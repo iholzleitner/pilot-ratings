@@ -150,129 +150,188 @@ exp_raw <- read_csv("data/manyfaces-pilot-exp.csv", show_col_types = FALSE)
 quest_raw <- read_csv("data/manyfaces-pilot-quest.csv", show_col_types = FALSE)
 ```
 
-
 ```{r}
-ed <- exp_data |> select(exp_id, exp)
+ed <- exp_data |>
+  select(exp_id, exp, trials) |> 
+  rename(trials_total = trials)
 
-exp_long <- exp_raw |>
+exp_long_raw <- exp_raw |>
   select(session_id, exp_id, trial_name, dv, rt, dt) |>
   unique() |>
   mutate(trial_name = sub("^(manyfaces|attention_checks)/", "", trial_name)) |>
   left_join(ed, by = "exp_id")
 ```
 
+### Preliminary data cleaning
 
-### Exclusions
-
-Investigate distribution of RTs
+**Remove remove duplicate trials and incomplete data**
 
 ```{r}
-ggplot(exp_long, aes(x = rt)) +
-  geom_histogram(bins = 100) +
-  scale_x_log10(breaks = 10^(1:6),
-                labels = c("10ms", "100ms", "1s", "10s", "100s", "1000s"))
+#| echo: false
+initial_participants <- exp_long_raw |> 
+  count(session_id) |> 
+  count() |> 
+  pull(n)
+
+initial_completions <- exp_long_raw |> 
+  count(session_id, exp_id) |> 
+  count() |> 
+  pull(n)
 ```
 
-And median RTs for peole who did at least 100 trials.
+We start with `r initial_participants` participants completing a total of `r initial_completions` experiments.
+
+Some participants completed more than the maximum amount of trials in an experiment. Duplicate trials were removed by only retaining participants' initial ratings of a particular stimulus.
 
 ```{r}
-med_rt_100 <- exp_long |>
-  summarise(med_rt = median(rt), 
-            n = n(),
-            .by = session_id) |>
-  filter(n > 100)
+dupl_trials_rm_test <- exp_long_raw |>
+  arrange(session_id, exp_id, trial_name, trials_total, dt) |> 
+  distinct(session_id, exp_id, trial_name, trials_total, .keep_all = TRUE)
+```
 
-ggplot(med_rt_100, aes(x = med_rt)) +
+```{r}
+incomplete <- dupl_trials_rm |> 
+  count(session_id, exp_id, trials_total) |> 
+  filter(n < trials_total)
+
+complete <- dupl_trials_rm |> 
+  filter(!session_id %in% incomplete$session_id)
+```
+
+`r unique(incomplete$session_id) |> length()` participants did not complete all trials for a total of `r nrow(incomplete)` experiments.
+
+As can be seen from discrepancy between number of participants and number of completed experiments, some participants  completed more than one experiment. If participants completed more than one experiment, only data from the first was retained.
+```{r}
+dupl_exp_ids <- complete |> 
+  # Mark participants that participated twice and establish which exp they did first
+  group_by(session_id, exp_id) |> 
+  summarise(first_dt = min(dt), .groups = "drop") |>
+  group_by(session_id) |> 
+  mutate(n_exp = n()) |>
+  mutate(first_exp = exp_id[which.min(first_dt)]) |>
+  ungroup() |> 
+  filter(n_exp > 1 & exp_id != first_exp)
+```
+
+```{r}
+exp_long <- complete |> 
+   anti_join(dupl_exp_ids, by = c("session_id", "exp_id" = "first_exp"))
+```
+
+```{r}
+#| echo: false
+prelim_participants <- exp_long |> 
+  count(session_id) |> 
+  count() |> 
+  pull(n)
+```
+
+Prior to pre-registered exclusions, preliminary sample thus consisted of `r prelim_participants` participants.
+
+### Pre-registered exclusions
+
+#### Overly consistent responses
+Participants were excluded based on overly consistent responding, i.e. if they responded to at least 90% of trials identically.
+
+```{r}
+overly_consistent <- exp_long |> 
+  summarise(
+    same_pcnt = max(tabulate(match(dv, unique(dv)))) / n(),
+    .by = c(session_id, exp_id)) |> 
+  dplyr::select(session_id, exp_id, same_pcnt) |> 
+  filter(same_pcnt >= 0.90)
+```
+
+#### Overly fast responses
+Participants were excluded based on overly fast responding, i.e. if their median reaction time fell below the 1st percentile of the overall distribution of median reaction times.
+
+```{r}
+med_rt <- exp_long |>
+  summarise(med_rt = median(rt),
+            .by = c(session_id, exp_id))
+
+overly_fast <- med_rt |> 
+  filter(med_rt < quantile(med_rt, probs = 0.01))
+```
+
+```{r}
+med_rt |> 
+  ggplot(aes(x = med_rt)) +
   geom_histogram(bins = 100) +
+  geom_vline(xintercept = quantile(med_rt$med_rt, probs = 0.01), 
+             color = "red", linetype = "dashed", linewidth = 1) +
   scale_x_continuous(breaks = seq(0, 10000, 500)) +
-  labs(x = "Median Reaction Time (ms)")
+  labs(x = "Median Reaction Time (ms)") +
+  theme_bw()
 ```
 
-
-Set RT median cutoff at 1% quantile?
+#### Self-reported honesty check
+Participants were excluded based on self-reported honesty check, i.e. if they responded not taking the study seriously vs. taking it authentically
 
 ```{r}
-rt_cutoff <- quantile(med_rt_100$med_rt, probs = 0.01)
+honesty_check_failed <- quest_raw |>
+  filter(q_name == "try") |>
+  select(session_id, honesty_check = dv) |>
+  unique() |> 
+  filter(honesty_check != 2) |> 
+  mutate(exp_id = NA) |>
+  relocate(exp_id, .after = session_id)
 ```
 
+#### Attention checks
+Participants were excluded if they failed two or more attention checks
 
 ```{r}
-# Calculate median RT and number of trials completed
-
-ed <- select(exp_data, exp_id, trials)
-
-rt <- exp_long |>
-  summarise(start = min(dt),
-            median_rt = median(rt), 
-            mfvp = (table(dv) |> sort() |> tail(1) |> as.vector())/n(),
-            n = n(),
-            .by = c(session_id, exp_id)) |>
-  left_join(ed, by = "exp_id")
-```
-
-
-
-```{r}
-# Check the attention checks
-checks <- exp_long |>
+attn_checks_failed <- exp_long |>
   select(session_id:dv) |>
   filter(grepl("check", trial_name)) |>
   mutate(check_type = sub("check_[a-z0-9-]+_", "", trial_name),
          check_type = ifelse(exp_id == 1400, substr(check_type, 4, 6), check_type)) |>
-  summarise(checks_passed = mean(check_type == dv), 
-            .by = c("session_id", "exp_id"))
+  summarise(attn_checks_passed = mean(check_type == dv), 
+            .by = c("session_id", "exp_id")) |> 
+  filter(attn_checks_passed < 5/7)
 ```
 
-
+#### Overview of exclusions
 
 ```{r}
-# Check try question
-try <- quest_raw |>
-  filter(q_name == "try") |>
-  select(session_id, try = dv) |>
-  unique()
+exclusions <- overly_consistent |> 
+  full_join(overly_fast, by = c("session_id", "exp_id")) |> 
+  full_join(honesty_check_failed, by = c("session_id", "exp_id")) |> 
+  full_join(attn_checks_failed, by = c("session_id", "exp_id"))
 ```
 
-
 ```{r}
-# combine to determine who gets excluded
-start_date <- "2025-05-06"
-
-to_exclude <- rt |>
-  left_join(checks, by = c("session_id", "exp_id")) |>
-  left_join(try, by = "session_id") |>
-  filter(
-    n != trials |
-    interval(start, start_date) |> as.numeric("days") > 0 |
-    is.na(checks_passed) |
-    checks_passed < 5/7 |
-    mfvp > 0.9 |
-    median_rt < rt_cutoff |
-    try != 2  
-  ) 
+exclusions |> 
+  summarise(
+    `>90% same response` = sum(!is.na(same_pcnt)),
+    `RT below cutoff` = sum(!is.na(med_rt)),
+    `Failed honesty check` = sum(!is.na(honesty_check)),
+    `Failed 2 or more of 7 attention checks` = sum(!is.na(attn_checks_passed)),
+    "Total exclusions" = n()
+  ) |> 
+  pivot_longer(
+    cols = everything(),
+    names_to = "Reason for exclusion",
+    values_to = "Number of participants"
+  )
 ```
 
+Exclude `r nrow(exclusions)` participants and remove attention checks from data.
 
 ```{r}
-to_exclude |>
-  mutate(reason = case_when(
-    n < trials ~ "did not finish trials",
-    n > trials ~ "too many trials",
-    interval(start, start_date) |> as.numeric("days") > 0 ~ "date",
-    checks_passed < 5/7 ~ "passed < 5/7 checks",
-    mfvp > .9 ~ ">90% same response",
-    median_rt < rt_cutoff ~ paste0("median RT < ", round(rt_cutoff)),
-    try == 1 ~ "did not try",
-    .default = "other")) |>
-  count(reason, sort = TRUE)
-  
-```
-
-Exclude `r nrow(to_exclude)` people and remove attention checks
-
-```{r}
-exp <- anti_join(exp_long, to_exclude, by = c("session_id", "exp_id")) |>
+exp <- exp_long |> 
+  anti_join(exclusions, by = c("session_id", "exp_id")) |>
   filter(!grepl("check_", trial_name))
+```
+
+After exclusions, there were `r unique(exp$session_id) |> length()` participants.
+
+Number of participants per study:
+```{r}
+exp |>
+  summarise(.by = c(exp, session_id)) |>
+  count(exp)
 ```
 
 ```{r}
@@ -285,21 +344,12 @@ times <- exp |>
   mutate(duration = interval(start, end) |> as.numeric("minutes"))
 ```
 
-Number of remaining participants per study
-
-There are `r unique(exp$session_id) |> length()` included participants.
-
-
-```{r}
-exp |>
-  summarise(.by = c(exp, session_id)) |>
-  count(exp)
-```
 
 ## Demographics
 
 ```{r}
-quest <- anti_join(quest_raw, to_exclude, by = c("session_id")) |>
+quest <- quest_raw |> 
+  anti_join(exclusions, by = c("session_id")) |>
   select(session_id, q_name, dv, endtime) |>
   unique() |>
   pivot_wider(names_from = q_name, values_from = dv) |>
@@ -311,7 +361,7 @@ quest <- anti_join(quest_raw, to_exclude, by = c("session_id")) |>
 ```{r}
 ggplot(quest, aes(x = age, fill = gender)) +
   geom_histogram(binwidth = 1) +
-  scale_fill_manual(values = c("hotpink", "lightblue", "orchid"))
+  scale_fill_manual(values = c("hotpink", "lightblue", "orchid", "gray"))
 ```
 
 ### Residence
@@ -333,8 +383,6 @@ quest |>
 ```{r}
 count(quest, device, sort = TRUE)
 ```
-
-
 
 ## Plots
 
