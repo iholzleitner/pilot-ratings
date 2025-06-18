@@ -1,0 +1,357 @@
+---
+title: "ManyFaces pilot ratings"
+subtitle: "Data prep: data cleaning and exclusions"
+format: 
+  html:
+    code-fold: true
+    df-print: paged
+    embed-resources: true
+    fig-height: 5
+    fig-width: 8
+    toc: true
+execute: 
+  error: true
+---
+
+```{r}
+#| message: false
+library(psych) # ICC, alpha, omega
+library(furrr) # run code parallel
+library(tidyverse)
+```
+
+```{r}
+# Load custom functions
+source("data/custom_functions.R")
+```
+
+## Project Structure
+
+Read in the full project structure from the project file to map experiment names to numbers. 
+
+```{r}
+proj <- jsonlite::read_json("data/project_1136_structure.json")
+
+exp_data <- purrr::map_df(proj, \(comp) {
+  if (comp$component_type == "exp") {
+     data.frame(
+       exp_id = comp$id,
+       name = comp$name,
+       res_name = comp$res_name,
+       instructions = comp$instructions,
+       question = comp$question,
+       exptype = comp$exptype,
+       trial_order = comp$trial_order,
+       total_stim = comp$total_stim,
+       random_stim = comp$random_stim,
+       trials = length(comp$trial),
+       stim = length(comp$stim)
+     )
+  } else {
+    NULL
+  }
+}) |>
+  mutate(exp = sub("ManyFaces? Pilot Ratings: ", "", res_name) |> trimws())
+
+
+trial_data <- purrr::map_df(proj, \(comp) {
+  if (comp$component_type == "exp") {
+    purrr::map_df(comp$trial, \(trial) {
+      data.frame(
+        exp_id = comp$id,
+        n = trial$trial_n,
+        name = trial$name, 
+        img_id = trial$center_img,
+        img_path = comp$stimuli[[as.character(trial$center_img)]]
+      )
+    })
+  } else {
+    NULL
+  }
+}) |>
+  mutate(name = sub("^(manyfaces|attention_checks)/", "", name))
+```
+
+```{r}
+exp_data |>
+  select(exp_id, exp, question, trials) |>
+  arrange(exp)
+```
+
+
+## Data Prep
+
+### Raw Data
+
+This workflow requires the data-raw directory, which is not shared on github. 
+
+This is the SQL for downloading the data from Experimentum. We need to download in chunks of 50000 rows to avoid file download limits on the site (not needed if downloading directly from SQL).
+
+``` sql
+SELECT 
+  session.id as session_id, project_id, exp.res_name as exp_name, exp_id, 
+  session.user_id, user.sex as user_sex, user.status as user_status,
+  ROUND(DATEDIFF(ed.dt, REPLACE(birthday, "-00","-01"))/365.25, 1) AS user_age,
+  trial.name as trial_name,
+  trial_n,
+  `order`,
+  dv,
+  rt,
+  ed.side,
+  ed.dt
+FROM session 
+  LEFT JOIN user USING (user_id)
+  LEFT JOIN exp_data AS ed ON ed.session_id = session.id
+  LEFT JOIN exp ON exp.id = ed.exp_id
+  LEFT JOIN trial USING (exp_id, trial_n)
+WHERE session.project_id = 1136
+  AND user.status IN ("guest", "registered")
+  AND exp_id IN (1384, 1400, 1399, 1398, 1401, 1402, 1403, 
+                 1404, 1405, 1397, 1390, 1389, 1388, 1387, 
+                 1386, 1385, 1382, 1381, 1380, 1379, 1377)
+LIMIT 50000
+OFFSET 0
+```
+
+```{r}
+#| eval: false
+
+# combine multiple downloads into one file
+exp_raw <- list.files("data-raw/exp", full.names = TRUE) |> 
+  read_csv(show_col_types = FALSE) |>
+  unique() |>
+  filter(user_status %in% c("guest", "registered"))
+
+write_csv(exp_raw, paste0("data-raw/ManyFaces-Pilot-Ratings-exps_", Sys.Date(), ".csv"))
+
+# get most recent files
+exp_file <- list.files("data-raw", "ManyFaces-Pilot-Ratings-exps",
+                       full.names = TRUE) |>
+  sort(decreasing = TRUE) |>
+  pluck(1)
+
+exp_raw <- read_csv(exp_file, show_col_types = FALSE) |>
+  filter(user_status %in% c("guest", "registered")) |>
+  unique()
+
+# get most recent files
+quest_file <- list.files("data-raw", "ManyFaces-Pilot-Ratings-quests", 
+                       full.names = TRUE) |>
+  sort(decreasing = TRUE) |>
+  pluck(1)
+
+quest_raw <- read_csv(quest_file, show_col_types = FALSE) |>
+  filter(user_status %in% c("guest", "registered")) |>
+  unique()
+
+# write to the data directory
+write_csv(exp_raw, "data/manyfaces-pilot-exp.csv")
+write_csv(quest_raw, "data/manyfaces-pilot-quest.csv")
+```
+
+
+### Reshape Data
+
+```{r}
+exp_raw <- read_csv("data/manyfaces-pilot-exp.csv",
+                    show_col_types = FALSE)
+
+ed <- exp_data |>
+  select(exp_id, exp, trials) |> 
+  rename(trials_total = trials)
+
+exp_long_raw <- exp_raw |>
+  select(session_id, exp_id, trial_name, dv, rt, dt) |>
+  unique() |>
+  mutate(trial_name = sub("^(manyfaces|attention_checks)/", "", trial_name)) |>
+  left_join(ed, by = "exp_id")
+```
+
+```{r}
+quest_raw <- read_csv("data/manyfaces-pilot-quest.csv",
+                      show_col_types = FALSE) |> 
+  dplyr::select(session_id, q_name, dv, endtime) |>
+  unique() |>
+  pivot_wider(names_from = q_name, values_from = dv) |>
+  mutate(age = as.integer(age))
+```
+
+### Preliminary data cleaning
+
+**Remove remove duplicate trials and incomplete data**
+
+```{r}
+#| echo: false
+initial_participants <- exp_long_raw |> 
+  count(session_id) |> 
+  count() |> 
+  pull(n)
+
+initial_completions <- exp_long_raw |> 
+  count(session_id, exp_id) |> 
+  count() |> 
+  pull(n)
+```
+
+We start with `r initial_participants` participants completing a total of `r initial_completions` experiments.
+
+Some participants completed more than the maximum amount of trials in an experiment. Duplicate trials were removed by only retaining participants' initial ratings of a particular stimulus.
+
+```{r}
+dupl_trials_rm <- exp_long_raw |>
+  arrange(session_id, exp_id, trial_name, trials_total, dt) |> 
+  distinct(session_id, exp_id, trial_name, trials_total, .keep_all = TRUE)
+```
+
+```{r}
+incomplete <- dupl_trials_rm |> 
+  count(session_id, exp_id, trials_total) |> 
+  filter(n < trials_total)
+
+complete <- dupl_trials_rm |> 
+  filter(!session_id %in% incomplete$session_id)
+```
+
+`r unique(incomplete$session_id) |> length()` participants did not complete all trials for a total of `r nrow(incomplete)` experiments.
+
+As can be seen from discrepancy between number of participants and number of completed experiments, some participants  completed more than one experiment. If participants completed more than one experiment, only data from the first was retained.
+```{r}
+dupl_exp_ids <- complete |> 
+  # Mark participants that participated twice and establish which exp they did first
+  group_by(session_id, exp_id) |> 
+  summarise(first_dt = min(dt), .groups = "drop") |>
+  group_by(session_id) |> 
+  mutate(n_exp = n()) |>
+  mutate(first_exp = exp_id[which.min(first_dt)]) |>
+  ungroup() |> 
+  filter(n_exp > 1 & exp_id != first_exp)
+```
+
+```{r}
+exp_long <- complete |> 
+   anti_join(dupl_exp_ids, by = c("session_id", "exp_id" = "first_exp"))
+```
+
+```{r}
+#| echo: false
+prelim_participants <- exp_long |> 
+  count(session_id) |> 
+  count() |> 
+  pull(n)
+```
+
+Prior to pre-registered exclusions, preliminary sample thus consisted of `r prelim_participants` participants.
+
+### Pre-registered exclusions
+
+#### Overly consistent responses
+Participants were excluded based on overly consistent responding, i.e. if they responded to at least 90% of trials identically.
+
+```{r}
+overly_consistent <- exp_long |> 
+  summarise(
+    same_pcnt = max(tabulate(match(dv, unique(dv)))) / n(),
+    .by = c(session_id, exp_id)) |> 
+  dplyr::select(session_id, exp_id, same_pcnt) |> 
+  filter(same_pcnt >= 0.90)
+```
+
+#### Overly fast responses
+Participants were excluded based on overly fast responding, i.e. if their median reaction time fell below the 1st percentile of the overall distribution of median reaction times.
+
+```{r}
+med_rt <- exp_long |>
+  summarise(med_rt = median(rt),
+            .by = c(session_id, exp_id))
+
+overly_fast <- med_rt |> 
+  filter(med_rt < quantile(med_rt, probs = 0.01))
+```
+
+```{r}
+med_rt |> 
+  ggplot(aes(x = med_rt)) +
+  geom_histogram(bins = 100) +
+  geom_vline(xintercept = quantile(med_rt$med_rt, probs = 0.01), 
+             color = "red", linetype = "dashed", linewidth = 1) +
+  scale_x_continuous(breaks = seq(0, 10000, 500)) +
+  labs(x = "Median Reaction Time (ms)") +
+  theme_bw()
+```
+
+#### Self-reported honesty check
+Participants were excluded based on self-reported honesty check, i.e. if they responded not taking the study seriously vs. taking it authentically
+
+```{r}
+honesty_check_failed <- quest_raw |>
+  select(session_id, honesty_check = try) |>
+  unique() |> 
+  filter(honesty_check != 2)
+```
+
+#### Attention checks
+Participants were excluded if they failed two or more attention checks
+
+```{r}
+attn_checks_failed <- exp_long |>
+  select(session_id:dv) |>
+  filter(grepl("check", trial_name)) |>
+  mutate(check_type = sub("check_[a-z0-9-]+_", "", trial_name),
+         check_type = ifelse(exp_id == 1400, substr(check_type, 4, 6), check_type)) |>
+  summarise(attn_checks_passed = mean(check_type == dv), 
+            .by = c("session_id", "exp_id")) |> 
+  filter(attn_checks_passed < 5/7)
+```
+
+#### Overview of exclusions
+
+```{r}
+exclusions <- overly_consistent |> 
+  full_join(overly_fast, by = c("session_id", "exp_id")) |> 
+  full_join(honesty_check_failed, by = c("session_id")) |> 
+  full_join(attn_checks_failed, by = c("session_id", "exp_id"))
+```
+
+```{r}
+exclusions |> 
+  summarise(
+    `>90% same response` = sum(!is.na(same_pcnt)),
+    `RT below cutoff` = sum(!is.na(med_rt)),
+    `Failed honesty check` = sum(!is.na(honesty_check)),
+    `Failed 2 or more of 7 attention checks` = sum(!is.na(attn_checks_passed)),
+    "Total exclusions" = n()
+  ) |> 
+  pivot_longer(
+    cols = everything(),
+    names_to = "Reason for exclusion",
+    values_to = "Number of participants"
+  )
+```
+
+Exclude `r nrow(exclusions)` participants and remove attention checks from data.
+
+```{r}
+data_exp <- exp_long |> 
+  anti_join(exclusions, by = c("session_id", "exp_id")) |>
+  filter(!grepl("check_", trial_name))
+```
+
+After exclusions, there were `r unique(data_exp$session_id) |> length()` participants.
+
+Number of participants per study:
+```{r}
+data_exp |>
+  summarise(.by = c(exp, session_id)) |>
+  count(exp)
+```
+
+### Compile and save data
+```{r}
+# Rating data
+write_csv(data_exp, "data/manyfaces-pilot-exp_cleaned.csv")
+
+# Questionnaire data
+data_quest <- quest_raw |> 
+  filter(session_id %in% data_exp$session_id)
+write_csv(data_quest, "data/manyfaces-pilot-quest_cleaned.csv")
+```

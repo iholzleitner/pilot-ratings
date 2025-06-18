@@ -1,0 +1,496 @@
+---
+title: "ManyFaces pilot ratings"
+subtitle: "Rater demographics and interrater agreement"
+format: 
+  html:
+    code-fold: true
+    df-print: paged
+    embed-resources: true
+    fig-height: 5
+    fig-width: 8
+    toc: true
+execute: 
+  error: true
+---
+
+```{r}
+#| message: false
+library(psych) # ICC, alpha, omega
+library(furrr) # run code parallel
+library(tidyverse)
+
+# Load custom functions
+source("data/custom_functions.R")
+```
+
+## Load data
+```{r}
+# Rating data
+data_exp <- read_csv("data/manyfaces-pilot-exp_cleaned.csv",
+                     show_col_types = FALSE)
+
+# Questionnaire data
+data_qu <- read_csv("data/manyfaces-pilot-quest_cleaned.csv",
+                    show_col_types = FALSE)
+```
+
+## Demographics
+
+Demographic data is available for 1685 of the total of 1909 raters.
+
+### Age and Gender
+
+```{r}
+data_qu |> 
+  ggplot(aes(x = age, fill = gender)) +
+  geom_histogram(binwidth = 1) +
+  scale_fill_manual(values = c("hotpink", "lightblue", "orchid", "gray"))
+```
+
+### Residence
+
+```{r}
+count(data_qu, residence, sort = TRUE)
+```
+
+### Ethnicity
+
+```{r}
+data_qu |>
+  mutate(ethnicity = tolower(ethnicity)) |>
+  count(ethnicity, sort = TRUE)
+```
+
+### Devices
+
+```{r}
+count(data_qu, device, sort = TRUE)
+```
+
+
+## Analyses
+
+### Interrater agreement
+
+```{r}
+data_trait <- data_exp |>
+  filter(exp == "attractive" | exp == "dominant"  | exp == "trustworthy"  | exp == "gender-typical"  | exp == "memorable") |>
+  mutate(dv = as.numeric(dv))
+  
+data_trait_unstd <- data_exp |>
+  filter(grepl("unstd", exp)) |>
+  mutate(dv = as.numeric(dv))
+
+data_emotion_int <- data_exp |>
+  filter(exp == "anger" | exp == "happiness"  | exp == "disgust"  | exp == "surprise"  | exp == "sadness" | exp == "fear") |>
+  mutate(dv = as.numeric(dv))
+
+data_emotion_cat <- data_exp |> 
+  # filter out emotion categorisation tasks
+  filter(grepl("^em", exp))
+
+```
+
+#### ICC
+
+##### Trait ratings
+
+**Standardised**
+```{r}
+data_trait |> 
+  group_by(exp) |> 
+  group_map(calc_icc) |> 
+  bind_rows()
+```
+
+**Unstandardised**
+```{r}
+data_trait_unstd |> 
+  group_by(exp) |> 
+  group_map(calc_icc) |> 
+  bind_rows()
+```
+
+###### ICC "corridors of stability"
+
+At what sample size (if at all) do ratings reach acceptable reliability of .75 to .90?
+
+```{r}
+#| warning: false
+#| message: false
+# Set seed for reproducibility
+set.seed(123)
+
+# Set a stable parallel plan
+future::plan(multisession, workers = 3)
+
+# Get unique experiments
+experiments <- unique(data_trait$exp)
+
+# Run the function in parallel across experiments
+corridor_icc_list <- furrr::future_map(
+  experiments,
+  function(exp_name) {
+    
+    data_subset <- data_trait |>
+      filter(exp == exp_name)
+    
+    calc_icc_cos(data = data_subset, 
+           exp = exp_name, 
+           n_raters_seq = seq(10, 100, 10), 
+           n_iter = 50)
+  },
+  .options = furrr::furrr_options(seed = TRUE)
+)
+
+# Combine all results into a single tibble
+corridor_icc_summary <- list_rbind(corridor_icc_list)
+
+# Reset plan to sequential
+future::plan(sequential)
+```
+
+```{r}
+#| echo: false
+icc2k_corridor_summary <- corridor_icc_summary |> 
+  group_by(experiment, n_raters_sampled) |> 
+  summarise(
+    ICC2_k_median = median(`ICC(2,k)`, na.rm = TRUE),
+    ICC2_k_low = quantile(`ICC(2,k)`, 0.025, na.rm = TRUE),
+    ICC2_k_high = quantile(`ICC(2,k)`, 0.975, na.rm = TRUE),
+    .groups = "drop"
+  )
+
+icc2k_corridor_summary |> 
+  ggplot(aes(x = n_raters_sampled)) +
+  geom_ribbon(aes(ymin = ICC2_k_low, ymax = ICC2_k_high), 
+              alpha = 0.15, fill = "grey60") +
+  # Median ICC(2,k)
+  geom_line(aes(y = ICC2_k_median), linewidth = 0.8, colour = "black") +
+  # Thresholds: 0.75 grey, 0.9 black
+  geom_hline(yintercept = 0.75, linetype = "dashed", colour = "grey40") +
+  geom_hline(yintercept = 0.9, linetype = "dashed", colour = "black") +
+  facet_wrap(~ experiment) +
+  scale_y_continuous(limits = c(0, 1)) +
+  labs(
+    x = "Number of raters sampled", 
+    y = "ICC(2,k)") +
+  theme_minimal(base_size = 12) +
+  theme(
+    strip.text = element_text(size = 12, face = "bold"),
+    axis.text = element_text(size = 11),
+    axis.title = element_text(size = 12),
+    plot.subtitle = element_text(size = 11)
+  )
+```
+
+##### Emotion intensity
+
+```{r}
+data_emotion_int |> 
+  group_by(exp) |> 
+  group_map(calc_icc) |> 
+  bind_rows()
+```
+
+#### Cronbach's alpha and McDonald's omega total
+
+##### Trait ratings
+
+**Standardised**
+```{r}
+#| warning: false
+#| message: false
+data_trait |> 
+  group_by(exp) |> 
+  group_map(calc_alpha_omega) |> 
+  bind_rows()
+```
+
+Wee note re warnings (turned off in output):
+
+-   "Number of categories should be increased...": occurs when some raters use only a subset of the response scale; that is not unexpected in subjective ratings (note that we did filter out raters with \<3 unique categories -- see also below)
+-   "Some items were negatively correlated...": potentially reflects true inter-rater disagreement; reversing raters not appropriate in this context
+-   "Omega_h... not meaningful": omega_h is undefined when computing a one-factor solution; omega_t remains valid and is the relevant statistic reported.
+
+**Unstandardised**
+```{r}
+#| warning: false
+#| message: false
+data_trait_unstd |> 
+  group_by(exp) |> 
+  group_map(calc_alpha_omega) |> 
+  bind_rows()
+```
+
+Four participants responded with only two values but were not caught by our "overly consistent filter". What do we want to do with them -- just drop them here, or exclude them more generally (as part of exclusions)?
+
+```{r}
+unique_values_check <- data_exp |> 
+  # filter out emotion categorisation tasks
+  filter(!grepl("^em", exp)) |>
+  mutate(dv = as.numeric(dv))
+
+unique_values_summary <- unique_values_check |> 
+  group_by(exp) |> 
+  group_map(~ {
+    unique_counts <- check_unique_values(.x,
+                                         col_map = list(p_id = "session_id",
+                                                        trait = "exp",
+                                                        stim_id = "trial_name",
+                                                        rating = "dv"))
+    tibble(
+      exp = .y$exp,
+      rater = names(unique_counts),
+      n_unique = unique_counts
+    )
+  }) |> 
+  bind_rows()
+
+unique_values_summary |> filter(n_unique < 3)
+```
+
+##### Emotion intensity
+
+```{r}
+#| warning: false
+#| message: false
+data_emotion_int |> 
+  group_by(exp) |> 
+  group_map(calc_alpha_omega) |> 
+  bind_rows()
+```
+
+### Point of stability (Hehman et al., 2018)
+
+##### Trait ratings
+
+**Standardised**
+```{r}
+set.seed(123)
+
+stability_stats_traits <- calc_stability_stats(data = data_trait,
+                                               N = 100,
+                                               iterations = 300,
+                                               ci_interval = 0.95, ci_method = "percentile",
+                                               cos_threshold = 0.5,
+                                               save_means = FALSE, # only save if actually needed (huge)
+                                               col_map = list(trait = "exp",
+                                                              stim_id = "trial_name",
+                                                              rating = "dv")) 
+
+# Summarise CI data: plotting resampled means is too much for my poor laptop
+summary_ci_traits <- stability_stats_traits$cis |> 
+  group_by(exp, sample_size) |> 
+  summarise(ul = mean(ul),
+            ll = mean(ll),
+            .groups = "drop")
+```
+
+Plot
+```{r}
+# POS labels
+stability_stats_traits$pos$label <- paste0("Point of stability\n(N = ", stability_stats_traits$pos$pos, ")")
+
+summary_ci_traits |> 
+  ggplot(aes(x = sample_size)) +
+  geom_ribbon(aes(ymin = ll, ymax = ul, fill = exp),
+              alpha = 0.5) +
+  geom_vline(data = stability_stats_traits$pos,
+             aes(xintercept = pos),
+             colour = "black",
+             linetype = "solid",
+             linewidth = .75) +
+  geom_hline(yintercept = c(-0.5, 0.5),
+             linetype = "dashed",
+             colour = "grey30",
+             linewidth = 0.5) +
+  facet_wrap(~ exp) +
+  xlab("Sample size (N)") +
+  ylab("Centered mean ratings") +
+  scale_fill_manual(values = paul_tol) +
+  theme_minimal() +
+  theme(panel.grid.major = element_line(colour = "#e8e8e8"),
+        panel.grid.minor = element_line(colour = "#e8e8e8"),
+        strip.text = element_text(size = 12, face = "bold"),
+        axis.text = element_text(size = 10),
+        axis.title = element_text(size = 12, face = "bold"),
+        legend.position = "none") +
+  geom_label(data = stability_stats_traits$pos,
+             aes(x = pos + 20, y = 1.6, label = label),
+             fill = NA,   
+             label.size = NA,
+             colour = "black",    
+             size = 3.5,
+             inherit.aes = FALSE)
+```
+
+Sanity check with Hehman et al. (20180) code
+
+```{r}
+source("data/resampling_hehmanetal.R")
+```
+
+```{r}
+#| warning: false
+#| message: false
+# Trustworthy
+trustworthy <- data_trait |> 
+  filter(exp == "trustworthy")
+
+trustworthy_rs <-RSSample(Rating = trustworthy$dv,
+                          Stimulus = factor(trustworthy$trial_name))
+
+# Our code N=38; Hehman et al. (2018) N=37
+RSGetPointOfStability(trustworthy_rs$ci, 0.5, inarow = 1)
+
+RSFigure(
+  trustworthy_rs$data,
+  trustworthy_rs$ci,
+  threshold = .5,
+  title = "",
+  figPNGname = "",
+  inarow = 1
+)
+```
+
+```{r}
+#| warning: false
+#| message: false
+# Memorable
+memorable <- data_trait |> 
+  filter(exp == "memorable")
+
+memorable_rs <-RSSample(Rating = memorable$dv,
+                        Stimulus = factor(memorable$trial_name))
+
+# Our code N=45; Hehman et al. (2018) N=45
+RSGetPointOfStability(memorable_rs$ci, 0.5, inarow = 1)
+
+RSFigure(
+  memorable_rs$data,
+  memorable_rs$ci,
+  threshold = .5,
+  title = "",
+  figPNGname = "",
+  inarow = 1
+)
+```
+
+**Unstandardised**
+```{r}
+set.seed(123)
+
+stability_stats_traits_unstd <- calc_stability_stats(data = data_trait_unstd,
+                                                     N = 100,
+                                                     iterations = 300,
+                                                     ci_interval = 0.95, ci_method = "percentile",
+                                                     cos_threshold = 0.5,
+                                                     save_means = FALSE,
+                                                     col_map = list(trait = "exp",
+                                                                    stim_id = "trial_name",
+                                                                    rating = "dv")) 
+
+summary_ci_traits_undstd <- stability_stats_traits_unstd$cis |> 
+  group_by(exp, sample_size) |> 
+  summarise(ul = mean(ul),
+            ll = mean(ll),
+            .groups = "drop")
+```
+
+Plot
+```{r}
+# POS labels
+stability_stats_traits_unstd$pos$label <- paste0("Point of stability\n(N = ", stability_stats_traits_unstd$pos$pos, ")")
+
+summary_ci_traits_undstd |> 
+  ggplot(aes(x = sample_size)) +
+  geom_ribbon(aes(ymin = ll, ymax = ul, fill = exp),
+              alpha = 0.5) +
+  geom_vline(data = stability_stats_traits_unstd$pos,
+             aes(xintercept = pos),
+             colour = "black",
+             linetype = "solid",
+             linewidth = .75) +
+  geom_hline(yintercept = c(-0.5, 0.5),
+             linetype = "dashed",
+             colour = "grey30",
+             linewidth = 0.5) +
+  facet_wrap(~ exp) +
+  xlab("Sample size (N)") +
+  ylab("Centered mean ratings") +
+  scale_fill_manual(values = paul_tol) +
+  theme_minimal() +
+  theme(panel.grid.major = element_line(colour = "#e8e8e8"),
+        panel.grid.minor = element_line(colour = "#e8e8e8"),
+        strip.text = element_text(size = 12, face = "bold"),
+        axis.text = element_text(size = 10),
+        axis.title = element_text(size = 12, face = "bold"),
+        legend.position = "none") +
+  geom_label(data = stability_stats_traits_unstd$pos,
+             aes(x = pos + 20, y = 1.6, label = label),
+             fill = NA,   
+             label.size = NA,
+             colour = "black",    
+             size = 3.5,
+             inherit.aes = FALSE)
+```
+
+##### Emotion intensity
+```{r}
+set.seed(123)
+
+stability_stats_emotion_int <- calc_stability_stats(data = data_emotion_int,
+                                                    N = 100,
+                                                    iterations = 300,
+                                                    ci_interval = 0.95, ci_method = "percentile",
+                                                    cos_threshold = 0.5,
+                                                    save_means = FALSE,
+                                                    col_map = list(trait = "exp",
+                                                                   stim_id = "trial_name",
+                                                                   rating = "dv")) 
+
+summary_ci_emotion_int <- stability_stats_emotion_int$cis |> 
+  group_by(exp, sample_size) |> 
+  summarise(ul = mean(ul),
+            ll = mean(ll),
+            .groups = "drop")
+```
+
+Plot
+```{r}
+# POS labels
+stability_stats_emotion_int$pos$label <- paste0("Point of stability\n(N = ", stability_stats_emotion_int$pos$pos, ")")
+
+summary_ci_emotion_int |> 
+  ggplot(aes(x = sample_size)) +
+  geom_ribbon(aes(ymin = ll, ymax = ul, fill = exp),
+              alpha = 0.5) +
+  geom_vline(data = stability_stats_emotion_int$pos,
+             aes(xintercept = pos),
+             colour = "black",
+             linetype = "solid",
+             linewidth = .75) +
+  geom_hline(yintercept = c(-0.5, 0.5),
+             linetype = "dashed",
+             colour = "grey30",
+             linewidth = 0.5) +
+  facet_wrap(~ exp) +
+  xlab("Sample size (N)") +
+  ylab("Centered mean ratings") +
+  scale_fill_manual(values = paul_tol) +
+  theme_minimal() +
+  theme(panel.grid.major = element_line(colour = "#e8e8e8"),
+        panel.grid.minor = element_line(colour = "#e8e8e8"),
+        strip.text = element_text(size = 12, face = "bold"),
+        axis.text = element_text(size = 10),
+        axis.title = element_text(size = 12, face = "bold"),
+        legend.position = "none") +
+  geom_label(data = stability_stats_emotion_int$pos,
+             aes(x = pos + 20, y = 1.6, label = label),
+             fill = NA,   
+             label.size = NA,
+             colour = "black",    
+             size = 3.5,
+             inherit.aes = FALSE)
+```
