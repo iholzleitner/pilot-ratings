@@ -176,13 +176,78 @@ quest_raw <- read_csv("data/manyfaces-pilot-quest.csv",
   mutate(age = as.integer(age))
 ```
 
-TODO: Model data
+
 ```{r}
-# find out what bits of raw and cleaned data should be shared
+model_raw <- read_csv("data/manyfaces-pilot-models.csv",
+                      show_col_types = FALSE)
+```
+
+### Preliminary data cleaning
+
+#### Model data
+
+```{r}
+data_model <- model_raw |> 
+  separate_wider_delim(ID,
+                       delim = "_",
+                       names = c("lab_id", "model_id"),
+                       too_many = "drop") |>
+  mutate(across(where(is.character), ~ na_if(.x, "NULL"))) |> 
+  # recode gender
+  mutate(gender = tolower(gender),
+         gender_rec = case_match(gender,
+                                 c("female", "mulher", "feminino", "female.",  "f",  "mujer",  "femenino",  "trans woman",  "femal") ~ "female",
+                                 c("homem", "masculino",  "mascãºlino",  "m") ~ "male",
+                                 c("sexo feminino, gãªnero fluido", "nã£o binã¡rio", "nã£o binã¡rio",  "genderfluid (amab)",  "nonbinary") ~ "non-binary",
+                                 c("hetero cis", "NA") ~ NA_character_,
+                                 .default = gender),
+         ethnicity = tolower(ethnicity),
+         ethnicity_rec = case_match(ethnicity,
+                                    c("white", "branco", "branca", "branca", "branco", "caucasian", 
+                                      "white (italian)", "white british", "british", "white-french", 
+                                      "british white", "white european", "white-scottish", 
+                                      "white scottish", "white britisg", "german", "german,", 
+                                      "german, swedish", "german/argentinien", "dutch", "french", 
+                                      "scottish", "european", "eastern european", "croatian", "serbian",
+                                      "romanian", "white - other", "meditrainian") ~ "White",
+                                    c("black", "preta", "negra", "african american", 
+                                      "african (mauritian)") ~ "Black",
+                                    c("asian", "asian (indian)", "south asian", "southasian", 
+                                      "east indian", "chinese", "chinese - east asian", "asian/chinese", 
+                                      "malaysian chinese", "malaysia chinese", "malaysian", 
+                                      "indian", "pakistani", "hindu", "british indian") ~ "Asian",
+                                    c("indigenous") ~ "Indigenous",
+                                    c("middle eastern",  "arab","east african middle eastern",
+                                      "israeli", "israeli.", "israel", "muslim", 
+                                      "turkish", "tã¼rkiye", "türkiye") ~ "Middle Eastern or North African (MENA)",
+                                    c("latino", "latina", "latina branca", "mexicana", "mexicano", 
+                                      "puerto rican/hispanic", "hispanic", "south american") ~ "Latine",
+                                    c("mixed", "pardo", "parda", "pardo - mixed race", 
+                                      "mixraces", "chinese-indian-malay mixed", "mixed white & asian", "mix white/black",
+                                      "white / middle-eastern", "white / middle eastern", "middle eastern/white") ~ "Multiracial or Mixed",
+                                    .default = NA_character_)) |> 
+  relocate(gender_rec, .after = gender) |> 
+  relocate(ethnicity_rec, .after = ethnicity) |> 
+  # recode height and weight
+  # one person reported weight of 37 kg at 163 cm -- recode as NA? Would be a BMI of 13.9
+  mutate(height_cm = case_when(height_units == "cm" & as.numeric(height) < 100 ~ as.numeric(height) * 2.54, # likely mislabelled inches
+                               height_units == "in" & as.numeric(height) > 100 ~ as.numeric(height), # likely mislabelled cms
+                               height_units == "in" ~ as.numeric(height) * 2.54,
+                               height_units == "cm" ~ as.numeric(height),
+                               .default = NA_real_),
+         weight_kg = case_when(as.numeric(weight) == 0 ~ NA_real_,
+                               weight_units == "kg" & as.numeric(weight) < 30 ~ as.numeric(weight) * 2.20462,  # likely mislabelled lb
+                               weight_units == "lb" & as.numeric(weight) < 80 ~ as.numeric(weight),            # likely mislabelled kg
+                               weight_units == "lb" ~ as.numeric(weight) / 2.20462,
+                               weight_units == "kg" ~ as.numeric(weight),
+                               as.numeric(weight) == 0 ~ NA,
+                               .default = NA_real_)) |> 
+  relocate(height_cm, .after = height_units) |>
+  relocate(c(weight, weight_units, weight_kg), .after = height_cm)
 ```
 
 
-### Preliminary data cleaning
+#### Experimental data
 
 **Remove remove duplicate trials and incomplete data**
 
@@ -360,4 +425,7 @@ write_csv(data_exp, "data/manyfaces-pilot-exp_cleaned.csv")
 data_quest <- quest_raw |> 
   filter(session_id %in% data_exp$session_id)
 write_csv(data_quest, "data/manyfaces-pilot-quest_cleaned.csv")
+
+# Model data
+write_csv(data_model, "data/manyfaces-pilot-models_cleaned.csv")
 ```
