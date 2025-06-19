@@ -241,7 +241,6 @@ session_id,endtime,gender,age,residence,ethnicity,device,try
 156010,2025-05-06T14:01:51Z,female,21,ZA,Black,phone,2
 156012,2025-05-06T14:03:40Z,male,39,ZA,Black,laptop,2
 156013,2025-05-06T14:06:51Z,female,31,ZA,White,phone,2
-156015,2025-05-06T14:03:15Z,male,39,GB,Sri Lankan,desktop,1
 156016,2025-05-06T14:13:56Z,male,31,ZA,Black/African,desktop,2
 156017,2025-05-06T14:06:27Z,male,48,GR,White,desktop,2
 156018,2025-05-06T14:02:01Z,female,24,ZA,Black,laptop,2
@@ -415,7 +414,6 @@ session_id,endtime,gender,age,residence,ethnicity,device,try
 156224,2025-05-06T14:56:37Z,male,27,ZA,Black,laptop,2
 156225,2025-05-06T14:48:25Z,female,30,ZA,Black,laptop,2
 156226,2025-05-06T14:50:11Z,male,22,ZA,Black,phone,2
-156227,2025-05-06T14:43:36Z,female,39,ZA,African/Black american,phone,1
 156228,2025-05-06T14:38:28Z,female,32,ZA,Black,phone,2
 156229,2025-05-06T14:42:55Z,male,24,KE,Black: African American,laptop,2
 156233,2025-05-06T14:46:29Z,male,43,ZA,black,laptop,2

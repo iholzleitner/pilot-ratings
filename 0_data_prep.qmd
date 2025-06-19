@@ -196,20 +196,22 @@ data_model <- model_raw |>
   # recode gender
   mutate(gender = tolower(gender),
          gender_rec = case_match(gender,
-                                 c("female", "mulher", "feminino", "female.",  "f",  "mujer",  "femenino",  "trans woman",  "femal") ~ "female",
-                                 c("homem", "masculino",  "mascãºlino",  "m") ~ "male",
-                                 c("sexo feminino, gãªnero fluido", "nã£o binã¡rio", "nã£o binã¡rio",  "genderfluid (amab)",  "nonbinary") ~ "non-binary",
+                                 c("female", "mulher", "feminino", "female.",
+                                   "f", "mujer", "femenino", "trans woman", "femal") ~ "female",
+                                 c("homem", "masculino", "mascãºlino", "m") ~ "male",
+                                 c("sexo feminino, gãªnero fluido", "nã£o binã¡rio", "nã£o binã¡rio",
+                                   "genderfluid (amab)", "nonbinary") ~ "non-binary",
                                  c("hetero cis", "NA") ~ NA_character_,
                                  .default = gender),
          ethnicity = tolower(ethnicity),
          ethnicity_rec = case_match(ethnicity,
-                                    c("white", "branco", "branca", "branca", "branco", "caucasian", 
+                                    c("white", "branco", "branca", "caucasian", 
                                       "white (italian)", "white british", "british", "white-french", 
                                       "british white", "white european", "white-scottish", 
                                       "white scottish", "white britisg", "german", "german,", 
                                       "german, swedish", "german/argentinien", "dutch", "french", 
-                                      "scottish", "european", "eastern european", "croatian", "serbian",
-                                      "romanian", "white - other", "meditrainian") ~ "White",
+                                      "scottish", "european", "eastern european", "croatian", 
+                                      "serbian", "romanian", "white - other", "meditrainian") ~ "White",
                                     c("black", "preta", "negra", "african american", 
                                       "african (mauritian)") ~ "Black",
                                     c("asian", "asian (indian)", "south asian", "southasian", 
@@ -217,14 +219,15 @@ data_model <- model_raw |>
                                       "malaysian chinese", "malaysia chinese", "malaysian", 
                                       "indian", "pakistani", "hindu", "british indian") ~ "Asian",
                                     c("indigenous") ~ "Indigenous",
-                                    c("middle eastern",  "arab","east african middle eastern",
+                                    c("middle eastern", "arab", "east african middle eastern",
                                       "israeli", "israeli.", "israel", "muslim", 
                                       "turkish", "tã¼rkiye", "türkiye") ~ "Middle Eastern or North African (MENA)",
                                     c("latino", "latina", "latina branca", "mexicana", "mexicano", 
                                       "puerto rican/hispanic", "hispanic", "south american") ~ "Latine",
-                                    c("mixed", "pardo", "parda", "pardo - mixed race", 
-                                      "mixraces", "chinese-indian-malay mixed", "mixed white & asian", "mix white/black",
-                                      "white / middle-eastern", "white / middle eastern", "middle eastern/white") ~ "Multiracial or Mixed",
+                                    c("mixed", "pardo", "parda", "pardo - mixed race", "mixraces",
+                                      "chinese-indian-malay mixed", "mixed white & asian", "mix white/black",
+                                      "white / middle-eastern", "white / middle eastern",
+                                      "middle eastern/white") ~ "Multiracial or Mixed",
                                     .default = NA_character_)) |> 
   relocate(gender_rec, .after = gender) |> 
   relocate(ethnicity_rec, .after = ethnicity) |> 
@@ -403,7 +406,7 @@ Exclude `r nrow(exclusions)` participants and remove attention checks from data.
 
 ```{r}
 data_exp <- exp_long |> 
-  anti_join(exclusions, by = c("session_id", "exp_id")) |>
+  anti_join(exclusions, by = "session_id") |>
   filter(!grepl("check_", trial_name))
 ```
 
