@@ -176,6 +176,12 @@ quest_raw <- read_csv("data/manyfaces-pilot-quest.csv",
   mutate(age = as.integer(age))
 ```
 
+TODO: Model data
+```{r}
+# find out what bits of raw and cleaned data should be shared
+```
+
+
 ### Preliminary data cleaning
 
 **Remove remove duplicate trials and incomplete data**
