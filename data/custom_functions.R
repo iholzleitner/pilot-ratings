@@ -27,121 +27,20 @@ check_unique_values <- function(data,
 
 ### --- OBSERVED
 
-# Compute ICC(2,1) and ICC(2,k) using psych package
-# TODO; should I check here too for participants who only gave 2 different responses?
-
-calc_icc <- function(data, group) {
+# Compute ICC(2,k) and ICC(2,1) using psych package
+calc_icc <- function(data,
+                     group,
+                     check_dropped_raters = FALSE) {
   
   # Reshape data
   rating_matrix <- data |> 
     select(session_id, trial_name, dv) |> 
     pivot_wider(names_from = session_id, values_from = dv) |> 
-    select(-c(trial_name)) |> 
+    dplyr::select(-c(trial_name)) |> 
     as.matrix()
   
-  # Run ICC
-  icc_result <- psych::ICC(rating_matrix)$results
-  
-  # Extract ICCs and corresponding CIs
-  icc21_row <- icc_result |> filter(type == "ICC2")
-  icc2k_row <- icc_result |> filter(type == "ICC2k")
-  
-  tibble(
-    experiment = group$exp,
-
-    `ICC(2,k)` = icc2k_row$ICC,
-    `ICC(2,k): 2.5%` = icc2k_row$`lower bound`,
-    `ICC(2,k): 97.5%` = icc2k_row$`upper bound`,
-    
-    `ICC(2,1)` = icc21_row$ICC,
-    `ICC(2,1): 2.5%` = icc21_row$`lower bound`,
-    `ICC(2,1): 97.5%` = icc21_row$`upper bound`,
-    
-    n_raters = ncol(rating_matrix),
-    n_stimuli = nrow(rating_matrix)
-  )
-}
-
-
-### --- RESAMPLING
-# TODO; still clunky and slow
-
-calc_icc_cos <- function(data, exp,
-                   n_raters_seq = seq(10, 100, 10),
-                   n_iter = 500) {
-  
-  # Reshape data
-  rating_matrix <- data |> 
-    select(session_id, trial_name, dv) |> 
-    pivot_wider(names_from = session_id, values_from = dv) |> 
-    select(-c(trial_name)) |> 
-    as.matrix()
-  
-  # Drop raters with <3 unique responses
-  unique_counts <- apply(rating_matrix, 2, function(x) length(unique(x)))
-  var_ok <- unique_counts >= 3
-  rating_matrix <- rating_matrix[, var_ok, drop = FALSE]
-  
-  available_raters <- colnames(rating_matrix)
-  max_raters <- length(available_raters)
-  
-  # Adjust n_raters_seq to not exceed max_raters
-  n_raters_seq <- n_raters_seq[n_raters_seq <= max_raters]
-  
-  # Run the resampling loop
-  results <- purrr::map(n_raters_seq, function(n_raters_sampled) {
-    
-    iterations <- purrr::map(1:n_iter, function(iter) {
-      
-      sampled_raters <- sample(available_raters, n_raters_sampled, replace = FALSE)
-      sampled_matrix <- rating_matrix[, sampled_raters, drop = FALSE]
-      
-      # Run ICC
-      icc_result <- suppressWarnings(psych::ICC(sampled_matrix)$results)
-      
-      # Extract ICC(2,k)
-      icc2k <- icc_result |> filter(type == "ICC2k")
-      
-      # Return result for this iteration
-      tibble(
-        experiment = exp,
-        n_raters_sampled = n_raters_sampled,
-        iter = iter,
-        `ICC(2,k)` = icc2k$ICC,
-        `ICC(2,k): 95% CI lower` = icc2k$`lower bound`,
-        `ICC(2,k): 95% CI upper` = icc2k$`upper bound`,
-      )
-    })
-    
-    # Combine all iterations into one tibble
-    list_rbind(iterations)
-  })
-  
-  # Combine all raters_sampled groups into one tibble
-  results <- list_rbind(results)
-  
-  return(results)
-}
-
-##############################################################
-#### ---- Cronbach's alpha and McDonalds omega total ---- ####
-##############################################################
-
-### --- OBSERVED
-
-calc_alpha_omega <- function(data, group) {
-  
-  # Prepare rating matrix
-  rating_matrix <- data |> 
-    select(session_id, trial_name, dv) |> 
-    pivot_wider(names_from = session_id, values_from = dv) |> 
-    select(-c(trial_name)) |> 
-    as.matrix()
-  
-  # Rater names
+  # CHECK UNIQUE RESPONSES
   rater_names <- colnames(rating_matrix)
-  
-  # Count initial raters BEFORE filtering
   n_raters_initial <- ncol(rating_matrix)
   
   # Drop raters with <3 unique categories
@@ -150,48 +49,137 @@ calc_alpha_omega <- function(data, group) {
   dropped_raters_var <- rater_names[!var_ok]
   
   rating_matrix <- rating_matrix[, var_ok, drop = FALSE]
-  
   n_raters_final <- ncol(rating_matrix)
-  n_raters_dropped_variability <- n_raters_initial - n_raters_final
   
-  # Compute alpha and omage if ≥2 raters left
+  # Compute ICCs if ≥2 raters left
   if (n_raters_final >= 2) {
+    icc_result <- suppressWarnings(psych::ICC(rating_matrix)$results)
     
-    # Alpha
-    alpha_result <- psych::alpha(rating_matrix)
-    alpha_val <- alpha_result$total$raw_alpha
+    icc2_row <- icc_result |> filter(type == "ICC2")
+    icc2k_row <- icc_result |> filter(type == "ICC2k")
     
-    # Omega total
-    omega_result <- psych::omega(rating_matrix, nfactors = 1, plot = FALSE)
-    omega_t <- omega_result$omega.tot
+    icc_21 <- icc2_row$ICC
+    icc_21_lower <- icc2_row$`lower bound`
+    icc_21_upper <- icc2_row$`upper bound`
+    
+    icc_2k <- icc2k_row$ICC
+    icc_2k_lower <- icc2k_row$`lower bound`
+    icc_2k_upper <- icc2k_row$`upper bound`
     
   } else {
-    alpha_val <- NA
-    omega_t <- NA
+    icc_21 <- NA_real_
+    icc_21_lower <- NA_real_
+    icc_21_upper <- NA_real_
+    
+    icc_2k <- NA_real_
+    icc_2k_lower <- NA_real_
+    icc_2k_upper <- NA_real_
   }
   
   # Return summary
-  tibble(
-    experiment = group$exp,
-    alpha = alpha_val,
-    omega_t = omega_t,
-    
-    n_raters_initial = n_raters_initial,
-    n_raters_final = n_raters_final,
-    
-    n_raters_dropped_variability = n_raters_dropped_variability,
-    dropped_raters_var = paste(dropped_raters_var, collapse = "; "),
-    
-    n_stimuli = nrow(rating_matrix)
-  )
+  if (check_dropped_raters) {
+    tibble(experiment = group$exp,
+           n_raters = n_raters_final,
+           `ICC(2,k)` = icc_2k,
+           `ICC(2,k): 2.5%` = icc_2k_lower,
+           `ICC(2,k): 97.5%` = icc_2k_upper,
+           `ICC(2,1)` = icc_21,
+           `ICC(2,1): 2.5%` = icc_21_lower,
+           `ICC(2,1): 97.5%` = icc_21_upper,
+           dropped_n = n_raters_initial - n_raters_final,
+           dropped_ids = paste(dropped_raters_var, collapse = "; "))
+  } else {
+    tibble(experiment = group$exp,
+           n_raters = n_raters_final,
+           `ICC(2,k)` = icc_2k,
+           `ICC(2,k): 2.5%` = icc_2k_lower,
+           `ICC(2,k): 97.5%` = icc_2k_upper,
+           `ICC(2,1)` = icc_21,
+           `ICC(2,1): 2.5%` = icc_21_lower,
+           `ICC(2,1): 97.5%` = icc_21_upper)
+  }
 }
 
-### --- RESAMPLING
 
-calc_alpha_omega_cos <- function(data,
-                                 experiment_label,
-                                 n_raters_seq = seq(10, 100, 10), # sequence of n_raters to test
-                                 n_iter = 500) {
+### --- RESAMPLING: Calculate "corridor of stability" (COS)
+calc_icc_cos <- function(data, exp,
+                         n_raters_seq = seq(10, 100, 10),
+                         n_iter = 500) {
+
+  # Reshape data
+  rating_matrix <- data |> 
+    select(session_id, trial_name, dv) |> 
+    pivot_wider(names_from = session_id, values_from = dv) |> 
+    select(-trial_name) |> 
+    as.matrix()
+
+  # Adjust n_raters_seq to not exceed max_raters
+  available_raters <- colnames(rating_matrix)
+  max_raters <- length(available_raters)
+  n_raters_seq <- n_raters_seq[n_raters_seq <= max_raters]
+  
+  # Run the resampling loop
+  all_results <- vector("list", length(n_raters_seq) * n_iter)
+  counter <- 1
+  
+  for (n_raters_sampled in n_raters_seq) {
+    
+    for (iter in seq_len(n_iter)) {
+      sampled_raters <- sample(available_raters, n_raters_sampled, replace = FALSE)
+      sampled_matrix <- rating_matrix[, sampled_raters, drop = FALSE]
+      # Run ICC
+      icc_result <- suppressWarnings(psych::ICC(sampled_matrix)$results)
+      # Extract ICC(2,k)
+      icc2k <- icc_result |> filter(type == "ICC2k")
+      # Return result for this iteration
+      all_results[[counter]] <- tibble(experiment = exp,
+                                       n_raters_sampled = n_raters_sampled,
+                                       iter = iter,
+                                       `ICC(2,k)` = icc2k$ICC,
+                                       `ICC(2,k): 2.5%` = icc2k$`lower bound`,
+                                       `ICC(2,k): 97.5% CI upper` = icc2k$`upper bound`)
+      counter <- counter + 1
+    }
+  }
+  # Combine all iterations
+  list_rbind(all_results)
+}
+
+# CACHE INTERMEDIARY OUTPUT
+# so next time script runs it will only recompute
+# ICCs for experiments for which data has changed
+run_or_load_icc <- function(exp_name, data,
+                            cache_dir = "cache/icc",
+                            n_raters_seq = seq(10, 100, 10),
+                            n_iter = 50) {
+  if (!dir.exists(cache_dir)) dir.create(cache_dir, recursive = TRUE)
+  
+  data_hash <- digest::digest(data, algo = "xxhash64")
+  cache_filename <- paste0("icc_", exp_name, "_", data_hash, ".rds")
+  cache_path <- file.path(cache_dir, cache_filename)
+  
+  if (file.exists(cache_path)) {
+    readr::read_rds(cache_path)
+  } else {
+    out <- calc_icc_cos(data = data,
+                        exp = exp_name,
+                        n_raters_seq = n_raters_seq,
+                        n_iter = n_iter)
+    
+    readr::write_rds(out, cache_path)
+    out
+  }
+}
+
+##############################################################
+#### ---- Cronbach's alpha and McDonalds omega total ---- ####
+##############################################################
+
+### --- OBSERVED
+
+calc_alpha_omega <- function(data,
+                             group,
+                             check_dropped_raters = FALSE) {
   
   # Prepare rating matrix
   rating_matrix <- data |> 
@@ -200,50 +188,43 @@ calc_alpha_omega_cos <- function(data,
     select(-c(trial_name)) |> 
     as.matrix()
   
+  # CHECK UNIQUE RESPONSES
+  rater_names <- colnames(rating_matrix)
+  n_raters_initial <- ncol(rating_matrix)
+  
   # Drop raters with <3 unique categories
   unique_counts <- apply(rating_matrix, 2, function(x) length(unique(x)))
   var_ok <- unique_counts >= 3
+  dropped_raters_var <- rater_names[!var_ok]
+  
   rating_matrix <- rating_matrix[, var_ok, drop = FALSE]
+  n_raters_final <- ncol(rating_matrix)
+
+  # Compute alpha and omega if ≥2 raters left
+  if (n_raters_final >= 2) {
+    alpha_val <- psych::alpha(rating_matrix)$total$raw_alpha
+    omega_t <- psych::omega(rating_matrix, nfactors = 1, plot = FALSE)$omega.tot
+  } else {
+    alpha_val <- NA_real_
+    omega_t <- NA_real_
+  }
   
-  # Available raters after filtering
-  available_raters <- colnames(rating_matrix)
-  max_raters <- length(available_raters)
-  
-  # Adjust n_raters_seq to not exceed max_raters
-  n_raters_seq <- n_raters_seq[n_raters_seq <= max_raters]
-  
-  # Store results / run in parallel using furrr::future_map_dfr (instead of purr::map_dfr)
-  results <- furrr::future_map_dfr(n_raters_seq, function(n_raters_sampled) {
-    
-    # Run n_iter subsamples for this n_raters_sampled
-    furrr::future_map_dfr(1:n_iter, function(iter) {
-      
-      sampled_raters <- sample(available_raters, n_raters_sampled, replace = FALSE)
-      sampled_matrix <- rating_matrix[, sampled_raters, drop = FALSE]
-      
-      # Compute alpha
-      alpha_val <- suppressWarnings(
-        psych::alpha(sampled_matrix)$total$raw_alpha
-      )
-      
-      # Compute omega
-      omega_t <- suppressWarnings(
-        psych::omega(sampled_matrix, nfactors = 1, plot = FALSE)$omega.tot
-      )
-      
-      # Return result for this iteration
-      tibble(
-        experiment = experiment_label,
-        n_raters_sampled = n_raters_sampled,
-        iter = iter,
-        alpha = alpha_val,
-        omega_t = omega_t
-      )
-    }, .options = furrr::furrr_options(seed = TRUE)) 
-  },  .options = furrr::furrr_options(seed = TRUE))
-  
-  return(results)
+  # Return summary
+  if (check_dropped_raters) {
+    tibble(experiment = group$exp,
+           n_raters = n_raters_final,
+           alpha = alpha_val,
+           omega_t = omega_t,
+           dropped_n = n_raters_initial - n_raters_final,
+           dropped_ids = paste(dropped_raters_var, collapse = "; "))
+  } else {
+    tibble(experiment = group$exp,
+           n_raters = n_raters_final,
+           alpha = alpha_val,
+           omega_t = omega_t)
+  }
 }
+
 
 #########################################################################################
 ##### ---- Hehman et al. (2018): Assessing point at which averages are stable ---- #####
@@ -356,13 +337,19 @@ calc_stability_stats <- function(data = data,
 }
 
 # RESAMPLING
-# helper function: create grid based on desired number of N and iterations
-# for each row, resample N values
 resample_group <- function(ratings, N, iterations) {
-  expand.grid(sample_size = 1:N,
-              iteration = 1:iterations) |> 
-    mutate(mean_rating = map_dbl(sample_size,
-                                 ~ mean(sample(ratings, size = .x, replace = TRUE))))
+  results <- vector("list", N)
+  
+  for (n in 1:N) {
+    means <- numeric(iterations)
+    for (i in 1:iterations) {
+      means[i] <- mean(sample(ratings, size = n, replace = TRUE))
+    }
+    results[[n]] <- tibble(sample_size = n,
+                           iteration = 1:iterations,
+                           mean_rating = means)
+  }
+  bind_rows(results)
 }
 
 # POINT OF STABILITY

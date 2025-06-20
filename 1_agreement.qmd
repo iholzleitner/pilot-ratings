@@ -34,11 +34,29 @@ data_qu <- read_csv("data/manyfaces-pilot-quest_cleaned.csv",
                     show_col_types = FALSE)
 ```
 
-## Demographics
+```{r}
+data_trait <- data_exp |>
+  filter(exp == "attractive" | exp == "dominant"  | exp == "trustworthy"  | exp == "gender-typical"  | exp == "memorable") |>
+  mutate(exp = factor(exp, levels = c("attractive", "dominant", "trustworthy", "gender-typical", "memorable"))) |>
+  mutate(dv = as.numeric(dv))
+
+data_trait_unstd <- data_exp |>
+  filter(grepl("unstd", exp)) |>
+  mutate(dv = as.numeric(dv))
+
+data_emo_int <- data_exp |>
+  filter(exp == "anger" | exp == "happiness"  | exp == "disgust"  | exp == "surprise"  | exp == "sadness" | exp == "fear") |>
+  mutate(dv = as.numeric(dv))
+
+data_emo_cat <- data_exp |> 
+  filter(grepl("^em", exp))
+```
+
+## Rater demographics
 
 Demographic data is available for 1685 of the total of 1909 raters.
 
-### Age and Gender
+### Age and gender
 
 ```{r}
 data_qu |> 
@@ -66,33 +84,13 @@ data_qu |>
 count(data_qu, device, sort = TRUE)
 ```
 
-## Analyses
+## Interrater agreement
 
-### Interrater agreement
-
-```{r}
-data_trait <- data_exp |>
-  filter(exp == "attractive" | exp == "dominant"  | exp == "trustworthy"  | exp == "gender-typical"  | exp == "memorable") |>
-  mutate(exp = factor(exp, levels = c("attractive", "dominant", "trustworthy", "gender-typical", "memorable"))) |>
-  mutate(dv = as.numeric(dv))
-
-data_trait_unstd <- data_exp |>
-  filter(grepl("unstd", exp)) |>
-  mutate(dv = as.numeric(dv))
-
-data_emo_int <- data_exp |>
-  filter(exp == "anger" | exp == "happiness"  | exp == "disgust"  | exp == "surprise"  | exp == "sadness" | exp == "fear") |>
-  mutate(dv = as.numeric(dv))
-
-data_emo_cat <- data_exp |> 
-  filter(grepl("^em", exp))
-```
+### Standardised trait ratings
 
 #### ICC
 
-##### Trait ratings
-
-**Standardised**
+**Observed across experiments**
 ```{r}
 data_trait |> 
   group_by(exp) |> 
@@ -101,22 +99,12 @@ data_trait |>
   mutate(across(where(is.numeric), ~ round(.x, 2)))
 ```
 
-**Unstandardised**
-```{r}
-data_trait_unstd |> 
-  group_by(exp) |> 
-  group_map(calc_icc) |> 
-  bind_rows() |> 
-  mutate(across(where(is.numeric), ~ round(.x, 2)))
-```
-
-###### ICC "corridors of stability"
-
+**"Corridors of stability"**
 At what sample size (if at all) do ratings reach acceptable reliability of .75 to .90?
-
 ```{r}
 #| warning: false
 #| message: false
+
 # Set seed for reproducibility
 set.seed(123)
 
@@ -130,28 +118,26 @@ experiments <- unique(data_trait$exp)
 corridor_icc_list <- furrr::future_map(
   experiments,
   function(exp_name) {
-    
-    data_subset <- data_trait |>
-      filter(exp == exp_name)
-    
-    calc_icc_cos(data = data_subset, 
-           exp = exp_name, 
-           n_raters_seq = seq(10, 100, 10), 
-           n_iter = 50)
+    data_subset <- data_trait |> filter(exp == exp_name)
+    run_or_load_icc(
+      exp_name = exp_name,
+      data = data_subset,
+      n_raters_seq = seq(10, 100, 10),
+      n_iter = 50
+    )
   },
   .options = furrr::furrr_options(seed = TRUE)
 )
 
-# Combine all results into a single tibble
-corridor_icc_summary <- list_rbind(corridor_icc_list)
+# Combine results
+icc_corridor <- list_rbind(corridor_icc_list)
 
 # Reset plan to sequential
 future::plan(sequential)
 ```
 
 ```{r}
-#| echo: false
-icc2k_corridor_summary <- corridor_icc_summary |> 
+icc2k_corridor_summary <- icc_corridor |> 
   group_by(experiment, n_raters_sampled) |> 
   summarise(
     ICC2_k_median = median(`ICC(2,k)`, na.rm = TRUE),
@@ -159,7 +145,9 @@ icc2k_corridor_summary <- corridor_icc_summary |>
     ICC2_k_high = quantile(`ICC(2,k)`, 0.975, na.rm = TRUE),
     .groups = "drop"
   )
+```
 
+```{r}
 icc2k_corridor_summary |> 
   ggplot(aes(x = n_raters_sampled)) +
   geom_ribbon(aes(ymin = ICC2_k_low, ymax = ICC2_k_high), 
@@ -183,92 +171,77 @@ icc2k_corridor_summary |>
   )
 ```
 
-##### Emotion intensity
+#### Alpha & omega
+
+**Observed across experiments**
+Note on warnings:
+ * "Some items were negatively correlated...": potentially reflects true inter-rater disagreement; reversing raters not appropriate in this context
+ * "Omega_h... not meaningful": omega_h is undefined when computing a one-factor solution; omega_t remains valid and is the relevant statistic reported.
 
 ```{r}
-data_emotion_int |> 
-  group_by(exp) |> 
-  group_map(calc_icc) |> 
-  bind_rows()
-```
-
-#### Cronbach's alpha and McDonald's omega total
-
-##### Trait ratings
-
-**Standardised**
-```{r}
-#| warning: false
 #| message: false
 data_trait |> 
   group_by(exp) |> 
-  group_map(calc_alpha_omega) |> 
-  bind_rows()
+  group_map(purrr::partial(calc_alpha_omega)) |> 
+  bind_rows() |> 
+  mutate(across(where(is.numeric), round, 2))
 ```
 
-Wee note re warnings (turned off in output):
+### Unstandardised trait ratings
 
--   "Number of categories should be increased...": occurs when some raters use only a subset of the response scale; that is not unexpected in subjective ratings (note that we did filter out raters with \<3 unique categories -- see also below)
--   "Some items were negatively correlated...": potentially reflects true inter-rater disagreement; reversing raters not appropriate in this context
--   "Omega_h... not meaningful": omega_h is undefined when computing a one-factor solution; omega_t remains valid and is the relevant statistic reported.
-
-**Unstandardised**
+#### ICC
+Note: two participants (1x dominant ratings, 1 x trustworthy ratings) responded with only two values but were not caught by our "overly consistent filter". What do we want to do with them——just drop them here, or exclude them more generally as part of exclusions?
 ```{r}
-#| warning: false
+data_trait_unstd |> 
+  group_by(exp) |> 
+  group_map(calc_icc, check_dropped_raters = TRUE) |> 
+  bind_rows() |> 
+  mutate(across(where(is.numeric), ~ round(.x, 2)))
+```
+
+#### Alpha & omega
+```{r}
 #| message: false
 data_trait_unstd |> 
   group_by(exp) |> 
-  group_map(calc_alpha_omega) |> 
-  bind_rows()
+  group_map(calc_alpha_omega, check_dropped_raters = TRUE) |> 
+  bind_rows() |> 
+  mutate(across(where(is.numeric), round, 2))
 ```
 
-Four participants responded with only two values but were not caught by our "overly consistent filter". What do we want to do with them -- just drop them here, or exclude them more generally (as part of exclusions)?
+### Emotion intensity ratings
 
+#### ICC
+Note: two more participants who responded with only two values (1 anger, 1 disgust participant)
 ```{r}
-unique_values_check <- data_exp |> 
-  # filter out emotion categorisation tasks
-  filter(!grepl("^em", exp)) |>
-  mutate(dv = as.numeric(dv))
-
-unique_values_summary <- unique_values_check |> 
+data_emo_int |> 
   group_by(exp) |> 
-  group_map(~ {
-    unique_counts <- check_unique_values(.x,
-                                         col_map = list(p_id = "session_id",
-                                                        trait = "exp",
-                                                        stim_id = "trial_name",
-                                                        rating = "dv"))
-    tibble(
-      exp = .y$exp,
-      rater = names(unique_counts),
-      n_unique = unique_counts
-    )
-  }) |> 
-  bind_rows()
-
-unique_values_summary |> filter(n_unique < 3)
+  group_map(calc_icc, check_dropped_raters = TRUE) |> 
+  bind_rows() |> 
+  mutate(across(where(is.numeric), ~ round(.x, 2)))
 ```
 
-##### Emotion intensity
-
+#### Alpha & omega
 ```{r}
 #| warning: false
 #| message: false
-data_emotion_int |> 
+data_emo_int |> 
   group_by(exp) |> 
-  group_map(calc_alpha_omega) |> 
-  bind_rows()
+  group_map(calc_alpha_omega, check_dropped_raters = TRUE) |> 
+  bind_rows() |> 
+  mutate(across(where(is.numeric), round, 2))
 ```
 
-### Point of stability (Hehman et al., 2018)
 
-##### Trait ratings
+## Point of stability (Hehman et al., 2018)
 
-**Standardised**
+### Standardised trait ratings
+
 ```{r}
 set.seed(123)
 
-stability_stats_traits <- calc_stability_stats(data = data_trait,
+system.time({
+  stability_stats_traits <- calc_stability_stats(data = data_trait,
                                                N = 100,
                                                iterations = 300,
                                                ci_interval = 0.95, ci_method = "percentile",
@@ -277,8 +250,11 @@ stability_stats_traits <- calc_stability_stats(data = data_trait,
                                                col_map = list(trait = "exp",
                                                               stim_id = "trial_name",
                                                               rating = "dv")) 
+})
 
-# Summarise CI data: plotting resampled means is too much for my poor laptop
+```
+
+```{r}
 summary_ci_traits <- stability_stats_traits$cis |> 
   group_by(exp, sample_size) |> 
   summarise(ul = mean(ul),
@@ -286,9 +262,9 @@ summary_ci_traits <- stability_stats_traits$cis |>
             .groups = "drop")
 ```
 
+
 Plot
 ```{r}
-# POS labels
 stability_stats_traits$pos$label <- paste0("Point of stability\n(N = ", stability_stats_traits$pos$pos, ")")
 
 summary_ci_traits |> 
@@ -340,7 +316,7 @@ trustworthy <- data_trait |>
 trustworthy_rs <-RSSample(Rating = trustworthy$dv,
                           Stimulus = factor(trustworthy$trial_name))
 
-# Our code N=38; Hehman et al. (2018) N=37
+# Our code N=37; Hehman et al. (2018) N=37
 RSGetPointOfStability(trustworthy_rs$ci, 0.5, inarow = 1)
 
 RSFigure(
@@ -376,7 +352,8 @@ RSFigure(
 )
 ```
 
-**Unstandardised**
+### Unstandardised trait ratings
+
 ```{r}
 set.seed(123)
 
@@ -435,21 +412,21 @@ summary_ci_traits_undstd |>
              inherit.aes = FALSE)
 ```
 
-##### Emotion intensity
+### Emotion intensity ratings
 ```{r}
 set.seed(123)
 
-stability_stats_emotion_int <- calc_stability_stats(data = data_emotion_int,
-                                                    N = 100,
-                                                    iterations = 300,
-                                                    ci_interval = 0.95, ci_method = "percentile",
-                                                    cos_threshold = 0.5,
-                                                    save_means = FALSE,
-                                                    col_map = list(trait = "exp",
-                                                                   stim_id = "trial_name",
-                                                                   rating = "dv")) 
+stability_stats_emo_int <- calc_stability_stats(data = data_emo_int,
+                                                N = 100,
+                                                iterations = 300,
+                                                ci_interval = 0.95, ci_method = "percentile",
+                                                cos_threshold = 0.5,
+                                                save_means = FALSE,
+                                                col_map = list(trait = "exp",
+                                                               stim_id = "trial_name",
+                                                               rating = "dv")) 
 
-summary_ci_emotion_int <- stability_stats_emotion_int$cis |> 
+summary_ci_emo_int <- stability_stats_emo_int$cis |> 
   group_by(exp, sample_size) |> 
   summarise(ul = mean(ul),
             ll = mean(ll),
@@ -459,13 +436,13 @@ summary_ci_emotion_int <- stability_stats_emotion_int$cis |>
 Plot
 ```{r}
 # POS labels
-stability_stats_emotion_int$pos$label <- paste0("Point of stability\n(N = ", stability_stats_emotion_int$pos$pos, ")")
+stability_stats_emo_int$pos$label <- paste0("Point of stability\n(N = ", stability_stats_emo_int$pos$pos, ")")
 
-summary_ci_emotion_int |> 
+summary_ci_emo_int |> 
   ggplot(aes(x = sample_size)) +
   geom_ribbon(aes(ymin = ll, ymax = ul, fill = exp),
               alpha = 0.5) +
-  geom_vline(data = stability_stats_emotion_int$pos,
+  geom_vline(data = stability_stats_emo_int$pos,
              aes(xintercept = pos),
              colour = "black",
              linetype = "solid",
@@ -485,7 +462,7 @@ summary_ci_emotion_int |>
         axis.text = element_text(size = 10),
         axis.title = element_text(size = 12, face = "bold"),
         legend.position = "none") +
-  geom_label(data = stability_stats_emotion_int$pos,
+  geom_label(data = stability_stats_emo_int$pos,
              aes(x = pos + 20, y = 1.6, label = label),
              fill = NA,   
              label.size = NA,
