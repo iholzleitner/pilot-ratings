@@ -48,14 +48,14 @@ calc_icc <- function(data, group) {
   
   tibble(
     experiment = group$exp,
+
+    `ICC(2,k)` = icc2k_row$ICC,
+    `ICC(2,k): 2.5%` = icc2k_row$`lower bound`,
+    `ICC(2,k): 97.5%` = icc2k_row$`upper bound`,
     
     `ICC(2,1)` = icc21_row$ICC,
-    `ICC(2,1): 95% CI lower` = icc21_row$`lower bound`,
-    `ICC(2,1): 95% CI upper` = icc21_row$`upper bound`,
-    
-    `ICC(2,k)` = icc2k_row$ICC,
-    `ICC(2,k): 95% CI lower` = icc2k_row$`lower bound`,
-    `ICC(2,k): 95% CI upper` = icc2k_row$`upper bound`,
+    `ICC(2,1): 2.5%` = icc21_row$`lower bound`,
+    `ICC(2,1): 97.5%` = icc21_row$`upper bound`,
     
     n_raters = ncol(rating_matrix),
     n_stimuli = nrow(rating_matrix)

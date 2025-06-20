@@ -57,8 +57,7 @@ count(data_qu, residence, sort = TRUE)
 
 ```{r}
 data_qu |>
-  mutate(ethnicity = tolower(ethnicity)) |>
-  count(ethnicity, sort = TRUE)
+  count(ethnicity_rec, sort = TRUE)
 ```
 
 ### Devices
@@ -67,7 +66,6 @@ data_qu |>
 count(data_qu, device, sort = TRUE)
 ```
 
-
 ## Analyses
 
 ### Interrater agreement
@@ -75,20 +73,19 @@ count(data_qu, device, sort = TRUE)
 ```{r}
 data_trait <- data_exp |>
   filter(exp == "attractive" | exp == "dominant"  | exp == "trustworthy"  | exp == "gender-typical"  | exp == "memorable") |>
+  mutate(exp = factor(exp, levels = c("attractive", "dominant", "trustworthy", "gender-typical", "memorable"))) |>
   mutate(dv = as.numeric(dv))
-  
+
 data_trait_unstd <- data_exp |>
   filter(grepl("unstd", exp)) |>
   mutate(dv = as.numeric(dv))
 
-data_emotion_int <- data_exp |>
+data_emo_int <- data_exp |>
   filter(exp == "anger" | exp == "happiness"  | exp == "disgust"  | exp == "surprise"  | exp == "sadness" | exp == "fear") |>
   mutate(dv = as.numeric(dv))
 
-data_emotion_cat <- data_exp |> 
-  # filter out emotion categorisation tasks
+data_emo_cat <- data_exp |> 
   filter(grepl("^em", exp))
-
 ```
 
 #### ICC
@@ -100,7 +97,8 @@ data_emotion_cat <- data_exp |>
 data_trait |> 
   group_by(exp) |> 
   group_map(calc_icc) |> 
-  bind_rows()
+  bind_rows() |> 
+  mutate(across(where(is.numeric), ~ round(.x, 2)))
 ```
 
 **Unstandardised**
@@ -108,7 +106,8 @@ data_trait |>
 data_trait_unstd |> 
   group_by(exp) |> 
   group_map(calc_icc) |> 
-  bind_rows()
+  bind_rows() |> 
+  mutate(across(where(is.numeric), ~ round(.x, 2)))
 ```
 
 ###### ICC "corridors of stability"
