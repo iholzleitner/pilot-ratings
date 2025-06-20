@@ -1,0 +1,432 @@
+---
+title: "ManyFaces pilot ratings"
+subtitle: "Compiling ratings by face"
+format: 
+  html:
+    code-fold: true
+    df-print: paged
+    embed-resources: true
+    fig-height: 5
+    fig-width: 8
+    toc: true
+execute: 
+  error: true
+---
+
+```{r}
+#| message: false
+library(tidyverse)
+```
+
+## Load data
+```{r}
+# Rating data
+data_exp <- read_csv("data/manyfaces-pilot-exp_cleaned.csv",
+                     show_col_types = FALSE)
+
+exp_levels_neutral <- c("attractive", "trustworthy", "dominant", 
+                        "memorable", "gender-typical")
+
+exp_levels_neutral_unstd <- c("attractive (unstd)", "trustworthy (unstd)",
+                              "dominant (unstd)")
+
+exp_levels_emo_cat <- c("emotion 1", "emotion 2", "emotion 3", 
+                        "emotion 4", "emotion 5", "emotion 6")
+
+exp_levels_emo_int <- c("fear", "anger", "disgust", 
+                        "happiness", "sadness", "surprise")
+
+# Questionnaire data
+data_qu <- read_csv("data/manyfaces-pilot-quest_cleaned.csv",
+                    show_col_types = FALSE)
+
+# Model data
+data_model <- read_csv("data/manyfaces-pilot-models_cleaned.csv",
+                       show_col_types = FALSE)
+
+rainbow <- c("firebrick", "darkorange", "goldenrod",
+             "darkgreen", "dodgerblue3", "darkorchid4")
+```
+
+```{r}
+# Function to create heatmap visualisations
+heatmap <- function(data, exp_id, label) {
+  data |>
+    filter(exp %in% !!exp_id) |>
+    count(lab_id, model_id, dv) |>
+    ggplot(aes(x = dv, y = model_id, fill = n)) +
+    geom_tile() +
+    facet_wrap(~lab_id) +
+    scale_fill_viridis_c() +
+    labs(x = label, y = NULL, 
+         title = paste(label, "Ratings")) +
+    theme(legend.position = "none", 
+          axis.text.x = element_text(angle = 90))
+}
+
+# Function to get mode, frequency, proportion
+get_mode_info <- function(x) {
+  x <- na.omit(x)
+  tab <- table(x)
+  mode_val <- names(tab)[which.max(tab)]
+  freq <- max(tab)
+  prop <- freq / length(x)
+  
+  list(age_mode = mode_val, age_prop = prop)
+}
+```
+
+## Standardised neutral trait ratings
+
+```{r}
+std_neutral <- data_exp |>
+  filter(exp %in% exp_levels_neutral) |>
+  mutate(dv = as.integer(dv),
+         exp = factor(exp, exp_levels_neutral)) |> 
+  separate_wider_delim(trial_name,
+                       delim = "_",
+                       names = c("lab_id", "model_id"),
+                       too_many = "drop")
+```
+
+```{r}
+std_neutral |>
+  summarise(N = n(),
+            mean_rating = mean(dv),
+            .by = c("exp", "lab_id", "model_id")) |> 
+  summarise(N = first(N),
+            M = mean(mean_rating),
+            SD = sd(mean_rating),
+            .by = "exp") |> 
+mutate(across(where(is.numeric) & !any_of("N"), ~ round(.x, 2)))
+```
+
+```{r}
+std_neutral |>
+  ggplot(aes(x = dv, fill = exp)) +
+  geom_histogram(binwidth = 1, show.legend = FALSE, color = "black") +
+  facet_wrap(~exp, ncol = 3, axes = "all_x", drop = FALSE) +
+  labs(title = "Standardised neutral ratings",
+       x = "") +
+  scale_x_continuous(breaks = 1:7) +
+  scale_fill_manual(values = rainbow, drop = FALSE)
+```
+
+Save mean rating for each face for each trait
+```{r}
+std_neutral_means <- std_neutral |> 
+  summarise(mean_rating = mean(dv),
+            rater_N = n(),
+            .by = c("exp", "lab_id", "model_id")) |> 
+  pivot_wider(id_cols = c(lab_id, model_id),
+              names_from = exp,
+              #values_from = c(mean_rating, rater_N))
+              values_from = mean_rating)
+```
+
+#### Attractiveness
+
+```{r}
+#| fig-height: 10
+#| fig-width: 10
+
+heatmap(std_neutral, "attractive", "Attractiveness")
+```
+
+#### Trustworthiness
+
+```{r}
+#| fig-height: 10
+#| fig-width: 10
+
+heatmap(std_neutral, "trustworthy", "Trustworthiness")
+```
+
+#### Dominance
+
+```{r}
+#| fig-height: 10
+#| fig-width: 10
+
+heatmap(std_neutral, "dominant", "Dominance")
+```
+
+#### Memorableness
+
+```{r}
+#| fig-height: 10
+#| fig-width: 10
+
+heatmap(std_neutral, "memorable", "Memorableness")
+ 
+```
+
+#### Gender typicality
+
+```{r}
+#| fig-height: 10
+#| fig-width: 10
+
+heatmap(std_neutral, "gender-typical", "Gender Typicality")
+```
+
+
+## Unstandardised neutral trait ratings
+
+```{r}
+unstd_neutral <- data_exp |>
+  filter(exp %in% exp_levels_neutral_unstd) |>
+  mutate(dv = as.integer(dv),
+         exp = factor(exp, exp_levels_neutral_unstd)) |> 
+  separate_wider_delim(trial_name,
+                       delim = "_",
+                       names = c("lab_id", "model_id"),
+                       too_many = "drop")
+```
+
+```{r}
+unstd_neutral |>
+  summarise(N = n(),
+            mean_rating = mean(dv),
+            .by = c("exp", "lab_id", "model_id")) |> 
+  summarise(N = first(N),
+            M = mean(mean_rating),
+            SD = sd(mean_rating),
+            .by = "exp") |> 
+mutate(across(where(is.numeric) & !any_of("N"), ~ round(.x, 2)))
+```
+
+```{r}
+#| fig-height: 2.5
+#| fig-width: 8
+
+unstd_neutral |>
+  ggplot(aes(x = dv, fill = exp)) +
+  geom_histogram(binwidth = 1, show.legend = FALSE, color = "black") +
+  facet_wrap(~exp, ncol = 5, drop = FALSE) +
+  labs(title = "Unstandardised Neutral Ratings",
+       x = "") +
+  scale_x_continuous(breaks = 1:7) +
+  scale_fill_manual(values = rainbow, drop = FALSE)
+```
+
+Save mean rating for each face for each trait
+```{r}
+unstd_neutral_means <- unstd_neutral |> 
+  summarise(mean_rating = mean(dv),
+            rater_N = n(),
+            .by = c("exp", "lab_id", "model_id")) |> 
+  pivot_wider(id_cols = c(lab_id, model_id),
+              names_from = exp,
+              #values_from = c(mean_rating, rater_N))
+              values_from = mean_rating)
+```
+
+#### Attractiveness (Unstandardised)
+
+```{r}
+#| fig-height: 10
+#| fig-width: 10
+
+heatmap(unstd_neutral, "attractive (unstd)", "Attractiveness (Unstandardised)")
+```
+
+#### Trustworthiness (Unstandardised)
+
+```{r}
+#| fig-height: 10
+#| fig-width: 10
+
+heatmap(unstd_neutral, "trustworthy (unstd)", "Trustworthiness (Unstandardised)")
+```
+
+#### Dominance (Unstandardised)
+
+```{r}
+#| fig-height: 10
+#| fig-width: 10
+
+heatmap(unstd_neutral, "dominant (unstd)", "Dominance (Unstandardised)")
+```
+
+## Emotion categorisation ratings
+
+```{r}
+emo_cat <- data_exp |>
+  filter(exp %in% exp_levels_emo_cat) |>
+  mutate(exp = factor(exp, exp_levels_emo_cat),
+         dv = factor(dv, levels = c("anger", "disgust", "fear", 
+                                    "happiness", "sadness", "surprise",
+                                    "other"))) |> 
+  separate_wider_delim(trial_name,
+                       delim = "_",
+                       names = c("lab_id", "model_id", NA, "model_expression", NA),
+                       too_many = "drop") |> 
+  mutate(model_expression = forcats::fct_recode(model_expression,
+                                                anger = "ang",
+                                                disgust = "dis",
+                                                fear = "fea",
+                                                happiness = "hap",
+                                                sadness = "sad",
+                                                surprise = "sur"))
+```
+
+```{r}
+emo_cat |> 
+  group_by(model_expression) |> 
+  count(model_expression, dv) |> 
+  mutate(prop = n / sum(n)) |>
+  ungroup() |> 
+  dplyr::select(-n) |> 
+  pivot_wider(names_from = dv,
+              values_from = prop) |> 
+  relocate(other, .after = surprise) |> 
+  mutate(across(where(is.numeric), ~ round(.x, 2)))
+```
+
+```{r}
+emo_levels <- levels(emo_cat$model_expression)
+emo_labels <- paste(emo_levels, "faces")
+
+emo_cat |>
+  mutate(emo = factor(model_expression, emo_levels, emo_labels)) |>
+  ggplot(aes(x = dv, fill = dv)) +
+  geom_point(aes(x = x, colour = I(fill), fill = I(fill)), 
+             data.frame(emo = factor(emo_levels, emo_levels, emo_labels),
+                        x = 1:6,
+                        fill = rainbow),
+             size = 6.5, y = -60, shape = 18, show.legend = FALSE) +
+  geom_bar(color = "transparent") +
+  facet_wrap(~emo, axes = "all_x", drop = FALSE) +
+  scale_x_discrete(labels = c("A", "D", "F", "H", "S", "U", "O")) +
+  scale_fill_manual(values = c(rainbow, "grey"), drop = FALSE) +
+  labs(title = "Emotion Ratings",
+       x = "",
+       fill = "Rated Emotion") +
+  coord_cartesian(clip = "off") +
+  theme(axis.ticks.x = element_blank())
+```
+
+Save proportion of raters choosing each emotion for each face
+```{r}
+emo_cat_props <- emo_cat |> 
+  group_by(lab_id, model_id, model_expression) |> 
+  count(model_expression, dv) |> 
+  group_by(lab_id, model_id, model_expression) |>
+  mutate(prop = n / sum(n)) |>
+  ungroup() |> 
+  dplyr::select(-n) |> 
+  pivot_wider(names_from = dv,
+              values_from = prop) |> 
+  relocate(other, .after = surprise)
+```
+
+## Emotion intensity ratings
+
+```{r}
+emo_int <- data_exp |>
+  filter(exp %in% exp_levels_emo_int) |>
+  mutate(dv = as.integer(dv),
+         exp = factor(exp, exp_levels_emo_int)) |> 
+  separate_wider_delim(trial_name,
+                       delim = "_",
+                       names = c("lab_id", "model_id"),
+                       too_many = "drop")
+```
+
+```{r}
+emo_int |>
+  summarise(N = n(),
+            mean_rating = mean(dv),
+            .by = c("exp", "lab_id", "model_id")) |> 
+  summarise(N = first(N),
+            M = mean(mean_rating),
+            SD = sd(mean_rating),
+            .by = "exp") |> 
+mutate(across(where(is.numeric) & !any_of("N"), ~ round(.x, 2)))
+```
+
+```{r}
+emo_int |>
+  ggplot(aes(x = dv, fill = exp)) +
+  geom_histogram(binwidth = 1, show.legend = FALSE, color = "black") +
+  facet_wrap(~exp, ncol = 3, axes = "all_x", drop = FALSE) +
+  labs(title = "Emotion Intensity Ratings",
+       x = "") +
+  scale_fill_manual(values = rainbow, drop = FALSE) +
+  scale_x_continuous(breaks = 1:7)
+```
+
+Save mean rating for each face for each trait
+```{r}
+emo_int_means <- emo_int |> 
+  summarise(mean_rating = mean(dv),
+            rater_N = n(),
+            .by = c("exp", "lab_id", "model_id")) |> 
+  pivot_wider(id_cols = c(lab_id, model_id),
+              names_from = exp,
+              values_from = mean_rating,
+              names_glue = "{exp}_intensity")
+```
+
+## Age Ratings
+
+```{r}
+dv_levels <- seq(20, 85, 5)
+dv_labels <- paste(dv_levels-4, "-", dv_levels )
+dv_labels[14] <- "81+"
+
+age <- data_exp |>
+  filter(exp == "age") |>
+  mutate(dv = factor(dv, dv_levels, dv_labels)) |> 
+  separate_wider_delim(trial_name,
+                       delim = "_",
+                       names = c("lab_id", "model_id"),
+                       too_many = "drop")
+```
+
+```{r}
+age |>
+  ggplot(aes(x = dv)) +
+  geom_bar(color = "black", fill = "gray") +
+  scale_x_discrete(drop = FALSE) +
+  labs(title = "Age Ratings",
+       x = "") +
+  theme_minimal()
+```
+
+Save modal age for each face
+```{r}
+age_modes <- age |>
+  group_by(lab_id, model_id) |>
+  summarise(out = list(get_mode_info(dv)),
+            .groups = "drop") |>
+  unnest_wider(out)
+```
+
+```{r}
+#| fig-height: 10
+#| fig-width: 10
+
+age |>
+  count(lab_id, model_id, dv) |>
+  ggplot(aes(x = dv, y = model_id, fill = n)) +
+  geom_tile() +
+  facet_wrap(~lab_id) +
+  scale_fill_viridis_c() +
+  labs(x = "Age", y = NULL) +
+  theme(legend.position = "none", 
+        axis.text.x = element_text(angle = 90))
+  
+```
+
+## Compile ratings
+```{r}
+pilot_ratings <- data_model |> 
+  left_join(std_neutral_means, by = c("lab_id", "model_id")) |> 
+  left_join(unstd_neutral_means, by = c("lab_id", "model_id")) |> 
+  left_join(emo_int_means, by = c("lab_id", "model_id"))
+
+write_csv(pilot_ratings, "results/manyfaces-pilot-ratings.csv")
+write_csv(emo_cat_props, "results/manyfaces-pilot-emotion_categorisation.csv")
+```
