@@ -227,7 +227,7 @@ data_model <- model_raw |>
                                     c("mixed", "pardo", "parda", "pardo - mixed race", "mixraces",
                                       "chinese-indian-malay mixed", "mixed white & asian", "mix white/black",
                                       "white / middle-eastern", "white / middle eastern",
-                                      "middle eastern/white") ~ "Multiracial or Mixed",
+                                      "middle eastern/white") ~ "Mixed",
                                     .default = NA_character_)) |> 
   relocate(gender_rec, .after = gender) |> 
   relocate(ethnicity_rec, .after = ethnicity) |> 
@@ -249,6 +249,58 @@ data_model <- model_raw |>
   relocate(c(weight, weight_units, weight_kg), .after = height_cm)
 ```
 
+#### Questionnaire data
+```{r}
+data_quest <- quest_raw |> 
+  # recode ethnicity
+  mutate(ethnicity = tolower(ethnicity),
+         ethnicity_rec = case_match(ethnicity,
+                                    c("white", "whitr", "blanco", "weiß",
+                                      "white/caucasian", "white caucasian", "white/caucasion",
+                                      "white / caucasian",  "caucasian/white", "caucasian (white)",
+                                      "whithe/caucasian", "caucasic", "caucasian", "caicasoan",
+                                      "caucasian canadian", "caucasian/greek",  
+                                      "white british caucasian", "white british caucasian",
+                                      "white british", "british", "white/british", "white - british",
+                                      "british/white", "welsh", "english", "irish", "scottish", 
+                                      "white european", "white/european", "white, southern european",
+                                      "white, eastern european", "european american", "eastern european",
+                                      "white slavic", "slavic", "white/polish", "polish", "polish/white",
+                                      "white, german", "white/greek", "greek/white", "greek", "white/italian",
+                                      "white/swedish", "white/estonian", "white other - romanian",
+                                      "white/spanish", "spanish", "spanish/white", "spanish-white") ~ "White",
+                                    c("black", "black african", "black/african",
+                                      "black/africa", "african/black", "africa/black",
+                                      "black/ african", "african black", "black-african", 
+                                      "african", "africa", "black south african",
+                                      "african american", "afican american",
+                                      "black: african american", "black american",
+                                      "black or african american", "african american/black", 
+                                      "black african american", "african/black american",
+                                      "zulu", "kenyan", "nigeria",  
+                                      "colored", "coloured", "coloured south african") ~ "Black",
+                                    c("asian", "asia", "south asian", "east asian",
+                                      "asian/indian", "indian", "bangladeshi", "pakistani",
+                                      "sri lankan", "chinese", "japanese",
+                                      "filipino", "philippine", "vietnamese", "sundanese",
+                                      "indo-aryan", "indo-fijian", "belgium, asian") ~ "Asian",
+                                    c("native american", "native hawaiian", "samoan") ~ "Indigenous",
+                                    c("arab", "middle eastern", "north african") ~ "MENA",
+                                    c("latino", "latina", "latinx", "latine", "latin", 
+                                      "hispanic", "hispanic/latino", "latinamerican", 
+                                       "preta", "brazilian") ~ "Latine",
+                                    c("mixed", "mixed race", "mix", "biracial",
+                                      "mixed black caribbean and white", "cape coloured",
+                                      "black/white", "black/british", "black british",
+                                      "chinese/uk", "british - indian", "british asian",
+                                      "british pakistani", "british asian american",
+                                      "latin european", "white / puerto rican",
+                                      "white/ latino", "white hispanic",
+                                      "white & asian", "eurasian",
+                                      "coloured / mixed race") ~ "Mixed",
+                                    .default = NA_character_)) |> 
+   relocate(ethnicity_rec, .after = ethnicity)
+```
 
 #### Experimental data
 
@@ -357,7 +409,7 @@ med_rt |>
 Participants were excluded based on self-reported honesty check, i.e. if they responded not taking the study seriously vs. taking it authentically
 
 ```{r}
-honesty_check_failed <- quest_raw |>
+honesty_check_failed <- data_quest |>
   select(session_id, honesty_check = try) |>
   unique() |> 
   filter(honesty_check != 2)
@@ -425,9 +477,9 @@ data_exp |>
 write_csv(data_exp, "data/manyfaces-pilot-exp_cleaned.csv")
 
 # Questionnaire data
-data_quest <- quest_raw |> 
-  filter(session_id %in% data_exp$session_id)
-write_csv(data_quest, "data/manyfaces-pilot-quest_cleaned.csv")
+data_quest |> 
+  filter(session_id %in% data_exp$session_id) |>
+  write_csv("data/manyfaces-pilot-quest_cleaned.csv")
 
 # Model data
 write_csv(data_model, "data/manyfaces-pilot-models_cleaned.csv")

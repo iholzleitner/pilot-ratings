@@ -3713,7 +3713,7 @@ window.onload = function() {
 <span id="cb10-38"><a href="#cb10-38" aria-hidden="true" tabindex="-1"></a>                                    <span class="fu">c</span>(<span class="st">&quot;mixed&quot;</span>, <span class="st">&quot;pardo&quot;</span>, <span class="st">&quot;parda&quot;</span>, <span class="st">&quot;pardo - mixed race&quot;</span>, <span class="st">&quot;mixraces&quot;</span>,</span>
 <span id="cb10-39"><a href="#cb10-39" aria-hidden="true" tabindex="-1"></a>                                      <span class="st">&quot;chinese-indian-malay mixed&quot;</span>, <span class="st">&quot;mixed white &amp; asian&quot;</span>, <span class="st">&quot;mix white/black&quot;</span>,</span>
 <span id="cb10-40"><a href="#cb10-40" aria-hidden="true" tabindex="-1"></a>                                      <span class="st">&quot;white / middle-eastern&quot;</span>, <span class="st">&quot;white / middle eastern&quot;</span>,</span>
-<span id="cb10-41"><a href="#cb10-41" aria-hidden="true" tabindex="-1"></a>                                      <span class="st">&quot;middle eastern/white&quot;</span>) <span class="sc">~</span> <span class="st">&quot;Multiracial or Mixed&quot;</span>,</span>
+<span id="cb10-41"><a href="#cb10-41" aria-hidden="true" tabindex="-1"></a>                                      <span class="st">&quot;middle eastern/white&quot;</span>) <span class="sc">~</span> <span class="st">&quot;Mixed&quot;</span>,</span>
 <span id="cb10-42"><a href="#cb10-42" aria-hidden="true" tabindex="-1"></a>                                    <span class="at">.default =</span> <span class="cn">NA_character_</span>)) <span class="sc">|&gt;</span> </span>
 <span id="cb10-43"><a href="#cb10-43" aria-hidden="true" tabindex="-1"></a>  <span class="fu">relocate</span>(gender_rec, <span class="at">.after =</span> gender) <span class="sc">|&gt;</span> </span>
 <span id="cb10-44"><a href="#cb10-44" aria-hidden="true" tabindex="-1"></a>  <span class="fu">relocate</span>(ethnicity_rec, <span class="at">.after =</span> ethnicity) <span class="sc">|&gt;</span> </span>
@@ -3736,6 +3736,63 @@ window.onload = function() {
 </details>
 </div>
 </section>
+<section id="questionnaire-data" class="level4">
+<h4 class="anchored" data-anchor-id="questionnaire-data">Questionnaire data</h4>
+<div class="cell">
+<details class="code-fold">
+<summary>Code</summary>
+<div class="sourceCode cell-code" id="cb11"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb11-1"><a href="#cb11-1" aria-hidden="true" tabindex="-1"></a>data_quest <span class="ot">&lt;-</span> quest_raw <span class="sc">|&gt;</span> </span>
+<span id="cb11-2"><a href="#cb11-2" aria-hidden="true" tabindex="-1"></a>  <span class="co"># recode ethnicity</span></span>
+<span id="cb11-3"><a href="#cb11-3" aria-hidden="true" tabindex="-1"></a>  <span class="fu">mutate</span>(<span class="at">ethnicity =</span> <span class="fu">tolower</span>(ethnicity),</span>
+<span id="cb11-4"><a href="#cb11-4" aria-hidden="true" tabindex="-1"></a>         <span class="at">ethnicity_rec =</span> <span class="fu">case_match</span>(ethnicity,</span>
+<span id="cb11-5"><a href="#cb11-5" aria-hidden="true" tabindex="-1"></a>                                    <span class="fu">c</span>(<span class="st">&quot;white&quot;</span>, <span class="st">&quot;whitr&quot;</span>, <span class="st">&quot;blanco&quot;</span>, <span class="st">&quot;weiß&quot;</span>,</span>
+<span id="cb11-6"><a href="#cb11-6" aria-hidden="true" tabindex="-1"></a>                                      <span class="st">&quot;white/caucasian&quot;</span>, <span class="st">&quot;white caucasian&quot;</span>, <span class="st">&quot;white/caucasion&quot;</span>,</span>
+<span id="cb11-7"><a href="#cb11-7" aria-hidden="true" tabindex="-1"></a>                                      <span class="st">&quot;white / caucasian&quot;</span>,  <span class="st">&quot;caucasian/white&quot;</span>, <span class="st">&quot;caucasian (white)&quot;</span>,</span>
+<span id="cb11-8"><a href="#cb11-8" aria-hidden="true" tabindex="-1"></a>                                      <span class="st">&quot;whithe/caucasian&quot;</span>, <span class="st">&quot;caucasic&quot;</span>, <span class="st">&quot;caucasian&quot;</span>, <span class="st">&quot;caicasoan&quot;</span>,</span>
+<span id="cb11-9"><a href="#cb11-9" aria-hidden="true" tabindex="-1"></a>                                      <span class="st">&quot;caucasian canadian&quot;</span>, <span class="st">&quot;caucasian/greek&quot;</span>,  </span>
+<span id="cb11-10"><a href="#cb11-10" aria-hidden="true" tabindex="-1"></a>                                      <span class="st">&quot;white british caucasian&quot;</span>, <span class="st">&quot;white british caucasian&quot;</span>,</span>
+<span id="cb11-11"><a href="#cb11-11" aria-hidden="true" tabindex="-1"></a>                                      <span class="st">&quot;white british&quot;</span>, <span class="st">&quot;british&quot;</span>, <span class="st">&quot;white/british&quot;</span>, <span class="st">&quot;white - british&quot;</span>,</span>
+<span id="cb11-12"><a href="#cb11-12" aria-hidden="true" tabindex="-1"></a>                                      <span class="st">&quot;british/white&quot;</span>, <span class="st">&quot;welsh&quot;</span>, <span class="st">&quot;english&quot;</span>, <span class="st">&quot;irish&quot;</span>, <span class="st">&quot;scottish&quot;</span>, </span>
+<span id="cb11-13"><a href="#cb11-13" aria-hidden="true" tabindex="-1"></a>                                      <span class="st">&quot;white european&quot;</span>, <span class="st">&quot;white/european&quot;</span>, <span class="st">&quot;white, southern european&quot;</span>,</span>
+<span id="cb11-14"><a href="#cb11-14" aria-hidden="true" tabindex="-1"></a>                                      <span class="st">&quot;white, eastern european&quot;</span>, <span class="st">&quot;european american&quot;</span>, <span class="st">&quot;eastern european&quot;</span>,</span>
+<span id="cb11-15"><a href="#cb11-15" aria-hidden="true" tabindex="-1"></a>                                      <span class="st">&quot;white slavic&quot;</span>, <span class="st">&quot;slavic&quot;</span>, <span class="st">&quot;white/polish&quot;</span>, <span class="st">&quot;polish&quot;</span>, <span class="st">&quot;polish/white&quot;</span>,</span>
+<span id="cb11-16"><a href="#cb11-16" aria-hidden="true" tabindex="-1"></a>                                      <span class="st">&quot;white, german&quot;</span>, <span class="st">&quot;white/greek&quot;</span>, <span class="st">&quot;greek/white&quot;</span>, <span class="st">&quot;greek&quot;</span>, <span class="st">&quot;white/italian&quot;</span>,</span>
+<span id="cb11-17"><a href="#cb11-17" aria-hidden="true" tabindex="-1"></a>                                      <span class="st">&quot;white/swedish&quot;</span>, <span class="st">&quot;white/estonian&quot;</span>, <span class="st">&quot;white other - romanian&quot;</span>,</span>
+<span id="cb11-18"><a href="#cb11-18" aria-hidden="true" tabindex="-1"></a>                                      <span class="st">&quot;white/spanish&quot;</span>, <span class="st">&quot;spanish&quot;</span>, <span class="st">&quot;spanish/white&quot;</span>, <span class="st">&quot;spanish-white&quot;</span>) <span class="sc">~</span> <span class="st">&quot;White&quot;</span>,</span>
+<span id="cb11-19"><a href="#cb11-19" aria-hidden="true" tabindex="-1"></a>                                    <span class="fu">c</span>(<span class="st">&quot;black&quot;</span>, <span class="st">&quot;black african&quot;</span>, <span class="st">&quot;black/african&quot;</span>,</span>
+<span id="cb11-20"><a href="#cb11-20" aria-hidden="true" tabindex="-1"></a>                                      <span class="st">&quot;black/africa&quot;</span>, <span class="st">&quot;african/black&quot;</span>, <span class="st">&quot;africa/black&quot;</span>,</span>
+<span id="cb11-21"><a href="#cb11-21" aria-hidden="true" tabindex="-1"></a>                                      <span class="st">&quot;black/ african&quot;</span>, <span class="st">&quot;african black&quot;</span>, <span class="st">&quot;black-african&quot;</span>, </span>
+<span id="cb11-22"><a href="#cb11-22" aria-hidden="true" tabindex="-1"></a>                                      <span class="st">&quot;african&quot;</span>, <span class="st">&quot;africa&quot;</span>, <span class="st">&quot;black south african&quot;</span>,</span>
+<span id="cb11-23"><a href="#cb11-23" aria-hidden="true" tabindex="-1"></a>                                      <span class="st">&quot;african american&quot;</span>, <span class="st">&quot;afican american&quot;</span>,</span>
+<span id="cb11-24"><a href="#cb11-24" aria-hidden="true" tabindex="-1"></a>                                      <span class="st">&quot;black: african american&quot;</span>, <span class="st">&quot;black american&quot;</span>,</span>
+<span id="cb11-25"><a href="#cb11-25" aria-hidden="true" tabindex="-1"></a>                                      <span class="st">&quot;black or african american&quot;</span>, <span class="st">&quot;african american/black&quot;</span>, </span>
+<span id="cb11-26"><a href="#cb11-26" aria-hidden="true" tabindex="-1"></a>                                      <span class="st">&quot;black african american&quot;</span>, <span class="st">&quot;african/black american&quot;</span>,</span>
+<span id="cb11-27"><a href="#cb11-27" aria-hidden="true" tabindex="-1"></a>                                      <span class="st">&quot;zulu&quot;</span>, <span class="st">&quot;kenyan&quot;</span>, <span class="st">&quot;nigeria&quot;</span>,  </span>
+<span id="cb11-28"><a href="#cb11-28" aria-hidden="true" tabindex="-1"></a>                                      <span class="st">&quot;colored&quot;</span>, <span class="st">&quot;coloured&quot;</span>, <span class="st">&quot;coloured south african&quot;</span>) <span class="sc">~</span> <span class="st">&quot;Black&quot;</span>,</span>
+<span id="cb11-29"><a href="#cb11-29" aria-hidden="true" tabindex="-1"></a>                                    <span class="fu">c</span>(<span class="st">&quot;asian&quot;</span>, <span class="st">&quot;asia&quot;</span>, <span class="st">&quot;south asian&quot;</span>, <span class="st">&quot;east asian&quot;</span>,</span>
+<span id="cb11-30"><a href="#cb11-30" aria-hidden="true" tabindex="-1"></a>                                      <span class="st">&quot;asian/indian&quot;</span>, <span class="st">&quot;indian&quot;</span>, <span class="st">&quot;bangladeshi&quot;</span>, <span class="st">&quot;pakistani&quot;</span>,</span>
+<span id="cb11-31"><a href="#cb11-31" aria-hidden="true" tabindex="-1"></a>                                      <span class="st">&quot;sri lankan&quot;</span>, <span class="st">&quot;chinese&quot;</span>, <span class="st">&quot;japanese&quot;</span>,</span>
+<span id="cb11-32"><a href="#cb11-32" aria-hidden="true" tabindex="-1"></a>                                      <span class="st">&quot;filipino&quot;</span>, <span class="st">&quot;philippine&quot;</span>, <span class="st">&quot;vietnamese&quot;</span>, <span class="st">&quot;sundanese&quot;</span>,</span>
+<span id="cb11-33"><a href="#cb11-33" aria-hidden="true" tabindex="-1"></a>                                      <span class="st">&quot;indo-aryan&quot;</span>, <span class="st">&quot;indo-fijian&quot;</span>, <span class="st">&quot;belgium, asian&quot;</span>) <span class="sc">~</span> <span class="st">&quot;Asian&quot;</span>,</span>
+<span id="cb11-34"><a href="#cb11-34" aria-hidden="true" tabindex="-1"></a>                                    <span class="fu">c</span>(<span class="st">&quot;native american&quot;</span>, <span class="st">&quot;native hawaiian&quot;</span>, <span class="st">&quot;samoan&quot;</span>) <span class="sc">~</span> <span class="st">&quot;Indigenous&quot;</span>,</span>
+<span id="cb11-35"><a href="#cb11-35" aria-hidden="true" tabindex="-1"></a>                                    <span class="fu">c</span>(<span class="st">&quot;arab&quot;</span>, <span class="st">&quot;middle eastern&quot;</span>, <span class="st">&quot;north african&quot;</span>) <span class="sc">~</span> <span class="st">&quot;MENA&quot;</span>,</span>
+<span id="cb11-36"><a href="#cb11-36" aria-hidden="true" tabindex="-1"></a>                                    <span class="fu">c</span>(<span class="st">&quot;latino&quot;</span>, <span class="st">&quot;latina&quot;</span>, <span class="st">&quot;latinx&quot;</span>, <span class="st">&quot;latine&quot;</span>, <span class="st">&quot;latin&quot;</span>, </span>
+<span id="cb11-37"><a href="#cb11-37" aria-hidden="true" tabindex="-1"></a>                                      <span class="st">&quot;hispanic&quot;</span>, <span class="st">&quot;hispanic/latino&quot;</span>, <span class="st">&quot;latinamerican&quot;</span>, </span>
+<span id="cb11-38"><a href="#cb11-38" aria-hidden="true" tabindex="-1"></a>                                       <span class="st">&quot;preta&quot;</span>, <span class="st">&quot;brazilian&quot;</span>) <span class="sc">~</span> <span class="st">&quot;Latine&quot;</span>,</span>
+<span id="cb11-39"><a href="#cb11-39" aria-hidden="true" tabindex="-1"></a>                                    <span class="fu">c</span>(<span class="st">&quot;mixed&quot;</span>, <span class="st">&quot;mixed race&quot;</span>, <span class="st">&quot;mix&quot;</span>, <span class="st">&quot;biracial&quot;</span>,</span>
+<span id="cb11-40"><a href="#cb11-40" aria-hidden="true" tabindex="-1"></a>                                      <span class="st">&quot;mixed black caribbean and white&quot;</span>, <span class="st">&quot;cape coloured&quot;</span>,</span>
+<span id="cb11-41"><a href="#cb11-41" aria-hidden="true" tabindex="-1"></a>                                      <span class="st">&quot;black/white&quot;</span>, <span class="st">&quot;black/british&quot;</span>, <span class="st">&quot;black british&quot;</span>,</span>
+<span id="cb11-42"><a href="#cb11-42" aria-hidden="true" tabindex="-1"></a>                                      <span class="st">&quot;chinese/uk&quot;</span>, <span class="st">&quot;british - indian&quot;</span>, <span class="st">&quot;british asian&quot;</span>,</span>
+<span id="cb11-43"><a href="#cb11-43" aria-hidden="true" tabindex="-1"></a>                                      <span class="st">&quot;british pakistani&quot;</span>, <span class="st">&quot;british asian american&quot;</span>,</span>
+<span id="cb11-44"><a href="#cb11-44" aria-hidden="true" tabindex="-1"></a>                                      <span class="st">&quot;latin european&quot;</span>, <span class="st">&quot;white / puerto rican&quot;</span>,</span>
+<span id="cb11-45"><a href="#cb11-45" aria-hidden="true" tabindex="-1"></a>                                      <span class="st">&quot;white/ latino&quot;</span>, <span class="st">&quot;white hispanic&quot;</span>,</span>
+<span id="cb11-46"><a href="#cb11-46" aria-hidden="true" tabindex="-1"></a>                                      <span class="st">&quot;white &amp; asian&quot;</span>, <span class="st">&quot;eurasian&quot;</span>,</span>
+<span id="cb11-47"><a href="#cb11-47" aria-hidden="true" tabindex="-1"></a>                                      <span class="st">&quot;coloured / mixed race&quot;</span>) <span class="sc">~</span> <span class="st">&quot;Mixed&quot;</span>,</span>
+<span id="cb11-48"><a href="#cb11-48" aria-hidden="true" tabindex="-1"></a>                                    <span class="at">.default =</span> <span class="cn">NA_character_</span>)) <span class="sc">|&gt;</span> </span>
+<span id="cb11-49"><a href="#cb11-49" aria-hidden="true" tabindex="-1"></a>   <span class="fu">relocate</span>(ethnicity_rec, <span class="at">.after =</span> ethnicity)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</details>
+</div>
+</section>
 <section id="experimental-data" class="level4">
 <h4 class="anchored" data-anchor-id="experimental-data">Experimental data</h4>
 <p><strong>Remove remove duplicate trials and incomplete data</strong></p>
@@ -3744,20 +3801,20 @@ window.onload = function() {
 <div class="cell">
 <details class="code-fold">
 <summary>Code</summary>
-<div class="sourceCode cell-code" id="cb11"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb11-1"><a href="#cb11-1" aria-hidden="true" tabindex="-1"></a>dupl_trials_rm <span class="ot">&lt;-</span> exp_long_raw <span class="sc">|&gt;</span></span>
-<span id="cb11-2"><a href="#cb11-2" aria-hidden="true" tabindex="-1"></a>  <span class="fu">arrange</span>(session_id, exp_id, trial_name, trials_total, dt) <span class="sc">|&gt;</span> </span>
-<span id="cb11-3"><a href="#cb11-3" aria-hidden="true" tabindex="-1"></a>  <span class="fu">distinct</span>(session_id, exp_id, trial_name, trials_total, <span class="at">.keep_all =</span> <span class="cn">TRUE</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="sourceCode cell-code" id="cb12"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb12-1"><a href="#cb12-1" aria-hidden="true" tabindex="-1"></a>dupl_trials_rm <span class="ot">&lt;-</span> exp_long_raw <span class="sc">|&gt;</span></span>
+<span id="cb12-2"><a href="#cb12-2" aria-hidden="true" tabindex="-1"></a>  <span class="fu">arrange</span>(session_id, exp_id, trial_name, trials_total, dt) <span class="sc">|&gt;</span> </span>
+<span id="cb12-3"><a href="#cb12-3" aria-hidden="true" tabindex="-1"></a>  <span class="fu">distinct</span>(session_id, exp_id, trial_name, trials_total, <span class="at">.keep_all =</span> <span class="cn">TRUE</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 </details>
 </div>
 <div class="cell">
 <details class="code-fold">
 <summary>Code</summary>
-<div class="sourceCode cell-code" id="cb12"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb12-1"><a href="#cb12-1" aria-hidden="true" tabindex="-1"></a>incomplete <span class="ot">&lt;-</span> dupl_trials_rm <span class="sc">|&gt;</span> </span>
-<span id="cb12-2"><a href="#cb12-2" aria-hidden="true" tabindex="-1"></a>  <span class="fu">count</span>(session_id, exp_id, trials_total) <span class="sc">|&gt;</span> </span>
-<span id="cb12-3"><a href="#cb12-3" aria-hidden="true" tabindex="-1"></a>  <span class="fu">filter</span>(n <span class="sc">&lt;</span> trials_total)</span>
-<span id="cb12-4"><a href="#cb12-4" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb12-5"><a href="#cb12-5" aria-hidden="true" tabindex="-1"></a>complete <span class="ot">&lt;-</span> dupl_trials_rm <span class="sc">|&gt;</span> </span>
-<span id="cb12-6"><a href="#cb12-6" aria-hidden="true" tabindex="-1"></a>  <span class="fu">filter</span>(<span class="sc">!</span>session_id <span class="sc">%in%</span> incomplete<span class="sc">$</span>session_id)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="sourceCode cell-code" id="cb13"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb13-1"><a href="#cb13-1" aria-hidden="true" tabindex="-1"></a>incomplete <span class="ot">&lt;-</span> dupl_trials_rm <span class="sc">|&gt;</span> </span>
+<span id="cb13-2"><a href="#cb13-2" aria-hidden="true" tabindex="-1"></a>  <span class="fu">count</span>(session_id, exp_id, trials_total) <span class="sc">|&gt;</span> </span>
+<span id="cb13-3"><a href="#cb13-3" aria-hidden="true" tabindex="-1"></a>  <span class="fu">filter</span>(n <span class="sc">&lt;</span> trials_total)</span>
+<span id="cb13-4"><a href="#cb13-4" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb13-5"><a href="#cb13-5" aria-hidden="true" tabindex="-1"></a>complete <span class="ot">&lt;-</span> dupl_trials_rm <span class="sc">|&gt;</span> </span>
+<span id="cb13-6"><a href="#cb13-6" aria-hidden="true" tabindex="-1"></a>  <span class="fu">filter</span>(<span class="sc">!</span>session_id <span class="sc">%in%</span> incomplete<span class="sc">$</span>session_id)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 </details>
 </div>
 <p>179 participants did not complete all trials for a total of 190 experiments.</p>
@@ -3765,22 +3822,22 @@ window.onload = function() {
 <div class="cell">
 <details class="code-fold">
 <summary>Code</summary>
-<div class="sourceCode cell-code" id="cb13"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb13-1"><a href="#cb13-1" aria-hidden="true" tabindex="-1"></a>dupl_exp_ids <span class="ot">&lt;-</span> complete <span class="sc">|&gt;</span> </span>
-<span id="cb13-2"><a href="#cb13-2" aria-hidden="true" tabindex="-1"></a>  <span class="co"># Mark participants that participated twice and establish which exp they did first</span></span>
-<span id="cb13-3"><a href="#cb13-3" aria-hidden="true" tabindex="-1"></a>  <span class="fu">group_by</span>(session_id, exp_id) <span class="sc">|&gt;</span> </span>
-<span id="cb13-4"><a href="#cb13-4" aria-hidden="true" tabindex="-1"></a>  <span class="fu">summarise</span>(<span class="at">first_dt =</span> <span class="fu">min</span>(dt), <span class="at">.groups =</span> <span class="st">&quot;drop&quot;</span>) <span class="sc">|&gt;</span></span>
-<span id="cb13-5"><a href="#cb13-5" aria-hidden="true" tabindex="-1"></a>  <span class="fu">group_by</span>(session_id) <span class="sc">|&gt;</span> </span>
-<span id="cb13-6"><a href="#cb13-6" aria-hidden="true" tabindex="-1"></a>  <span class="fu">mutate</span>(<span class="at">n_exp =</span> <span class="fu">n</span>()) <span class="sc">|&gt;</span></span>
-<span id="cb13-7"><a href="#cb13-7" aria-hidden="true" tabindex="-1"></a>  <span class="fu">mutate</span>(<span class="at">first_exp =</span> exp_id[<span class="fu">which.min</span>(first_dt)]) <span class="sc">|&gt;</span></span>
-<span id="cb13-8"><a href="#cb13-8" aria-hidden="true" tabindex="-1"></a>  <span class="fu">ungroup</span>() <span class="sc">|&gt;</span> </span>
-<span id="cb13-9"><a href="#cb13-9" aria-hidden="true" tabindex="-1"></a>  <span class="fu">filter</span>(n_exp <span class="sc">&gt;</span> <span class="dv">1</span> <span class="sc">&amp;</span> exp_id <span class="sc">!=</span> first_exp)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="sourceCode cell-code" id="cb14"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb14-1"><a href="#cb14-1" aria-hidden="true" tabindex="-1"></a>dupl_exp_ids <span class="ot">&lt;-</span> complete <span class="sc">|&gt;</span> </span>
+<span id="cb14-2"><a href="#cb14-2" aria-hidden="true" tabindex="-1"></a>  <span class="co"># Mark participants that participated twice and establish which exp they did first</span></span>
+<span id="cb14-3"><a href="#cb14-3" aria-hidden="true" tabindex="-1"></a>  <span class="fu">group_by</span>(session_id, exp_id) <span class="sc">|&gt;</span> </span>
+<span id="cb14-4"><a href="#cb14-4" aria-hidden="true" tabindex="-1"></a>  <span class="fu">summarise</span>(<span class="at">first_dt =</span> <span class="fu">min</span>(dt), <span class="at">.groups =</span> <span class="st">&quot;drop&quot;</span>) <span class="sc">|&gt;</span></span>
+<span id="cb14-5"><a href="#cb14-5" aria-hidden="true" tabindex="-1"></a>  <span class="fu">group_by</span>(session_id) <span class="sc">|&gt;</span> </span>
+<span id="cb14-6"><a href="#cb14-6" aria-hidden="true" tabindex="-1"></a>  <span class="fu">mutate</span>(<span class="at">n_exp =</span> <span class="fu">n</span>()) <span class="sc">|&gt;</span></span>
+<span id="cb14-7"><a href="#cb14-7" aria-hidden="true" tabindex="-1"></a>  <span class="fu">mutate</span>(<span class="at">first_exp =</span> exp_id[<span class="fu">which.min</span>(first_dt)]) <span class="sc">|&gt;</span></span>
+<span id="cb14-8"><a href="#cb14-8" aria-hidden="true" tabindex="-1"></a>  <span class="fu">ungroup</span>() <span class="sc">|&gt;</span> </span>
+<span id="cb14-9"><a href="#cb14-9" aria-hidden="true" tabindex="-1"></a>  <span class="fu">filter</span>(n_exp <span class="sc">&gt;</span> <span class="dv">1</span> <span class="sc">&amp;</span> exp_id <span class="sc">!=</span> first_exp)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 </details>
 </div>
 <div class="cell">
 <details class="code-fold">
 <summary>Code</summary>
-<div class="sourceCode cell-code" id="cb14"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb14-1"><a href="#cb14-1" aria-hidden="true" tabindex="-1"></a>exp_long <span class="ot">&lt;-</span> complete <span class="sc">|&gt;</span> </span>
-<span id="cb14-2"><a href="#cb14-2" aria-hidden="true" tabindex="-1"></a>   <span class="fu">anti_join</span>(dupl_exp_ids, <span class="at">by =</span> <span class="fu">c</span>(<span class="st">&quot;session_id&quot;</span>, <span class="st">&quot;exp_id&quot;</span> <span class="ot">=</span> <span class="st">&quot;first_exp&quot;</span>))</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="sourceCode cell-code" id="cb15"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb15-1"><a href="#cb15-1" aria-hidden="true" tabindex="-1"></a>exp_long <span class="ot">&lt;-</span> complete <span class="sc">|&gt;</span> </span>
+<span id="cb15-2"><a href="#cb15-2" aria-hidden="true" tabindex="-1"></a>   <span class="fu">anti_join</span>(dupl_exp_ids, <span class="at">by =</span> <span class="fu">c</span>(<span class="st">&quot;session_id&quot;</span>, <span class="st">&quot;exp_id&quot;</span> <span class="ot">=</span> <span class="st">&quot;first_exp&quot;</span>))</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 </details>
 </div>
 <p>Prior to pre-registered exclusions, preliminary sample thus consisted of 1936 participants.</p>
@@ -3794,12 +3851,12 @@ window.onload = function() {
 <div class="cell">
 <details class="code-fold">
 <summary>Code</summary>
-<div class="sourceCode cell-code" id="cb15"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb15-1"><a href="#cb15-1" aria-hidden="true" tabindex="-1"></a>overly_consistent <span class="ot">&lt;-</span> exp_long <span class="sc">|&gt;</span> </span>
-<span id="cb15-2"><a href="#cb15-2" aria-hidden="true" tabindex="-1"></a>  <span class="fu">summarise</span>(</span>
-<span id="cb15-3"><a href="#cb15-3" aria-hidden="true" tabindex="-1"></a>    <span class="at">same_pcnt =</span> <span class="fu">max</span>(<span class="fu">tabulate</span>(<span class="fu">match</span>(dv, <span class="fu">unique</span>(dv)))) <span class="sc">/</span> <span class="fu">n</span>(),</span>
-<span id="cb15-4"><a href="#cb15-4" aria-hidden="true" tabindex="-1"></a>    <span class="at">.by =</span> <span class="fu">c</span>(session_id, exp_id)) <span class="sc">|&gt;</span> </span>
-<span id="cb15-5"><a href="#cb15-5" aria-hidden="true" tabindex="-1"></a>  dplyr<span class="sc">::</span><span class="fu">select</span>(session_id, exp_id, same_pcnt) <span class="sc">|&gt;</span> </span>
-<span id="cb15-6"><a href="#cb15-6" aria-hidden="true" tabindex="-1"></a>  <span class="fu">filter</span>(same_pcnt <span class="sc">&gt;=</span> <span class="fl">0.90</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="sourceCode cell-code" id="cb16"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb16-1"><a href="#cb16-1" aria-hidden="true" tabindex="-1"></a>overly_consistent <span class="ot">&lt;-</span> exp_long <span class="sc">|&gt;</span> </span>
+<span id="cb16-2"><a href="#cb16-2" aria-hidden="true" tabindex="-1"></a>  <span class="fu">summarise</span>(</span>
+<span id="cb16-3"><a href="#cb16-3" aria-hidden="true" tabindex="-1"></a>    <span class="at">same_pcnt =</span> <span class="fu">max</span>(<span class="fu">tabulate</span>(<span class="fu">match</span>(dv, <span class="fu">unique</span>(dv)))) <span class="sc">/</span> <span class="fu">n</span>(),</span>
+<span id="cb16-4"><a href="#cb16-4" aria-hidden="true" tabindex="-1"></a>    <span class="at">.by =</span> <span class="fu">c</span>(session_id, exp_id)) <span class="sc">|&gt;</span> </span>
+<span id="cb16-5"><a href="#cb16-5" aria-hidden="true" tabindex="-1"></a>  dplyr<span class="sc">::</span><span class="fu">select</span>(session_id, exp_id, same_pcnt) <span class="sc">|&gt;</span> </span>
+<span id="cb16-6"><a href="#cb16-6" aria-hidden="true" tabindex="-1"></a>  <span class="fu">filter</span>(same_pcnt <span class="sc">&gt;=</span> <span class="fl">0.90</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 </details>
 </div>
 </section>
@@ -3809,25 +3866,25 @@ window.onload = function() {
 <div class="cell">
 <details class="code-fold">
 <summary>Code</summary>
-<div class="sourceCode cell-code" id="cb16"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb16-1"><a href="#cb16-1" aria-hidden="true" tabindex="-1"></a>med_rt <span class="ot">&lt;-</span> exp_long <span class="sc">|&gt;</span></span>
-<span id="cb16-2"><a href="#cb16-2" aria-hidden="true" tabindex="-1"></a>  <span class="fu">summarise</span>(<span class="at">med_rt =</span> <span class="fu">median</span>(rt),</span>
-<span id="cb16-3"><a href="#cb16-3" aria-hidden="true" tabindex="-1"></a>            <span class="at">.by =</span> <span class="fu">c</span>(session_id, exp_id))</span>
-<span id="cb16-4"><a href="#cb16-4" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb16-5"><a href="#cb16-5" aria-hidden="true" tabindex="-1"></a>overly_fast <span class="ot">&lt;-</span> med_rt <span class="sc">|&gt;</span> </span>
-<span id="cb16-6"><a href="#cb16-6" aria-hidden="true" tabindex="-1"></a>  <span class="fu">filter</span>(med_rt <span class="sc">&lt;</span> <span class="fu">quantile</span>(med_rt, <span class="at">probs =</span> <span class="fl">0.01</span>))</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="sourceCode cell-code" id="cb17"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb17-1"><a href="#cb17-1" aria-hidden="true" tabindex="-1"></a>med_rt <span class="ot">&lt;-</span> exp_long <span class="sc">|&gt;</span></span>
+<span id="cb17-2"><a href="#cb17-2" aria-hidden="true" tabindex="-1"></a>  <span class="fu">summarise</span>(<span class="at">med_rt =</span> <span class="fu">median</span>(rt),</span>
+<span id="cb17-3"><a href="#cb17-3" aria-hidden="true" tabindex="-1"></a>            <span class="at">.by =</span> <span class="fu">c</span>(session_id, exp_id))</span>
+<span id="cb17-4"><a href="#cb17-4" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb17-5"><a href="#cb17-5" aria-hidden="true" tabindex="-1"></a>overly_fast <span class="ot">&lt;-</span> med_rt <span class="sc">|&gt;</span> </span>
+<span id="cb17-6"><a href="#cb17-6" aria-hidden="true" tabindex="-1"></a>  <span class="fu">filter</span>(med_rt <span class="sc">&lt;</span> <span class="fu">quantile</span>(med_rt, <span class="at">probs =</span> <span class="fl">0.01</span>))</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 </details>
 </div>
 <div class="cell">
 <details class="code-fold">
 <summary>Code</summary>
-<div class="sourceCode cell-code" id="cb17"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb17-1"><a href="#cb17-1" aria-hidden="true" tabindex="-1"></a>med_rt <span class="sc">|&gt;</span> </span>
-<span id="cb17-2"><a href="#cb17-2" aria-hidden="true" tabindex="-1"></a>  <span class="fu">ggplot</span>(<span class="fu">aes</span>(<span class="at">x =</span> med_rt)) <span class="sc">+</span></span>
-<span id="cb17-3"><a href="#cb17-3" aria-hidden="true" tabindex="-1"></a>  <span class="fu">geom_histogram</span>(<span class="at">bins =</span> <span class="dv">100</span>) <span class="sc">+</span></span>
-<span id="cb17-4"><a href="#cb17-4" aria-hidden="true" tabindex="-1"></a>  <span class="fu">geom_vline</span>(<span class="at">xintercept =</span> <span class="fu">quantile</span>(med_rt<span class="sc">$</span>med_rt, <span class="at">probs =</span> <span class="fl">0.01</span>), </span>
-<span id="cb17-5"><a href="#cb17-5" aria-hidden="true" tabindex="-1"></a>             <span class="at">color =</span> <span class="st">&quot;red&quot;</span>, <span class="at">linetype =</span> <span class="st">&quot;dashed&quot;</span>, <span class="at">linewidth =</span> <span class="dv">1</span>) <span class="sc">+</span></span>
-<span id="cb17-6"><a href="#cb17-6" aria-hidden="true" tabindex="-1"></a>  <span class="fu">scale_x_continuous</span>(<span class="at">breaks =</span> <span class="fu">seq</span>(<span class="dv">0</span>, <span class="dv">10000</span>, <span class="dv">500</span>)) <span class="sc">+</span></span>
-<span id="cb17-7"><a href="#cb17-7" aria-hidden="true" tabindex="-1"></a>  <span class="fu">labs</span>(<span class="at">x =</span> <span class="st">&quot;Median Reaction Time (ms)&quot;</span>) <span class="sc">+</span></span>
-<span id="cb17-8"><a href="#cb17-8" aria-hidden="true" tabindex="-1"></a>  <span class="fu">theme_bw</span>()</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="sourceCode cell-code" id="cb18"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb18-1"><a href="#cb18-1" aria-hidden="true" tabindex="-1"></a>med_rt <span class="sc">|&gt;</span> </span>
+<span id="cb18-2"><a href="#cb18-2" aria-hidden="true" tabindex="-1"></a>  <span class="fu">ggplot</span>(<span class="fu">aes</span>(<span class="at">x =</span> med_rt)) <span class="sc">+</span></span>
+<span id="cb18-3"><a href="#cb18-3" aria-hidden="true" tabindex="-1"></a>  <span class="fu">geom_histogram</span>(<span class="at">bins =</span> <span class="dv">100</span>) <span class="sc">+</span></span>
+<span id="cb18-4"><a href="#cb18-4" aria-hidden="true" tabindex="-1"></a>  <span class="fu">geom_vline</span>(<span class="at">xintercept =</span> <span class="fu">quantile</span>(med_rt<span class="sc">$</span>med_rt, <span class="at">probs =</span> <span class="fl">0.01</span>), </span>
+<span id="cb18-5"><a href="#cb18-5" aria-hidden="true" tabindex="-1"></a>             <span class="at">color =</span> <span class="st">&quot;red&quot;</span>, <span class="at">linetype =</span> <span class="st">&quot;dashed&quot;</span>, <span class="at">linewidth =</span> <span class="dv">1</span>) <span class="sc">+</span></span>
+<span id="cb18-6"><a href="#cb18-6" aria-hidden="true" tabindex="-1"></a>  <span class="fu">scale_x_continuous</span>(<span class="at">breaks =</span> <span class="fu">seq</span>(<span class="dv">0</span>, <span class="dv">10000</span>, <span class="dv">500</span>)) <span class="sc">+</span></span>
+<span id="cb18-7"><a href="#cb18-7" aria-hidden="true" tabindex="-1"></a>  <span class="fu">labs</span>(<span class="at">x =</span> <span class="st">&quot;Median Reaction Time (ms)&quot;</span>) <span class="sc">+</span></span>
+<span id="cb18-8"><a href="#cb18-8" aria-hidden="true" tabindex="-1"></a>  <span class="fu">theme_bw</span>()</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 </details>
 <div class="cell-output-display">
 <div>
@@ -3844,10 +3901,10 @@ window.onload = function() {
 <div class="cell">
 <details class="code-fold">
 <summary>Code</summary>
-<div class="sourceCode cell-code" id="cb18"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb18-1"><a href="#cb18-1" aria-hidden="true" tabindex="-1"></a>honesty_check_failed <span class="ot">&lt;-</span> quest_raw <span class="sc">|&gt;</span></span>
-<span id="cb18-2"><a href="#cb18-2" aria-hidden="true" tabindex="-1"></a>  <span class="fu">select</span>(session_id, <span class="at">honesty_check =</span> try) <span class="sc">|&gt;</span></span>
-<span id="cb18-3"><a href="#cb18-3" aria-hidden="true" tabindex="-1"></a>  <span class="fu">unique</span>() <span class="sc">|&gt;</span> </span>
-<span id="cb18-4"><a href="#cb18-4" aria-hidden="true" tabindex="-1"></a>  <span class="fu">filter</span>(honesty_check <span class="sc">!=</span> <span class="dv">2</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="sourceCode cell-code" id="cb19"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb19-1"><a href="#cb19-1" aria-hidden="true" tabindex="-1"></a>honesty_check_failed <span class="ot">&lt;-</span> data_quest <span class="sc">|&gt;</span></span>
+<span id="cb19-2"><a href="#cb19-2" aria-hidden="true" tabindex="-1"></a>  <span class="fu">select</span>(session_id, <span class="at">honesty_check =</span> try) <span class="sc">|&gt;</span></span>
+<span id="cb19-3"><a href="#cb19-3" aria-hidden="true" tabindex="-1"></a>  <span class="fu">unique</span>() <span class="sc">|&gt;</span> </span>
+<span id="cb19-4"><a href="#cb19-4" aria-hidden="true" tabindex="-1"></a>  <span class="fu">filter</span>(honesty_check <span class="sc">!=</span> <span class="dv">2</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 </details>
 </div>
 </section>
@@ -3857,14 +3914,14 @@ window.onload = function() {
 <div class="cell">
 <details class="code-fold">
 <summary>Code</summary>
-<div class="sourceCode cell-code" id="cb19"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb19-1"><a href="#cb19-1" aria-hidden="true" tabindex="-1"></a>attn_checks_failed <span class="ot">&lt;-</span> exp_long <span class="sc">|&gt;</span></span>
-<span id="cb19-2"><a href="#cb19-2" aria-hidden="true" tabindex="-1"></a>  <span class="fu">select</span>(session_id<span class="sc">:</span>dv) <span class="sc">|&gt;</span></span>
-<span id="cb19-3"><a href="#cb19-3" aria-hidden="true" tabindex="-1"></a>  <span class="fu">filter</span>(<span class="fu">grepl</span>(<span class="st">&quot;check&quot;</span>, trial_name)) <span class="sc">|&gt;</span></span>
-<span id="cb19-4"><a href="#cb19-4" aria-hidden="true" tabindex="-1"></a>  <span class="fu">mutate</span>(<span class="at">check_type =</span> <span class="fu">sub</span>(<span class="st">&quot;check_[a-z0-9-]+_&quot;</span>, <span class="st">&quot;&quot;</span>, trial_name),</span>
-<span id="cb19-5"><a href="#cb19-5" aria-hidden="true" tabindex="-1"></a>         <span class="at">check_type =</span> <span class="fu">ifelse</span>(exp_id <span class="sc">==</span> <span class="dv">1400</span>, <span class="fu">substr</span>(check_type, <span class="dv">4</span>, <span class="dv">6</span>), check_type)) <span class="sc">|&gt;</span></span>
-<span id="cb19-6"><a href="#cb19-6" aria-hidden="true" tabindex="-1"></a>  <span class="fu">summarise</span>(<span class="at">attn_checks_passed =</span> <span class="fu">mean</span>(check_type <span class="sc">==</span> dv), </span>
-<span id="cb19-7"><a href="#cb19-7" aria-hidden="true" tabindex="-1"></a>            <span class="at">.by =</span> <span class="fu">c</span>(<span class="st">&quot;session_id&quot;</span>, <span class="st">&quot;exp_id&quot;</span>)) <span class="sc">|&gt;</span> </span>
-<span id="cb19-8"><a href="#cb19-8" aria-hidden="true" tabindex="-1"></a>  <span class="fu">filter</span>(attn_checks_passed <span class="sc">&lt;</span> <span class="dv">5</span><span class="sc">/</span><span class="dv">7</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="sourceCode cell-code" id="cb20"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb20-1"><a href="#cb20-1" aria-hidden="true" tabindex="-1"></a>attn_checks_failed <span class="ot">&lt;-</span> exp_long <span class="sc">|&gt;</span></span>
+<span id="cb20-2"><a href="#cb20-2" aria-hidden="true" tabindex="-1"></a>  <span class="fu">select</span>(session_id<span class="sc">:</span>dv) <span class="sc">|&gt;</span></span>
+<span id="cb20-3"><a href="#cb20-3" aria-hidden="true" tabindex="-1"></a>  <span class="fu">filter</span>(<span class="fu">grepl</span>(<span class="st">&quot;check&quot;</span>, trial_name)) <span class="sc">|&gt;</span></span>
+<span id="cb20-4"><a href="#cb20-4" aria-hidden="true" tabindex="-1"></a>  <span class="fu">mutate</span>(<span class="at">check_type =</span> <span class="fu">sub</span>(<span class="st">&quot;check_[a-z0-9-]+_&quot;</span>, <span class="st">&quot;&quot;</span>, trial_name),</span>
+<span id="cb20-5"><a href="#cb20-5" aria-hidden="true" tabindex="-1"></a>         <span class="at">check_type =</span> <span class="fu">ifelse</span>(exp_id <span class="sc">==</span> <span class="dv">1400</span>, <span class="fu">substr</span>(check_type, <span class="dv">4</span>, <span class="dv">6</span>), check_type)) <span class="sc">|&gt;</span></span>
+<span id="cb20-6"><a href="#cb20-6" aria-hidden="true" tabindex="-1"></a>  <span class="fu">summarise</span>(<span class="at">attn_checks_passed =</span> <span class="fu">mean</span>(check_type <span class="sc">==</span> dv), </span>
+<span id="cb20-7"><a href="#cb20-7" aria-hidden="true" tabindex="-1"></a>            <span class="at">.by =</span> <span class="fu">c</span>(<span class="st">&quot;session_id&quot;</span>, <span class="st">&quot;exp_id&quot;</span>)) <span class="sc">|&gt;</span> </span>
+<span id="cb20-8"><a href="#cb20-8" aria-hidden="true" tabindex="-1"></a>  <span class="fu">filter</span>(attn_checks_passed <span class="sc">&lt;</span> <span class="dv">5</span><span class="sc">/</span><span class="dv">7</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 </details>
 </div>
 </section>
@@ -3873,28 +3930,28 @@ window.onload = function() {
 <div class="cell">
 <details class="code-fold">
 <summary>Code</summary>
-<div class="sourceCode cell-code" id="cb20"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb20-1"><a href="#cb20-1" aria-hidden="true" tabindex="-1"></a>exclusions <span class="ot">&lt;-</span> overly_consistent <span class="sc">|&gt;</span> </span>
-<span id="cb20-2"><a href="#cb20-2" aria-hidden="true" tabindex="-1"></a>  <span class="fu">full_join</span>(overly_fast, <span class="at">by =</span> <span class="fu">c</span>(<span class="st">&quot;session_id&quot;</span>, <span class="st">&quot;exp_id&quot;</span>)) <span class="sc">|&gt;</span> </span>
-<span id="cb20-3"><a href="#cb20-3" aria-hidden="true" tabindex="-1"></a>  <span class="fu">full_join</span>(honesty_check_failed, <span class="at">by =</span> <span class="fu">c</span>(<span class="st">&quot;session_id&quot;</span>)) <span class="sc">|&gt;</span> </span>
-<span id="cb20-4"><a href="#cb20-4" aria-hidden="true" tabindex="-1"></a>  <span class="fu">full_join</span>(attn_checks_failed, <span class="at">by =</span> <span class="fu">c</span>(<span class="st">&quot;session_id&quot;</span>, <span class="st">&quot;exp_id&quot;</span>))</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="sourceCode cell-code" id="cb21"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb21-1"><a href="#cb21-1" aria-hidden="true" tabindex="-1"></a>exclusions <span class="ot">&lt;-</span> overly_consistent <span class="sc">|&gt;</span> </span>
+<span id="cb21-2"><a href="#cb21-2" aria-hidden="true" tabindex="-1"></a>  <span class="fu">full_join</span>(overly_fast, <span class="at">by =</span> <span class="fu">c</span>(<span class="st">&quot;session_id&quot;</span>, <span class="st">&quot;exp_id&quot;</span>)) <span class="sc">|&gt;</span> </span>
+<span id="cb21-3"><a href="#cb21-3" aria-hidden="true" tabindex="-1"></a>  <span class="fu">full_join</span>(honesty_check_failed, <span class="at">by =</span> <span class="fu">c</span>(<span class="st">&quot;session_id&quot;</span>)) <span class="sc">|&gt;</span> </span>
+<span id="cb21-4"><a href="#cb21-4" aria-hidden="true" tabindex="-1"></a>  <span class="fu">full_join</span>(attn_checks_failed, <span class="at">by =</span> <span class="fu">c</span>(<span class="st">&quot;session_id&quot;</span>, <span class="st">&quot;exp_id&quot;</span>))</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 </details>
 </div>
 <div class="cell">
 <details class="code-fold">
 <summary>Code</summary>
-<div class="sourceCode cell-code" id="cb21"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb21-1"><a href="#cb21-1" aria-hidden="true" tabindex="-1"></a>exclusions <span class="sc">|&gt;</span> </span>
-<span id="cb21-2"><a href="#cb21-2" aria-hidden="true" tabindex="-1"></a>  <span class="fu">summarise</span>(</span>
-<span id="cb21-3"><a href="#cb21-3" aria-hidden="true" tabindex="-1"></a>    <span class="st">`</span><span class="at">&gt;90% same response</span><span class="st">`</span> <span class="ot">=</span> <span class="fu">sum</span>(<span class="sc">!</span><span class="fu">is.na</span>(same_pcnt)),</span>
-<span id="cb21-4"><a href="#cb21-4" aria-hidden="true" tabindex="-1"></a>    <span class="st">`</span><span class="at">RT below cutoff</span><span class="st">`</span> <span class="ot">=</span> <span class="fu">sum</span>(<span class="sc">!</span><span class="fu">is.na</span>(med_rt)),</span>
-<span id="cb21-5"><a href="#cb21-5" aria-hidden="true" tabindex="-1"></a>    <span class="st">`</span><span class="at">Failed honesty check</span><span class="st">`</span> <span class="ot">=</span> <span class="fu">sum</span>(<span class="sc">!</span><span class="fu">is.na</span>(honesty_check)),</span>
-<span id="cb21-6"><a href="#cb21-6" aria-hidden="true" tabindex="-1"></a>    <span class="st">`</span><span class="at">Failed 2 or more of 7 attention checks</span><span class="st">`</span> <span class="ot">=</span> <span class="fu">sum</span>(<span class="sc">!</span><span class="fu">is.na</span>(attn_checks_passed)),</span>
-<span id="cb21-7"><a href="#cb21-7" aria-hidden="true" tabindex="-1"></a>    <span class="st">&quot;Total exclusions&quot;</span> <span class="ot">=</span> <span class="fu">n</span>()</span>
-<span id="cb21-8"><a href="#cb21-8" aria-hidden="true" tabindex="-1"></a>  ) <span class="sc">|&gt;</span> </span>
-<span id="cb21-9"><a href="#cb21-9" aria-hidden="true" tabindex="-1"></a>  <span class="fu">pivot_longer</span>(</span>
-<span id="cb21-10"><a href="#cb21-10" aria-hidden="true" tabindex="-1"></a>    <span class="at">cols =</span> <span class="fu">everything</span>(),</span>
-<span id="cb21-11"><a href="#cb21-11" aria-hidden="true" tabindex="-1"></a>    <span class="at">names_to =</span> <span class="st">&quot;Reason for exclusion&quot;</span>,</span>
-<span id="cb21-12"><a href="#cb21-12" aria-hidden="true" tabindex="-1"></a>    <span class="at">values_to =</span> <span class="st">&quot;Number of participants&quot;</span></span>
-<span id="cb21-13"><a href="#cb21-13" aria-hidden="true" tabindex="-1"></a>  )</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="sourceCode cell-code" id="cb22"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb22-1"><a href="#cb22-1" aria-hidden="true" tabindex="-1"></a>exclusions <span class="sc">|&gt;</span> </span>
+<span id="cb22-2"><a href="#cb22-2" aria-hidden="true" tabindex="-1"></a>  <span class="fu">summarise</span>(</span>
+<span id="cb22-3"><a href="#cb22-3" aria-hidden="true" tabindex="-1"></a>    <span class="st">`</span><span class="at">&gt;90% same response</span><span class="st">`</span> <span class="ot">=</span> <span class="fu">sum</span>(<span class="sc">!</span><span class="fu">is.na</span>(same_pcnt)),</span>
+<span id="cb22-4"><a href="#cb22-4" aria-hidden="true" tabindex="-1"></a>    <span class="st">`</span><span class="at">RT below cutoff</span><span class="st">`</span> <span class="ot">=</span> <span class="fu">sum</span>(<span class="sc">!</span><span class="fu">is.na</span>(med_rt)),</span>
+<span id="cb22-5"><a href="#cb22-5" aria-hidden="true" tabindex="-1"></a>    <span class="st">`</span><span class="at">Failed honesty check</span><span class="st">`</span> <span class="ot">=</span> <span class="fu">sum</span>(<span class="sc">!</span><span class="fu">is.na</span>(honesty_check)),</span>
+<span id="cb22-6"><a href="#cb22-6" aria-hidden="true" tabindex="-1"></a>    <span class="st">`</span><span class="at">Failed 2 or more of 7 attention checks</span><span class="st">`</span> <span class="ot">=</span> <span class="fu">sum</span>(<span class="sc">!</span><span class="fu">is.na</span>(attn_checks_passed)),</span>
+<span id="cb22-7"><a href="#cb22-7" aria-hidden="true" tabindex="-1"></a>    <span class="st">&quot;Total exclusions&quot;</span> <span class="ot">=</span> <span class="fu">n</span>()</span>
+<span id="cb22-8"><a href="#cb22-8" aria-hidden="true" tabindex="-1"></a>  ) <span class="sc">|&gt;</span> </span>
+<span id="cb22-9"><a href="#cb22-9" aria-hidden="true" tabindex="-1"></a>  <span class="fu">pivot_longer</span>(</span>
+<span id="cb22-10"><a href="#cb22-10" aria-hidden="true" tabindex="-1"></a>    <span class="at">cols =</span> <span class="fu">everything</span>(),</span>
+<span id="cb22-11"><a href="#cb22-11" aria-hidden="true" tabindex="-1"></a>    <span class="at">names_to =</span> <span class="st">&quot;Reason for exclusion&quot;</span>,</span>
+<span id="cb22-12"><a href="#cb22-12" aria-hidden="true" tabindex="-1"></a>    <span class="at">values_to =</span> <span class="st">&quot;Number of participants&quot;</span></span>
+<span id="cb22-13"><a href="#cb22-13" aria-hidden="true" tabindex="-1"></a>  )</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 </details>
 <div class="cell-output-display">
 <div data-pagedtable="false">
@@ -3908,9 +3965,9 @@ window.onload = function() {
 <div class="cell">
 <details class="code-fold">
 <summary>Code</summary>
-<div class="sourceCode cell-code" id="cb22"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb22-1"><a href="#cb22-1" aria-hidden="true" tabindex="-1"></a>data_exp <span class="ot">&lt;-</span> exp_long <span class="sc">|&gt;</span> </span>
-<span id="cb22-2"><a href="#cb22-2" aria-hidden="true" tabindex="-1"></a>  <span class="fu">anti_join</span>(exclusions, <span class="at">by =</span> <span class="st">&quot;session_id&quot;</span>) <span class="sc">|&gt;</span></span>
-<span id="cb22-3"><a href="#cb22-3" aria-hidden="true" tabindex="-1"></a>  <span class="fu">filter</span>(<span class="sc">!</span><span class="fu">grepl</span>(<span class="st">&quot;check_&quot;</span>, trial_name))</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="sourceCode cell-code" id="cb23"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb23-1"><a href="#cb23-1" aria-hidden="true" tabindex="-1"></a>data_exp <span class="ot">&lt;-</span> exp_long <span class="sc">|&gt;</span> </span>
+<span id="cb23-2"><a href="#cb23-2" aria-hidden="true" tabindex="-1"></a>  <span class="fu">anti_join</span>(exclusions, <span class="at">by =</span> <span class="st">&quot;session_id&quot;</span>) <span class="sc">|&gt;</span></span>
+<span id="cb23-3"><a href="#cb23-3" aria-hidden="true" tabindex="-1"></a>  <span class="fu">filter</span>(<span class="sc">!</span><span class="fu">grepl</span>(<span class="st">&quot;check_&quot;</span>, trial_name))</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 </details>
 </div>
 <p>After exclusions, there were 1907 participants.</p>
@@ -3918,9 +3975,9 @@ window.onload = function() {
 <div class="cell">
 <details class="code-fold">
 <summary>Code</summary>
-<div class="sourceCode cell-code" id="cb23"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb23-1"><a href="#cb23-1" aria-hidden="true" tabindex="-1"></a>data_exp <span class="sc">|&gt;</span></span>
-<span id="cb23-2"><a href="#cb23-2" aria-hidden="true" tabindex="-1"></a>  <span class="fu">summarise</span>(<span class="at">.by =</span> <span class="fu">c</span>(exp, session_id)) <span class="sc">|&gt;</span></span>
-<span id="cb23-3"><a href="#cb23-3" aria-hidden="true" tabindex="-1"></a>  <span class="fu">count</span>(exp)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="sourceCode cell-code" id="cb24"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb24-1"><a href="#cb24-1" aria-hidden="true" tabindex="-1"></a>data_exp <span class="sc">|&gt;</span></span>
+<span id="cb24-2"><a href="#cb24-2" aria-hidden="true" tabindex="-1"></a>  <span class="fu">summarise</span>(<span class="at">.by =</span> <span class="fu">c</span>(exp, session_id)) <span class="sc">|&gt;</span></span>
+<span id="cb24-3"><a href="#cb24-3" aria-hidden="true" tabindex="-1"></a>  <span class="fu">count</span>(exp)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 </details>
 <div class="cell-output-display">
 <div data-pagedtable="false">
@@ -3937,16 +3994,16 @@ window.onload = function() {
 <div class="cell">
 <details class="code-fold">
 <summary>Code</summary>
-<div class="sourceCode cell-code" id="cb24"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb24-1"><a href="#cb24-1" aria-hidden="true" tabindex="-1"></a><span class="co"># Rating data</span></span>
-<span id="cb24-2"><a href="#cb24-2" aria-hidden="true" tabindex="-1"></a><span class="fu">write_csv</span>(data_exp, <span class="st">&quot;data/manyfaces-pilot-exp_cleaned.csv&quot;</span>)</span>
-<span id="cb24-3"><a href="#cb24-3" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb24-4"><a href="#cb24-4" aria-hidden="true" tabindex="-1"></a><span class="co"># Questionnaire data</span></span>
-<span id="cb24-5"><a href="#cb24-5" aria-hidden="true" tabindex="-1"></a>data_quest <span class="ot">&lt;-</span> quest_raw <span class="sc">|&gt;</span> </span>
-<span id="cb24-6"><a href="#cb24-6" aria-hidden="true" tabindex="-1"></a>  <span class="fu">filter</span>(session_id <span class="sc">%in%</span> data_exp<span class="sc">$</span>session_id)</span>
-<span id="cb24-7"><a href="#cb24-7" aria-hidden="true" tabindex="-1"></a><span class="fu">write_csv</span>(data_quest, <span class="st">&quot;data/manyfaces-pilot-quest_cleaned.csv&quot;</span>)</span>
-<span id="cb24-8"><a href="#cb24-8" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb24-9"><a href="#cb24-9" aria-hidden="true" tabindex="-1"></a><span class="co"># Model data</span></span>
-<span id="cb24-10"><a href="#cb24-10" aria-hidden="true" tabindex="-1"></a><span class="fu">write_csv</span>(data_model, <span class="st">&quot;data/manyfaces-pilot-models_cleaned.csv&quot;</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="sourceCode cell-code" id="cb25"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb25-1"><a href="#cb25-1" aria-hidden="true" tabindex="-1"></a><span class="co"># Rating data</span></span>
+<span id="cb25-2"><a href="#cb25-2" aria-hidden="true" tabindex="-1"></a><span class="fu">write_csv</span>(data_exp, <span class="st">&quot;data/manyfaces-pilot-exp_cleaned.csv&quot;</span>)</span>
+<span id="cb25-3"><a href="#cb25-3" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb25-4"><a href="#cb25-4" aria-hidden="true" tabindex="-1"></a><span class="co"># Questionnaire data</span></span>
+<span id="cb25-5"><a href="#cb25-5" aria-hidden="true" tabindex="-1"></a>data_quest <span class="sc">|&gt;</span> </span>
+<span id="cb25-6"><a href="#cb25-6" aria-hidden="true" tabindex="-1"></a>  <span class="fu">filter</span>(session_id <span class="sc">%in%</span> data_exp<span class="sc">$</span>session_id) <span class="sc">|&gt;</span></span>
+<span id="cb25-7"><a href="#cb25-7" aria-hidden="true" tabindex="-1"></a>  <span class="fu">write_csv</span>(<span class="st">&quot;data/manyfaces-pilot-quest_cleaned.csv&quot;</span>)</span>
+<span id="cb25-8"><a href="#cb25-8" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb25-9"><a href="#cb25-9" aria-hidden="true" tabindex="-1"></a><span class="co"># Model data</span></span>
+<span id="cb25-10"><a href="#cb25-10" aria-hidden="true" tabindex="-1"></a><span class="fu">write_csv</span>(data_model, <span class="st">&quot;data/manyfaces-pilot-models_cleaned.csv&quot;</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 </details>
 </div>
 </section>
