@@ -363,10 +363,9 @@ emo_int_means <- emo_int |>
   summarise(mean_rating = mean(dv),
             rater_N = n(),
             .by = c("exp", "lab_id", "model_id")) |> 
-  pivot_wider(id_cols = c(lab_id, model_id),
-              names_from = exp,
-              values_from = mean_rating,
-              names_glue = "{exp}_intensity")
+  rename(model_expression = exp,
+         mean_intensity_rating = mean_rating) |> 
+  dplyr::select(-rater_N)
 ```
 
 ## Age Ratings
@@ -424,9 +423,11 @@ age |>
 ```{r}
 pilot_ratings <- data_model |> 
   left_join(std_neutral_means, by = c("lab_id", "model_id")) |> 
-  left_join(unstd_neutral_means, by = c("lab_id", "model_id")) |> 
-  left_join(emo_int_means, by = c("lab_id", "model_id"))
+  left_join(unstd_neutral_means, by = c("lab_id", "model_id"))
 
-write_csv(pilot_ratings, "results/manyfaces-pilot-ratings.csv")
-write_csv(emo_cat_props, "results/manyfaces-pilot-emotion_categorisation.csv")
+pilot_ratings_emotions <- emo_cat_props |> 
+  left_join(emo_int_means, by = c("lab_id", "model_id", "model_expression"))
+
+write_csv(pilot_ratings, "results/manyfaces-pilot-ratings-traits.csv")
+write_csv(pilot_ratings_emotions, "results/manyfaces-pilot-ratings-emotions.csv")
 ```

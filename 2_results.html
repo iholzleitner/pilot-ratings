@@ -3980,10 +3980,9 @@ window.onload = function() {
 <span id="cb27-2"><a href="#cb27-2" aria-hidden="true" tabindex="-1"></a>  <span class="fu">summarise</span>(<span class="at">mean_rating =</span> <span class="fu">mean</span>(dv),</span>
 <span id="cb27-3"><a href="#cb27-3" aria-hidden="true" tabindex="-1"></a>            <span class="at">rater_N =</span> <span class="fu">n</span>(),</span>
 <span id="cb27-4"><a href="#cb27-4" aria-hidden="true" tabindex="-1"></a>            <span class="at">.by =</span> <span class="fu">c</span>(<span class="st">&quot;exp&quot;</span>, <span class="st">&quot;lab_id&quot;</span>, <span class="st">&quot;model_id&quot;</span>)) <span class="sc">|&gt;</span> </span>
-<span id="cb27-5"><a href="#cb27-5" aria-hidden="true" tabindex="-1"></a>  <span class="fu">pivot_wider</span>(<span class="at">id_cols =</span> <span class="fu">c</span>(lab_id, model_id),</span>
-<span id="cb27-6"><a href="#cb27-6" aria-hidden="true" tabindex="-1"></a>              <span class="at">names_from =</span> exp,</span>
-<span id="cb27-7"><a href="#cb27-7" aria-hidden="true" tabindex="-1"></a>              <span class="at">values_from =</span> mean_rating,</span>
-<span id="cb27-8"><a href="#cb27-8" aria-hidden="true" tabindex="-1"></a>              <span class="at">names_glue =</span> <span class="st">&quot;{exp}_intensity&quot;</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<span id="cb27-5"><a href="#cb27-5" aria-hidden="true" tabindex="-1"></a>  <span class="fu">rename</span>(<span class="at">model_expression =</span> exp,</span>
+<span id="cb27-6"><a href="#cb27-6" aria-hidden="true" tabindex="-1"></a>         <span class="at">mean_intensity_rating =</span> mean_rating) <span class="sc">|&gt;</span> </span>
+<span id="cb27-7"><a href="#cb27-7" aria-hidden="true" tabindex="-1"></a>  dplyr<span class="sc">::</span><span class="fu">select</span>(<span class="sc">-</span>rater_N)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 </details>
 </div>
 </section>
@@ -4064,11 +4063,13 @@ window.onload = function() {
 <summary>Code</summary>
 <div class="sourceCode cell-code" id="cb32"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb32-1"><a href="#cb32-1" aria-hidden="true" tabindex="-1"></a>pilot_ratings <span class="ot">&lt;-</span> data_model <span class="sc">|&gt;</span> </span>
 <span id="cb32-2"><a href="#cb32-2" aria-hidden="true" tabindex="-1"></a>  <span class="fu">left_join</span>(std_neutral_means, <span class="at">by =</span> <span class="fu">c</span>(<span class="st">&quot;lab_id&quot;</span>, <span class="st">&quot;model_id&quot;</span>)) <span class="sc">|&gt;</span> </span>
-<span id="cb32-3"><a href="#cb32-3" aria-hidden="true" tabindex="-1"></a>  <span class="fu">left_join</span>(unstd_neutral_means, <span class="at">by =</span> <span class="fu">c</span>(<span class="st">&quot;lab_id&quot;</span>, <span class="st">&quot;model_id&quot;</span>)) <span class="sc">|&gt;</span> </span>
-<span id="cb32-4"><a href="#cb32-4" aria-hidden="true" tabindex="-1"></a>  <span class="fu">left_join</span>(emo_int_means, <span class="at">by =</span> <span class="fu">c</span>(<span class="st">&quot;lab_id&quot;</span>, <span class="st">&quot;model_id&quot;</span>))</span>
-<span id="cb32-5"><a href="#cb32-5" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb32-6"><a href="#cb32-6" aria-hidden="true" tabindex="-1"></a><span class="fu">write_csv</span>(pilot_ratings, <span class="st">&quot;results/manyfaces-pilot-ratings.csv&quot;</span>)</span>
-<span id="cb32-7"><a href="#cb32-7" aria-hidden="true" tabindex="-1"></a><span class="fu">write_csv</span>(emo_cat_props, <span class="st">&quot;results/manyfaces-pilot-emotion_categorisation.csv&quot;</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<span id="cb32-3"><a href="#cb32-3" aria-hidden="true" tabindex="-1"></a>  <span class="fu">left_join</span>(unstd_neutral_means, <span class="at">by =</span> <span class="fu">c</span>(<span class="st">&quot;lab_id&quot;</span>, <span class="st">&quot;model_id&quot;</span>))</span>
+<span id="cb32-4"><a href="#cb32-4" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb32-5"><a href="#cb32-5" aria-hidden="true" tabindex="-1"></a>pilot_ratings_emotions <span class="ot">&lt;-</span> emo_cat_props <span class="sc">|&gt;</span> </span>
+<span id="cb32-6"><a href="#cb32-6" aria-hidden="true" tabindex="-1"></a>  <span class="fu">left_join</span>(emo_int_means, <span class="at">by =</span> <span class="fu">c</span>(<span class="st">&quot;lab_id&quot;</span>, <span class="st">&quot;model_id&quot;</span>, <span class="st">&quot;model_expression&quot;</span>))</span>
+<span id="cb32-7"><a href="#cb32-7" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb32-8"><a href="#cb32-8" aria-hidden="true" tabindex="-1"></a><span class="fu">write_csv</span>(pilot_ratings, <span class="st">&quot;results/manyfaces-pilot-ratings-traits.csv&quot;</span>)</span>
+<span id="cb32-9"><a href="#cb32-9" aria-hidden="true" tabindex="-1"></a><span class="fu">write_csv</span>(pilot_ratings_emotions, <span class="st">&quot;results/manyfaces-pilot-ratings-emotions.csv&quot;</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 </details>
 </div>
 </section>
