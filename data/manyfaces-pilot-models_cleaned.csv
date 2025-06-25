@@ -121,16 +121,16 @@ MF0015,0010,1,1,1,1,1,1,1,1,22,chinese,Asian,1,NA,female,female,167,cm,167,52,kg
 MF0015,0011,1,1,1,1,1,1,1,0,21,malaysia chinese,Asian,1,-,male,male,171,cm,171,63,kg,63,1,1,1,1,1,1,1,1,1
 MF0015,0012,1,1,1,1,1,1,1,1,21,malaysian chinese,Asian,1,NA,female,female,174,cm,174,58,kg,58,1,1,1,1,1,1,1,1,1
 MF0015,0013,1,1,1,1,1,1,1,1,22,chinese,Asian,1,NA,female,female,165,cm,165,NA,NA,NA,1,1,1,1,1,1,1,1,1
-MF0016,0001,1,1,1,1,1,1,1,1,23,ninguno,NA,1,NA,mujer,female,170,cm,170,53,kg,53,1,1,1,1,1,1,1,1,1
-MF0016,0002,1,1,1,1,1,1,1,1,23,ninguno,NA,1,NA,femenino,female,150,cm,150,50,kg,50,1,1,1,1,1,1,1,1,1
+MF0016,0001,1,1,1,1,1,1,1,1,23,ninguno,Abmiguous label,1,NA,mujer,female,170,cm,170,53,kg,53,1,1,1,1,1,1,1,1,1
+MF0016,0002,1,1,1,1,1,1,1,1,23,ninguno,Abmiguous label,1,NA,femenino,female,150,cm,150,50,kg,50,1,1,1,1,1,1,1,1,1
 MF0016,0003,1,1,1,1,1,1,1,1,20,mexicana,Latine,1,NA,femenino,female,155,cm,155,45,kg,45,1,1,1,1,1,2,1,1,1
 MF0016,0004,1,1,1,1,1,1,1,1,24,mexicano,Latine,1,NA,mascãºlino,male,175,cm,175,89,kg,89,1,1,1,1,1,1,1,1,1
-MF0016,0005,1,1,1,1,1,1,1,1,22,ninguno,NA,1,NA,masculino,male,175,cm,175,68,kg,68,1,1,1,1,1,1,1,1,1
+MF0016,0005,1,1,1,1,1,1,1,1,22,ninguno,Abmiguous label,1,NA,masculino,male,175,cm,175,68,kg,68,1,1,1,1,1,1,1,1,1
 MF0016,0006,1,1,1,1,1,1,1,1,22,latino,Latine,2,Ortodoncia,masculino,male,179,cm,179,71,kg,71,2,1,1,1,1,1,1,1,1
-MF0016,0007,1,1,1,1,1,1,1,1,22,ninguno,NA,2,ME FRACTURÃ‰ EL TABIQUE DE LA NARIZ,femenino,female,152,cm,152,46,kg,46,1,1,1,1,1,1,1,1,1
+MF0016,0007,1,1,1,1,1,1,1,1,22,ninguno,Abmiguous label,2,ME FRACTURÃ‰ EL TABIQUE DE LA NARIZ,femenino,female,152,cm,152,46,kg,46,1,1,1,1,1,1,1,1,1
 MF0016,0008,1,1,1,1,1,1,1,1,48,mexicana,Latine,1,NA,mujer,female,162,cm,162,63,kg,63,2,2,1,1,1,2,1,1,1
 MF0016,0009,1,1,1,1,1,1,1,1,28,latino,Latine,1,NA,masculino,male,163,cm,163,56,kg,56,1,1,1,1,1,1,1,1,1
-MF0016,0010,1,1,1,1,1,1,1,1,21,ninguno,NA,1,NA,femenino,female,156,cm,156,60,kg,60,1,1,1,1,1,1,1,1,1
+MF0016,0010,1,1,1,1,1,1,1,1,21,ninguno,Abmiguous label,1,NA,femenino,female,156,cm,156,60,kg,60,1,1,1,1,1,1,1,1,1
 MF0017,0004,1,1,1,1,1,1,1,1,18,caucasian,White,1,NA,male,male,174,cm,174,74,kg,74,1,1,1,1,1,1,1,1,1
 MF0017,0005,1,1,1,1,1,1,1,1,20,eastern european,White,1,NA,female,female,168,cm,168,53,kg,53,1,1,1,1,1,1,1,1,1
 MF0017,0006,1,1,1,1,1,1,1,1,35,south american,Latine,1,NA,female,female,160,cm,160,50,kg,50,2,2,1,1,2,2,2,1,1
@@ -189,9 +189,9 @@ MF0024,0005,1,1,1,1,1,1,1,1,23,white,White,1,NA,female,female,167,cm,167,107,kg,
 MF0024,0006,1,1,1,1,1,1,1,1,23,white,White,1,NA,female,female,163,cm,163,54,kg,54,1,1,1,1,1,1,1,1,1
 MF0024,0007,1,1,1,1,1,1,1,1,29,asian,Asian,1,n/a,male,male,174,cm,174,74,kg,74,1,1,1,1,1,1,1,1,1
 MF0024,0008,1,1,1,1,1,1,1,1,20,white-scottish,White,1,NA,male,male,180,cm,180,65,kg,65,1,1,1,1,1,1,1,1,1
-MF0024,0009,1,1,1,1,1,1,1,1,22,jewish,NA,1,NA,male,male,187,cm,187,84,kg,84,1,1,1,1,1,1,1,1,1
+MF0024,0009,1,1,1,1,1,1,1,1,22,jewish,Abmiguous label,1,NA,male,male,187,cm,187,84,kg,84,1,1,1,1,1,1,1,1,1
 MF0024,0010,1,1,1,1,1,1,1,1,44,white scottish,White,1,NA,f,female,165,cm,165,55,kg,55,1,1,1,1,1,1,1,1,1
-MF0025,0001,1,1,1,1,1,1,1,1,22,not hispanic/latino,NA,1,N/A,female,female,67,in,170.18,145,lb,65.77097186816776,1,1,1,1,1,1,1,1,1
+MF0025,0001,1,1,1,1,1,1,1,1,22,not hispanic/latino,Abmiguous label,1,N/A,female,female,67,in,170.18,145,lb,65.77097186816776,1,1,1,1,1,1,1,1,1
 MF0025,0002,1,1,1,1,1,1,1,1,24,white / middle-eastern,Mixed,1,NA,female,female,63,in,160.02,140,lb,63.50300732098956,1,1,1,1,1,1,1,1,1
 MF0025,0003,1,1,1,1,1,1,1,1,NA,NA,NA,NA,NA,male,male,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA
 MF0025,0004,1,1,1,1,1,1,1,1,23,white / middle eastern,Mixed,1,NA,female,female,63,in,160.02,130,lb,58.96707822663317,1,1,1,1,1,1,1,1,1

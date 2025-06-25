@@ -201,6 +201,8 @@ data_model <- model_raw |>
                                  c("homem", "masculino", "mascãºlino", "m") ~ "male",
                                  c("sexo feminino, gãªnero fluido", "nã£o binã¡rio", "nã£o binã¡rio",
                                    "genderfluid (amab)", "nonbinary") ~ "non-binary",
+                                 c("sexo feminino, gãªnero fluido",
+                                   "genderfluid (amab)") ~ "gender-fluid",
                                  c("hetero cis", "NA") ~ NA_character_,
                                  .default = gender),
          ethnicity = tolower(ethnicity),
@@ -228,6 +230,7 @@ data_model <- model_raw |>
                                       "chinese-indian-malay mixed", "mixed white & asian", "mix white/black",
                                       "white / middle-eastern", "white / middle eastern",
                                       "middle eastern/white") ~ "Mixed",
+                                    c("ninguno", "jewish", "not hispanic/latino") ~ "Abmiguous label",
                                     .default = NA_character_)) |> 
   relocate(gender_rec, .after = gender) |> 
   relocate(ethnicity_rec, .after = ethnicity) |> 
@@ -239,7 +242,7 @@ data_model <- model_raw |>
                                height_units == "cm" ~ as.numeric(height),
                                .default = NA_real_),
          weight_kg = case_when(as.numeric(weight) == 0 ~ NA_real_,
-                               weight_units == "kg" & as.numeric(weight) < 30 ~ as.numeric(weight) * 2.20462,  # likely mislabelled lb
+                               # Note: one participant indicated weight as 37kg and height as 163cm, which would mean BMI of ~14.0 - data entry error or legitimate value?
                                weight_units == "lb" & as.numeric(weight) < 80 ~ as.numeric(weight),            # likely mislabelled kg
                                weight_units == "lb" ~ as.numeric(weight) / 2.20462,
                                weight_units == "kg" ~ as.numeric(weight),
@@ -277,27 +280,30 @@ data_quest <- quest_raw |>
                                       "black: african american", "black american",
                                       "black or african american", "african american/black", 
                                       "black african american", "african/black american",
+                                      "black british",
                                       "zulu", "kenyan", "nigeria",  
                                       "colored", "coloured", "coloured south african") ~ "Black",
                                     c("asian", "asia", "south asian", "east asian",
                                       "asian/indian", "indian", "bangladeshi", "pakistani",
                                       "sri lankan", "chinese", "japanese",
                                       "filipino", "philippine", "vietnamese", "sundanese",
-                                      "indo-aryan", "indo-fijian", "belgium, asian") ~ "Asian",
-                                    c("native american", "native hawaiian", "samoan") ~ "Indigenous",
+                                      "indo-aryan", "indo-fijian", "british - indian",
+                                      "british asian", "british pakistani") ~ "Asian",
+                                    c("native american", "native hawaiian", "samoan") ~ "Indigenous / Pacific Islander",
                                     c("arab", "middle eastern", "north african") ~ "MENA",
                                     c("latino", "latina", "latinx", "latine", "latin", 
                                       "hispanic", "hispanic/latino", "latinamerican", 
                                        "preta", "brazilian") ~ "Latine",
                                     c("mixed", "mixed race", "mix", "biracial",
                                       "mixed black caribbean and white", "cape coloured",
-                                      "black/white", "black/british", "black british",
-                                      "chinese/uk", "british - indian", "british asian",
-                                      "british pakistani", "british asian american",
-                                      "latin european", "white / puerto rican",
-                                      "white/ latino", "white hispanic",
-                                      "white & asian", "eurasian",
+                                      "black/white", "white / puerto rican",
+                                      "white/ latino", "white & asian", 
                                       "coloured / mixed race") ~ "Mixed",
+                                    c("mauritian", "belgium, asian", "black/british",
+                                      "eurasian", "caribbean", "carribean", 
+                                      "british asian american","chinese/uk",
+                                      "latin european", "white hispanic", "race",
+                                       "american", "christian", "christianity") ~ "Abmiguous label",
                                     .default = NA_character_)) |> 
    relocate(ethnicity_rec, .after = ethnicity)
 ```
