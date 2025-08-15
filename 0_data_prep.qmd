@@ -377,15 +377,31 @@ Prior to pre-registered exclusions, preliminary sample thus consisted of `r prel
 ### Pre-registered exclusions
 
 #### Overly consistent responses
-Participants were excluded based on overly consistent responding, i.e. if they responded to at least 90% of trials identically.
+Participants were excluded based on overly consistent responding, i.e. if they responded to at least 90% of trials identically. Please note that four additional participants with only two unique responses across all trials were identified during reliability analyses and excluded under the original 'overly consistent responding' criterion.
 
 ```{r}
-overly_consistent <- exp_long |> 
+overly_consistent_prereg <- exp_long |> 
+  filter(!startsWith(trial_name, "check_")) |>
   summarise(
     same_pcnt = max(tabulate(match(dv, unique(dv)))) / n(),
     .by = c(session_id, exp_id)) |> 
   dplyr::select(session_id, exp_id, same_pcnt) |> 
   filter(same_pcnt >= 0.90)
+```
+
+```{r}
+overly_consistent_additional <- exp_long |> 
+  filter(!startsWith(trial_name, "check_")) |>
+  summarise(
+    n_unique = n_distinct(dv, na.rm = TRUE),
+    .by = c(session_id, exp_id)) |> 
+  dplyr::select(session_id, exp_id, n_unique) |> 
+  filter(n_unique <= 2)
+```
+
+```{r}
+overly_consistent <- overly_consistent_prereg |> 
+  full_join(overly_consistent_additional, by=c("session_id", "exp_id"))
 ```
 
 #### Overly fast responses
@@ -412,7 +428,7 @@ med_rt |>
 ```
 
 #### Self-reported honesty check
-Participants were excluded based on self-reported honesty check, i.e. if they responded not taking the study seriously vs. taking it authentically
+Participants were excluded based on self-reported honesty check, i.e. if they responded not taking the study seriously vs. taking it authentically.
 
 ```{r}
 honesty_check_failed <- data_quest |>
@@ -422,7 +438,7 @@ honesty_check_failed <- data_quest |>
 ```
 
 #### Attention checks
-Participants were excluded if they failed two or more attention checks
+Participants were excluded if they failed two or more attention checks.
 
 ```{r}
 attn_checks_failed <- exp_long |>
@@ -447,7 +463,7 @@ exclusions <- overly_consistent |>
 ```{r}
 exclusions |> 
   summarise(
-    `>90% same response` = sum(!is.na(same_pcnt)),
+    `Overly consistent response` = sum(!is.na(same_pcnt)),
     `RT below cutoff` = sum(!is.na(med_rt)),
     `Failed honesty check` = sum(!is.na(honesty_check)),
     `Failed 2 or more of 7 attention checks` = sum(!is.na(attn_checks_passed)),

@@ -324,7 +324,6 @@ session_id,endtime,gender,age,residence,ethnicity,ethnicity_rec,device,try
 156113,2025-05-06T14:16:20Z,male,58,CA,caucasian,White,laptop,2
 156114,2025-05-06T14:20:21Z,female,54,ZA,white,White,desktop,2
 156115,2025-05-06T14:19:54Z,female,35,ZA,black,Black,laptop,2
-156116,2025-05-06T14:40:05Z,male,37,ZA,black,Black,laptop,2
 156117,2025-05-06T14:23:29Z,male,51,ZA,black,Black,laptop,2
 156118,2025-05-06T14:22:21Z,male,20,ZA,african,Black,laptop,2
 156119,2025-05-06T14:21:26Z,male,67,ZA,coloured,Black,laptop,2
@@ -400,7 +399,6 @@ session_id,endtime,gender,age,residence,ethnicity,ethnicity_rec,device,try
 156206,2025-05-06T14:36:35Z,male,30,US,caucasian,White,laptop,2
 156207,2025-05-06T14:42:11Z,male,29,GB,white,White,laptop,2
 156208,2025-05-06T14:42:40Z,female,20,GB,black,Black,laptop,2
-156209,2025-05-06T14:35:11Z,male,21,ZA,black african,Black,tablet,2
 156210,2025-05-06T14:41:18Z,female,35,ZA,indian,Asian,desktop,2
 156211,2025-05-06T14:41:37Z,female,26,ZA,african,Black,desktop,2
 156212,2025-05-06T14:42:33Z,male,44,GB,white,White,desktop,2
@@ -425,7 +423,6 @@ session_id,endtime,gender,age,residence,ethnicity,ethnicity_rec,device,try
 156240,2025-05-06T14:46:44Z,female,24,US,white,White,desktop,2
 156241,2025-05-06T14:43:39Z,female,49,ZA,black,Black,phone,2
 156242,2025-05-06T14:37:51Z,female,47,ZA,african,Black,phone,2
-156243,2025-05-06T14:48:06Z,female,25,ZA,black african,Black,phone,2
 156247,2025-05-06T14:46:42Z,female,25,ZA,black,Black,desktop,2
 156248,2025-05-06T14:45:15Z,female,24,DE,white european,White,desktop,2
 156251,2025-05-06T14:56:58Z,female,26,ZA,black,Black,phone,2
@@ -626,7 +623,6 @@ session_id,endtime,gender,age,residence,ethnicity,ethnicity_rec,device,try
 156502,2025-05-06T15:39:52Z,female,31,ZA,black,Black,phone,2
 156503,2025-05-06T15:35:06Z,male,24,ZA,black,Black,desktop,2
 156504,2025-05-06T15:34:15Z,female,32,US,african american,Black,laptop,2
-156505,2025-05-06T15:27:33Z,male,29,ZA,african,Black,laptop,2
 156507,2025-05-06T15:24:26Z,male,22,GB,pakistani,Asian,laptop,2
 156508,2025-05-06T15:23:49Z,female,32,ZA,black,Black,phone,2
 156509,2025-05-06T15:29:12Z,male,34,ZA,black,Black,phone,2
@@ -767,7 +763,6 @@ session_id,endtime,gender,age,residence,ethnicity,ethnicity_rec,device,try
 156687,2025-05-06T15:53:42Z,male,23,PL,white european,White,desktop,2
 156688,2025-05-06T16:10:17Z,female,39,ZA,black,Black,desktop,2
 156689,2025-05-06T15:54:49Z,female,20,ZA,african,Black,laptop,2
-156690,2025-05-06T15:51:54Z,female,32,ZA,black,Black,phone,2
 156691,2025-05-06T15:57:18Z,female,26,ZA,black,Black,phone,2
 156692,2025-05-06T15:58:17Z,female,69,ZA,indian,Asian,phone,2
 156693,2025-05-06T15:56:53Z,female,36,ZA,black,Black,desktop,2
@@ -893,7 +888,6 @@ session_id,endtime,gender,age,residence,ethnicity,ethnicity_rec,device,try
 156830,2025-05-06T16:32:41Z,female,22,ZA,black,Black,laptop,2
 156831,2025-05-06T16:26:07Z,female,29,ZA,black,Black,laptop,2
 156833,2025-05-06T16:26:56Z,female,56,ZA,black,Black,phone,2
-156836,2025-05-06T16:24:00Z,female,39,ZA,black,Black,phone,2
 156837,2025-05-06T16:23:59Z,female,67,ZA,coloured south african,Black,laptop,2
 156838,2025-05-06T16:28:54Z,female,44,CA,caucasian,White,laptop,2
 156840,2025-05-06T16:22:03Z,male,62,GB,caucasian,White,laptop,2
@@ -1293,7 +1287,6 @@ session_id,endtime,gender,age,residence,ethnicity,ethnicity_rec,device,try
 157312,2025-05-06T17:34:43Z,male,26,PL,white,White,laptop,2
 157313,2025-05-06T17:42:37Z,male,28,ZA,coloured,Black,desktop,2
 157314,2025-05-06T17:38:12Z,male,18,GB,white,White,laptop,2
-157315,2025-05-06T17:37:45Z,male,36,GB,white,White,laptop,2
 157317,2025-05-06T17:44:17Z,male,34,GR,caucasian/greek,White,desktop,2
 157318,2025-05-06T17:43:18Z,male,44,ES,white,White,laptop,2
 157319,2025-05-06T17:37:24Z,female,38,US,black,Black,laptop,2
