@@ -16,6 +16,9 @@ execute:
 ```{r}
 #| message: false
 library(tidyverse)
+
+# Load custom functions
+source("data/custom_functions.R")
 ```
 
 ## Load data
@@ -48,33 +51,6 @@ rainbow <- c("firebrick", "darkorange", "goldenrod",
              "darkgreen", "dodgerblue3", "darkorchid4")
 ```
 
-```{r}
-# Function to create heatmap visualisations
-heatmap <- function(data, exp_id, label) {
-  data |>
-    filter(exp %in% !!exp_id) |>
-    count(lab_id, model_id, dv) |>
-    ggplot(aes(x = dv, y = model_id, fill = n)) +
-    geom_tile() +
-    facet_wrap(~lab_id) +
-    scale_fill_viridis_c() +
-    labs(x = label, y = NULL, 
-         title = paste(label, "Ratings")) +
-    theme(legend.position = "none", 
-          axis.text.x = element_text(angle = 90))
-}
-
-# Function to get mode, frequency, proportion
-get_mode_info <- function(x) {
-  x <- na.omit(x)
-  tab <- table(x)
-  mode_val <- names(tab)[which.max(tab)]
-  freq <- max(tab)
-  prop <- freq / length(x)
-  
-  list(age_mode = mode_val, age_prop = prop)
-}
-```
 
 ## Standardised neutral trait ratings
 
@@ -126,6 +102,8 @@ std_neutral_means <- std_neutral |>
 
 #### Attractiveness
 
+Please note: The heatmaps visualise the frequency distribution of ratings for each model. Darker tiles indicate that more participants from a given lab (shown in separate panels) gave that particular rating (x-axis, e.g., attractiveness) to that model (y-axis).
+
 ```{r}
 #| fig-height: 10
 #| fig-width: 10
@@ -158,7 +136,6 @@ heatmap(std_neutral, "dominant", "Dominance")
 #| fig-width: 10
 
 heatmap(std_neutral, "memorable", "Memorableness")
- 
 ```
 
 #### Gender typicality
@@ -419,6 +396,42 @@ age |>
   
 ```
 
+### Actual vs perceived age
+
+Relate actual age to perceived modal age for each face
+```{r}
+age_perc <- age_modes |> 
+  mutate(age_mid = age_mode) |> 
+  separate(age_mid, into = c("age_start", "age_end"), sep = "-", convert = TRUE) |> 
+  mutate(age_perc = (age_start + age_end) / 2) |> 
+  select(-age_start, -age_end)
+
+age_by_face <- data_model |> 
+  dplyr::select(lab_id, model_id, age) |> 
+  rename(age_actual = age) |> 
+  left_join(age_perc, by = c("lab_id", "model_id"))
+```
+
+```{r}
+# Get stats
+age_by_face_cortest <- cor.test(age_by_face$age_actual, age_by_face$age_perc)
+age_by_face_r <- age_by_face_cortest$estimate
+age_by_face_p <- age_by_face_cortest$p.value
+label_text <- sprintf("r = %.2f, p = %.3f", age_by_face_r, age_by_face_p)
+```
+
+```{r}
+age_by_face |> 
+  filter(!is.na(age_actual) & !is.na(age_perc)) |> 
+  ggplot(aes(x = age_actual, y = age_perc)) +
+  geom_point() +
+  geom_smooth(method = "lm",  formula = y ~ x, se = TRUE, colour = "black") +
+  annotate("text", x = 65, y = 20, label = label_text, hjust = 0) +
+  labs(x = "Actual Age", y = "Perceived Age [Mode]") +
+  theme_bw()
+```
+
+
 ## Compile ratings
 ```{r}
 pilot_ratings <- data_model |> 
@@ -427,7 +440,10 @@ pilot_ratings <- data_model |>
 
 pilot_ratings_emotions <- emo_cat_props |> 
   left_join(emo_int_means, by = c("lab_id", "model_id", "model_expression"))
+```
 
+```{r}
 write_csv(pilot_ratings, "results/manyfaces-pilot-ratings-traits.csv")
 write_csv(pilot_ratings_emotions, "results/manyfaces-pilot-ratings-emotions.csv")
 ```
+

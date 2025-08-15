@@ -21,6 +21,33 @@ check_unique_values <- function(data,
   apply(rating_matrix, 2, function(x) length(unique(x)))
 }
 
+# Function to create heatmap visualisations
+heatmap <- function(data, exp_id, label) {
+  data |>
+    filter(exp %in% !!exp_id) |>
+    count(lab_id, model_id, dv) |>
+    ggplot(aes(x = dv, y = model_id, fill = n)) +
+    geom_tile() +
+    facet_wrap(~lab_id) +
+    scale_fill_viridis_c() +
+    labs(x = label, y = NULL, 
+         title = paste(label, "Ratings")) +
+    theme(legend.position = "none", 
+          axis.text.x = element_text(angle = 90))
+}
+
+# Function to get mode, frequency, proportion
+get_mode_info <- function(x) {
+  x <- na.omit(x)
+  tab <- table(x)
+  mode_val <- names(tab)[which.max(tab)]
+  freq <- max(tab)
+  prop <- freq / length(x)
+  
+  list(age_mode = mode_val, age_prop = prop)
+}
+
+
 #######################################################
 #################### ---- ICC ---- ####################
 #######################################################
