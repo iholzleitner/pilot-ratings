@@ -184,19 +184,18 @@ data_trait |>
   group_by(exp) |> 
   group_map(purrr::partial(calc_alpha_omega)) |> 
   bind_rows() |> 
-  mutate(across(where(is.numeric), round, 2))
+  mutate(across(where(is.numeric), \(x) round(x, 2)))
 ```
 
 ### Unstandardised trait ratings
 
 #### ICC
-Note: two participants (1x dominant ratings, 1 x trustworthy ratings) responded with only two values but were not caught by our "overly consistent filter". What do we want to do with them——just drop them here, or exclude them more generally as part of exclusions?
 ```{r}
 data_trait_unstd |> 
   group_by(exp) |> 
-  group_map(calc_icc, check_dropped_raters = TRUE) |> 
+  group_map(calc_icc, check_dropped_raters = FALSE) |> 
   bind_rows() |> 
-  mutate(across(where(is.numeric), ~ round(.x, 2)))
+  mutate(across(where(is.numeric), \(x) round(x, 2)))
 ```
 
 #### Alpha & omega
@@ -204,21 +203,20 @@ data_trait_unstd |>
 #| message: false
 data_trait_unstd |> 
   group_by(exp) |> 
-  group_map(calc_alpha_omega, check_dropped_raters = TRUE) |> 
+  group_map(calc_alpha_omega) |> 
   bind_rows() |> 
-  mutate(across(where(is.numeric), round, 2))
+  mutate(across(where(is.numeric), \(x) round(x, 2)))
 ```
 
 ### Emotion intensity ratings
 
 #### ICC
-Note: two more participants who responded with only two values (1 anger, 1 disgust participant)
 ```{r}
 data_emo_int |> 
   group_by(exp) |> 
-  group_map(calc_icc, check_dropped_raters = TRUE) |> 
+  group_map(calc_icc) |> 
   bind_rows() |> 
-  mutate(across(where(is.numeric), ~ round(.x, 2)))
+  mutate(across(where(is.numeric), \(x) round(x, 2)))
 ```
 
 #### Alpha & omega
@@ -227,9 +225,9 @@ data_emo_int |>
 #| message: false
 data_emo_int |> 
   group_by(exp) |> 
-  group_map(calc_alpha_omega, check_dropped_raters = TRUE) |> 
+  group_map(calc_alpha_omega) |> 
   bind_rows() |> 
-  mutate(across(where(is.numeric), round, 2))
+  mutate(across(where(is.numeric), \(x) round(x, 2)))
 ```
 
 

@@ -27,7 +27,7 @@ check_unique_values <- function(data,
 
 ### --- OBSERVED
 
-# Compute ICC(2,k) and ICC(2,1) using psych package
+# Compute ICC(2,k) using psych package
 calc_icc <- function(data,
                      group,
                      check_dropped_raters = FALSE) {
@@ -55,22 +55,14 @@ calc_icc <- function(data,
   if (n_raters_final >= 2) {
     icc_result <- suppressWarnings(psych::ICC(rating_matrix)$results)
     
-    icc2_row <- icc_result |> filter(type == "ICC2")
     icc2k_row <- icc_result |> filter(type == "ICC2k")
-    
-    icc_21 <- icc2_row$ICC
-    icc_21_lower <- icc2_row$`lower bound`
-    icc_21_upper <- icc2_row$`upper bound`
-    
+
     icc_2k <- icc2k_row$ICC
     icc_2k_lower <- icc2k_row$`lower bound`
     icc_2k_upper <- icc2k_row$`upper bound`
     
   } else {
-    icc_21 <- NA_real_
-    icc_21_lower <- NA_real_
-    icc_21_upper <- NA_real_
-    
+
     icc_2k <- NA_real_
     icc_2k_lower <- NA_real_
     icc_2k_upper <- NA_real_
@@ -83,9 +75,6 @@ calc_icc <- function(data,
            `ICC(2,k)` = icc_2k,
            `ICC(2,k): 2.5%` = icc_2k_lower,
            `ICC(2,k): 97.5%` = icc_2k_upper,
-           `ICC(2,1)` = icc_21,
-           `ICC(2,1): 2.5%` = icc_21_lower,
-           `ICC(2,1): 97.5%` = icc_21_upper,
            dropped_n = n_raters_initial - n_raters_final,
            dropped_ids = paste(dropped_raters_var, collapse = "; "))
   } else {
@@ -93,10 +82,7 @@ calc_icc <- function(data,
            n_raters = n_raters_final,
            `ICC(2,k)` = icc_2k,
            `ICC(2,k): 2.5%` = icc_2k_lower,
-           `ICC(2,k): 97.5%` = icc_2k_upper,
-           `ICC(2,1)` = icc_21,
-           `ICC(2,1): 2.5%` = icc_21_lower,
-           `ICC(2,1): 97.5%` = icc_21_upper)
+           `ICC(2,k): 97.5%` = icc_2k_upper)
   }
 }
 
