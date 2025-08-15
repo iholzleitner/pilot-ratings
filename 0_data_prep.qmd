@@ -230,7 +230,7 @@ data_model <- model_raw |>
                                       "chinese-indian-malay mixed", "mixed white & asian", "mix white/black",
                                       "white / middle-eastern", "white / middle eastern",
                                       "middle eastern/white") ~ "Mixed",
-                                    c("ninguno", "jewish", "not hispanic/latino") ~ "Abmiguous label",
+                                    c("ninguno", "jewish", "not hispanic/latino") ~ "Ambiguous label",
                                     .default = NA_character_)) |> 
   relocate(gender_rec, .after = gender) |> 
   relocate(ethnicity_rec, .after = ethnicity) |> 
@@ -459,6 +459,8 @@ exclusions |>
     values_to = "Number of participants"
   )
 ```
+
+Please note that multiple participants met more than one exclusion criterion (e.g., responded too quickly and failed attention checks); therefore, the counts for individual criteria do not sum to the total number of participants excluded.
 
 Exclude `r nrow(exclusions)` participants and remove attention checks from data.
 
