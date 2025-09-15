@@ -303,7 +303,7 @@ data_quest <- quest_raw |>
                                       "eurasian", "caribbean", "carribean", 
                                       "british asian american","chinese/uk",
                                       "latin european", "white hispanic", "race",
-                                       "american", "christian", "christianity") ~ "Abmiguous label",
+                                       "american", "christian", "christianity") ~ "Ambiguous label",
                                     .default = NA_character_)) |> 
    relocate(ethnicity_rec, .after = ethnicity)
 ```

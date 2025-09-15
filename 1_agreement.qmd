@@ -54,7 +54,7 @@ data_emo_cat <- data_exp |>
 
 ## Rater demographics
 
-Demographic data is available for 1685 of the total of 1909 raters.
+Demographic data is available for 1676 of the total of 1899 raters.
 
 ### Age and gender
 

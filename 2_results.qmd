@@ -102,7 +102,7 @@ std_neutral_means <- std_neutral |>
 
 #### Attractiveness
 
-Please note: The heatmaps visualise the frequency distribution of ratings for each model. Darker tiles indicate that more participants from a given lab (shown in separate panels) gave that particular rating (x-axis, e.g., attractiveness) to that model (y-axis).
+Please note: The heatmaps visualise the frequency distribution of ratings for each model (y-axis) from each lab (shown in separate panels). Darker tiles indicate that more raters gave a particular rating (x-axis) to that model.
 
 ```{r}
 #| fig-height: 10
@@ -129,13 +129,13 @@ heatmap(std_neutral, "trustworthy", "Trustworthiness")
 heatmap(std_neutral, "dominant", "Dominance")
 ```
 
-#### Memorableness
+#### Memorability
 
 ```{r}
 #| fig-height: 10
 #| fig-width: 10
 
-heatmap(std_neutral, "memorable", "Memorableness")
+heatmap(std_neutral, "memorable", "Memorability")
 ```
 
 #### Gender typicality
@@ -147,6 +147,22 @@ heatmap(std_neutral, "memorable", "Memorableness")
 heatmap(std_neutral, "gender-typical", "Gender Typicality")
 ```
 
+##### Perceived typicality vs self-reported gender
+
+```{r}
+gender <- std_neutral |> 
+  filter(exp == "gender-typical") |> 
+  left_join((data_model |> dplyr::select(lab_id, model_id, gender_rec)), by = c("lab_id", "model_id"))
+```
+
+```{r}
+gender |> 
+  ggplot(aes(x = dv, fill = gender_rec)) +
+  geom_histogram(binwidth = 1) +
+  scale_fill_manual(values = c("hotpink", "lightblue", "orchid", "gray")) +
+  labs(x = "Gender typicality",
+       fill = "Self-reported gender")
+```
 
 ## Unstandardised neutral trait ratings
 
@@ -277,9 +293,9 @@ emo_cat |>
   facet_wrap(~emo, axes = "all_x", drop = FALSE) +
   scale_x_discrete(labels = c("A", "D", "F", "H", "S", "U", "O")) +
   scale_fill_manual(values = c(rainbow, "grey"), drop = FALSE) +
-  labs(title = "Emotion Ratings",
+  labs(title = "Emotion categorisation",
        x = "",
-       fill = "Rated Emotion") +
+       fill = "Categorised as") +
   coord_cartesian(clip = "off") +
   theme(axis.ticks.x = element_blank())
 ```
@@ -446,4 +462,5 @@ pilot_ratings_emotions <- emo_cat_props |>
 write_csv(pilot_ratings, "results/manyfaces-pilot-ratings-traits.csv")
 write_csv(pilot_ratings_emotions, "results/manyfaces-pilot-ratings-emotions.csv")
 ```
+
 
