@@ -448,7 +448,7 @@ attn_checks_failed <- exp_long |>
          check_type = ifelse(exp_id == 1400, substr(check_type, 4, 6), check_type)) |>
   summarise(attn_checks_passed = mean(check_type == dv), 
             .by = c("session_id", "exp_id")) |> 
-  filter(attn_checks_passed < 5/7)
+  filter(attn_checks_passed < 6/7)
 ```
 
 #### Overview of exclusions
