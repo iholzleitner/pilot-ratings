@@ -1,0 +1,510 @@
+---
+title: "ManyFaces pilot ratings"
+subtitle: "Data prep: data cleaning and exclusions"
+format: 
+  html:
+    code-fold: true
+    df-print: paged
+    embed-resources: true
+    fig-height: 5
+    fig-width: 8
+    toc: true
+execute: 
+  error: true
+---
+
+```{r}
+#| message: false
+library(psych) # ICC, alpha, omega
+library(furrr) # run code parallel
+library(tidyverse)
+```
+
+```{r}
+# Load custom functions
+source("data/custom_functions.R")
+```
+
+## Project Structure
+
+Read in the full project structure from the project file to map experiment names to numbers. 
+
+```{r}
+proj <- jsonlite::read_json("data/project_1136_structure.json")
+
+exp_data <- purrr::map_df(proj, \(comp) {
+  if (comp$component_type == "exp") {
+     data.frame(
+       exp_id = comp$id,
+       name = comp$name,
+       res_name = comp$res_name,
+       instructions = comp$instructions,
+       question = comp$question,
+       exptype = comp$exptype,
+       trial_order = comp$trial_order,
+       total_stim = comp$total_stim,
+       random_stim = comp$random_stim,
+       trials = length(comp$trial),
+       stim = length(comp$stim)
+     )
+  } else {
+    NULL
+  }
+}) |>
+  mutate(exp = sub("ManyFaces? Pilot Ratings: ", "", res_name) |> trimws())
+
+
+trial_data <- purrr::map_df(proj, \(comp) {
+  if (comp$component_type == "exp") {
+    purrr::map_df(comp$trial, \(trial) {
+      data.frame(
+        exp_id = comp$id,
+        n = trial$trial_n,
+        name = trial$name, 
+        img_id = trial$center_img,
+        img_path = comp$stimuli[[as.character(trial$center_img)]]
+      )
+    })
+  } else {
+    NULL
+  }
+}) |>
+  mutate(name = sub("^(manyfaces|attention_checks)/", "", name))
+```
+
+```{r}
+exp_data |>
+  select(exp_id, exp, question, trials) |>
+  arrange(exp)
+```
+
+
+## Data Prep
+
+### Raw Data
+
+This workflow requires the data-raw directory, which is not shared on github. 
+
+This is the SQL for downloading the data from Experimentum. We need to download in chunks of 50000 rows to avoid file download limits on the site (not needed if downloading directly from SQL).
+
+``` sql
+SELECT 
+  session.id as session_id, project_id, exp.res_name as exp_name, exp_id, 
+  session.user_id, user.sex as user_sex, user.status as user_status,
+  ROUND(DATEDIFF(ed.dt, REPLACE(birthday, "-00","-01"))/365.25, 1) AS user_age,
+  trial.name as trial_name,
+  trial_n,
+  `order`,
+  dv,
+  rt,
+  ed.side,
+  ed.dt
+FROM session 
+  LEFT JOIN user USING (user_id)
+  LEFT JOIN exp_data AS ed ON ed.session_id = session.id
+  LEFT JOIN exp ON exp.id = ed.exp_id
+  LEFT JOIN trial USING (exp_id, trial_n)
+WHERE session.project_id = 1136
+  AND user.status IN ("guest", "registered")
+  AND exp_id IN (1384, 1400, 1399, 1398, 1401, 1402, 1403, 
+                 1404, 1405, 1397, 1390, 1389, 1388, 1387, 
+                 1386, 1385, 1382, 1381, 1380, 1379, 1377)
+LIMIT 50000
+OFFSET 0
+```
+
+```{r}
+#| eval: false
+
+# combine multiple downloads into one file
+exp_raw <- list.files("data-raw/exp", full.names = TRUE) |> 
+  read_csv(show_col_types = FALSE) |>
+  unique() |>
+  filter(user_status %in% c("guest", "registered"))
+
+write_csv(exp_raw, paste0("data-raw/ManyFaces-Pilot-Ratings-exps_", Sys.Date(), ".csv"))
+
+# get most recent files
+exp_file <- list.files("data-raw", "ManyFaces-Pilot-Ratings-exps",
+                       full.names = TRUE) |>
+  sort(decreasing = TRUE) |>
+  pluck(1)
+
+exp_raw <- read_csv(exp_file, show_col_types = FALSE) |>
+  filter(user_status %in% c("guest", "registered")) |>
+  unique()
+
+# get most recent files
+quest_file <- list.files("data-raw", "ManyFaces-Pilot-Ratings-quests", 
+                       full.names = TRUE) |>
+  sort(decreasing = TRUE) |>
+  pluck(1)
+
+quest_raw <- read_csv(quest_file, show_col_types = FALSE) |>
+  filter(user_status %in% c("guest", "registered")) |>
+  unique()
+
+# write to the data directory
+write_csv(exp_raw, "data/manyfaces-pilot-exp.csv")
+write_csv(quest_raw, "data/manyfaces-pilot-quest.csv")
+```
+
+
+### Reshape Data
+
+```{r}
+exp_raw <- read_csv("data/manyfaces-pilot-exp.csv",
+                    show_col_types = FALSE)
+
+ed <- exp_data |>
+  select(exp_id, exp, trials) |> 
+  rename(trials_total = trials)
+
+exp_long_raw <- exp_raw |>
+  select(session_id, exp_id, trial_name, dv, rt, dt) |>
+  unique() |>
+  mutate(trial_name = sub("^(manyfaces|attention_checks)/", "", trial_name)) |>
+  left_join(ed, by = "exp_id")
+```
+
+```{r}
+quest_raw <- read_csv("data/manyfaces-pilot-quest.csv",
+                      show_col_types = FALSE) |> 
+  dplyr::select(session_id, q_name, dv, endtime) |>
+  unique() |>
+  pivot_wider(names_from = q_name, values_from = dv) |>
+  mutate(age = as.integer(age))
+```
+
+
+```{r}
+model_raw <- read_csv("data/manyfaces-pilot-models.csv",
+                      show_col_types = FALSE)
+```
+
+### Preliminary data cleaning
+
+#### Model data
+
+```{r}
+data_model <- model_raw |> 
+  separate_wider_delim(ID,
+                       delim = "_",
+                       names = c("lab_id", "model_id"),
+                       too_many = "drop") |>
+  mutate(across(where(is.character), ~ na_if(.x, "NULL"))) |> 
+  # recode gender
+  mutate(gender = tolower(gender),
+         gender_rec = case_match(gender,
+                                 c("female", "mulher", "feminino", "female.",
+                                   "f", "mujer", "femenino", "trans woman", "femal") ~ "female",
+                                 c("homem", "masculino", "mascãºlino", "m") ~ "male",
+                                 c("sexo feminino, gãªnero fluido", "nã£o binã¡rio", "nã£o binã¡rio",
+                                   "genderfluid (amab)", "nonbinary") ~ "non-binary",
+                                 c("sexo feminino, gãªnero fluido",
+                                   "genderfluid (amab)") ~ "gender-fluid",
+                                 c("hetero cis", "NA") ~ NA_character_,
+                                 .default = gender),
+         ethnicity = tolower(ethnicity),
+         ethnicity_rec = case_match(ethnicity,
+                                    c("white", "branco", "branca", "caucasian", 
+                                      "white (italian)", "white british", "british", "white-french", 
+                                      "british white", "white european", "white-scottish", 
+                                      "white scottish", "white britisg", "german", "german,", 
+                                      "german, swedish", "german/argentinien", "dutch", "french", 
+                                      "scottish", "european", "eastern european", "croatian", 
+                                      "serbian", "romanian", "white - other", "meditrainian") ~ "White",
+                                    c("black", "preta", "negra", "african american", 
+                                      "african (mauritian)") ~ "Black",
+                                    c("asian", "asian (indian)", "south asian", "southasian", 
+                                      "east indian", "chinese", "chinese - east asian", "asian/chinese", 
+                                      "malaysian chinese", "malaysia chinese", "malaysian", 
+                                      "indian", "pakistani", "hindu", "british indian") ~ "Asian",
+                                    c("indigenous") ~ "Indigenous",
+                                    c("middle eastern", "arab", "east african middle eastern",
+                                      "israeli", "israeli.", "israel", "muslim", 
+                                      "turkish", "tã¼rkiye", "türkiye") ~ "Middle Eastern or North African (MENA)",
+                                    c("latino", "latina", "latina branca", "mexicana", "mexicano", 
+                                      "puerto rican/hispanic", "hispanic", "south american") ~ "Latine",
+                                    c("mixed", "pardo", "parda", "pardo - mixed race", "mixraces",
+                                      "chinese-indian-malay mixed", "mixed white & asian", "mix white/black",
+                                      "white / middle-eastern", "white / middle eastern",
+                                      "middle eastern/white") ~ "Mixed",
+                                    c("ninguno", "jewish", "not hispanic/latino") ~ "Ambiguous label",
+                                    .default = NA_character_)) |> 
+  relocate(gender_rec, .after = gender) |> 
+  relocate(ethnicity_rec, .after = ethnicity) |> 
+  # recode height and weight
+  # one person reported weight of 37 kg at 163 cm -- recode as NA? Would be a BMI of 13.9
+  mutate(height_cm = case_when(height_units == "cm" & as.numeric(height) < 100 ~ as.numeric(height) * 2.54, # likely mislabelled inches
+                               height_units == "in" & as.numeric(height) > 100 ~ as.numeric(height), # likely mislabelled cms
+                               height_units == "in" ~ as.numeric(height) * 2.54,
+                               height_units == "cm" ~ as.numeric(height),
+                               .default = NA_real_),
+         weight_kg = case_when(as.numeric(weight) == 0 ~ NA_real_,
+                               # Note: one participant indicated weight as 37kg and height as 163cm, which would mean BMI of ~14.0 - data entry error or legitimate value?
+                               weight_units == "lb" & as.numeric(weight) < 80 ~ as.numeric(weight),            # likely mislabelled kg
+                               weight_units == "lb" ~ as.numeric(weight) / 2.20462,
+                               weight_units == "kg" ~ as.numeric(weight),
+                               as.numeric(weight) == 0 ~ NA,
+                               .default = NA_real_)) |> 
+  relocate(height_cm, .after = height_units) |>
+  relocate(c(weight, weight_units, weight_kg), .after = height_cm)
+```
+
+#### Questionnaire data
+```{r}
+data_quest <- quest_raw |> 
+  # recode ethnicity
+  mutate(ethnicity = tolower(ethnicity),
+         ethnicity_rec = case_match(ethnicity,
+                                    c("white", "whitr", "blanco", "weiß",
+                                      "white/caucasian", "white caucasian", "white/caucasion",
+                                      "white / caucasian",  "caucasian/white", "caucasian (white)",
+                                      "whithe/caucasian", "caucasic", "caucasian", "caicasoan",
+                                      "caucasian canadian", "caucasian/greek",  
+                                      "white british caucasian", "white british caucasian",
+                                      "white british", "british", "white/british", "white - british",
+                                      "british/white", "welsh", "english", "irish", "scottish", 
+                                      "white european", "white/european", "white, southern european",
+                                      "white, eastern european", "european american", "eastern european",
+                                      "white slavic", "slavic", "white/polish", "polish", "polish/white",
+                                      "white, german", "white/greek", "greek/white", "greek", "white/italian",
+                                      "white/swedish", "white/estonian", "white other - romanian",
+                                      "white/spanish", "spanish", "spanish/white", "spanish-white") ~ "White",
+                                    c("black", "black african", "black/african",
+                                      "black/africa", "african/black", "africa/black",
+                                      "black/ african", "african black", "black-african", 
+                                      "african", "africa", "black south african",
+                                      "african american", "afican american",
+                                      "black: african american", "black american",
+                                      "black or african american", "african american/black", 
+                                      "black african american", "african/black american",
+                                      "black british",
+                                      "zulu", "kenyan", "nigeria",  
+                                      "colored", "coloured", "coloured south african") ~ "Black",
+                                    c("asian", "asia", "south asian", "east asian",
+                                      "asian/indian", "indian", "bangladeshi", "pakistani",
+                                      "sri lankan", "chinese", "japanese",
+                                      "filipino", "philippine", "vietnamese", "sundanese",
+                                      "indo-aryan", "indo-fijian", "british - indian",
+                                      "british asian", "british pakistani") ~ "Asian",
+                                    c("native american", "native hawaiian", "samoan") ~ "Indigenous / Pacific Islander",
+                                    c("arab", "middle eastern", "north african") ~ "MENA",
+                                    c("latino", "latina", "latinx", "latine", "latin", 
+                                      "hispanic", "hispanic/latino", "latinamerican", 
+                                       "preta", "brazilian") ~ "Latine",
+                                    c("mixed", "mixed race", "mix", "biracial",
+                                      "mixed black caribbean and white", "cape coloured",
+                                      "black/white", "white / puerto rican",
+                                      "white/ latino", "white & asian", 
+                                      "coloured / mixed race") ~ "Mixed",
+                                    c("mauritian", "belgium, asian", "black/british",
+                                      "eurasian", "caribbean", "carribean", 
+                                      "british asian american","chinese/uk",
+                                      "latin european", "white hispanic", "race",
+                                       "american", "christian", "christianity") ~ "Ambiguous label",
+                                    .default = NA_character_)) |> 
+   relocate(ethnicity_rec, .after = ethnicity)
+```
+
+#### Experimental data
+
+**Remove remove duplicate trials and incomplete data**
+
+```{r}
+#| echo: false
+initial_participants <- exp_long_raw |> 
+  count(session_id) |> 
+  count() |> 
+  pull(n)
+
+initial_completions <- exp_long_raw |> 
+  count(session_id, exp_id) |> 
+  count() |> 
+  pull(n)
+```
+
+We start with `r initial_participants` participants completing a total of `r initial_completions` experiments.
+
+Some participants completed more than the maximum amount of trials in an experiment. Duplicate trials were removed by only retaining participants' initial ratings of a particular stimulus.
+
+```{r}
+dupl_trials_rm <- exp_long_raw |>
+  arrange(session_id, exp_id, trial_name, trials_total, dt) |> 
+  distinct(session_id, exp_id, trial_name, trials_total, .keep_all = TRUE)
+```
+
+```{r}
+incomplete <- dupl_trials_rm |> 
+  count(session_id, exp_id, trials_total) |> 
+  filter(n < trials_total)
+
+complete <- dupl_trials_rm |> 
+  filter(!session_id %in% incomplete$session_id)
+```
+
+`r unique(incomplete$session_id) |> length()` participants did not complete all trials for a total of `r nrow(incomplete)` experiments.
+
+As can be seen from discrepancy between number of participants and number of completed experiments, some participants  completed more than one experiment. If participants completed more than one experiment, only data from the first was retained.
+```{r}
+dupl_exp_ids <- complete |> 
+  # Mark participants that participated twice and establish which exp they did first
+  group_by(session_id, exp_id) |> 
+  summarise(first_dt = min(dt), .groups = "drop") |>
+  group_by(session_id) |> 
+  mutate(n_exp = n()) |>
+  mutate(first_exp = exp_id[which.min(first_dt)]) |>
+  ungroup() |> 
+  filter(n_exp > 1 & exp_id != first_exp)
+```
+
+```{r}
+exp_long <- complete |> 
+   anti_join(dupl_exp_ids, by = c("session_id", "exp_id" = "first_exp"))
+```
+
+```{r}
+#| echo: false
+prelim_participants <- exp_long |> 
+  count(session_id) |> 
+  count() |> 
+  pull(n)
+```
+
+Prior to pre-registered exclusions, preliminary sample thus consisted of `r prelim_participants` participants.
+
+### Pre-registered exclusions
+
+#### Overly consistent responses
+Participants were excluded based on overly consistent responding, i.e. if they responded to at least 90% of trials identically. Please note that four additional participants with only two unique responses across all trials were identified during reliability analyses and excluded under the original 'overly consistent responding' criterion.
+
+```{r}
+overly_consistent_prereg <- exp_long |> 
+  filter(!startsWith(trial_name, "check_")) |>
+  summarise(
+    same_pcnt = max(tabulate(match(dv, unique(dv)))) / n(),
+    .by = c(session_id, exp_id)) |> 
+  dplyr::select(session_id, exp_id, same_pcnt) |> 
+  filter(same_pcnt >= 0.90)
+```
+
+```{r}
+overly_consistent_additional <- exp_long |> 
+  filter(!startsWith(trial_name, "check_")) |>
+  summarise(
+    n_unique = n_distinct(dv, na.rm = TRUE),
+    .by = c(session_id, exp_id)) |> 
+  dplyr::select(session_id, exp_id, n_unique) |> 
+  filter(n_unique <= 2)
+```
+
+```{r}
+overly_consistent <- overly_consistent_prereg |> 
+  full_join(overly_consistent_additional, by=c("session_id", "exp_id"))
+```
+
+#### Overly fast responses
+Participants were excluded based on overly fast responding, i.e. if their median reaction time fell below the 1st percentile of the overall distribution of median reaction times.
+
+```{r}
+med_rt <- exp_long |>
+  summarise(med_rt = median(rt),
+            .by = c(session_id, exp_id))
+
+overly_fast <- med_rt |> 
+  filter(med_rt < quantile(med_rt, probs = 0.01))
+```
+
+```{r}
+med_rt |> 
+  ggplot(aes(x = med_rt)) +
+  geom_histogram(bins = 100) +
+  geom_vline(xintercept = quantile(med_rt$med_rt, probs = 0.01), 
+             color = "red", linetype = "dashed", linewidth = 1) +
+  scale_x_continuous(breaks = seq(0, 10000, 500)) +
+  labs(x = "Median Reaction Time (ms)") +
+  theme_bw()
+```
+
+#### Self-reported honesty check
+Participants were excluded based on self-reported honesty check, i.e. if they responded not taking the study seriously vs. taking it authentically.
+
+```{r}
+honesty_check_failed <- data_quest |>
+  select(session_id, honesty_check = try) |>
+  unique() |> 
+  filter(honesty_check != 2)
+```
+
+#### Attention checks
+Participants were excluded if they failed two or more attention checks.
+
+```{r}
+attn_checks_failed <- exp_long |>
+  select(session_id:dv) |>
+  filter(grepl("check", trial_name)) |>
+  mutate(check_type = sub("check_[a-z0-9-]+_", "", trial_name),
+         check_type = ifelse(exp_id == 1400, substr(check_type, 4, 6), check_type)) |>
+  summarise(attn_checks_passed = mean(check_type == dv), 
+            .by = c("session_id", "exp_id")) |> 
+  filter(attn_checks_passed < 5/7)
+```
+
+#### Overview of exclusions
+
+```{r}
+exclusions <- overly_consistent |> 
+  full_join(overly_fast, by = c("session_id", "exp_id")) |> 
+  full_join(honesty_check_failed, by = c("session_id")) |> 
+  full_join(attn_checks_failed, by = c("session_id", "exp_id"))
+```
+
+```{r}
+exclusions |> 
+  summarise(
+    `Overly consistent response` = sum(!is.na(same_pcnt)),
+    `RT below cutoff` = sum(!is.na(med_rt)),
+    `Failed honesty check` = sum(!is.na(honesty_check)),
+    `Failed 2 or more of 7 attention checks` = sum(!is.na(attn_checks_passed)),
+    "Total exclusions" = n()
+  ) |> 
+  pivot_longer(
+    cols = everything(),
+    names_to = "Reason for exclusion",
+    values_to = "Number of participants"
+  )
+```
+
+Please note that multiple participants met more than one exclusion criterion (e.g., responded too quickly and failed attention checks); therefore, the counts for individual criteria do not sum to the total number of participants excluded.
+
+Exclude `r nrow(exclusions)` participants and remove attention checks from data.
+
+```{r}
+data_exp <- exp_long |> 
+  anti_join(exclusions, by = "session_id") |>
+  filter(!grepl("check_", trial_name))
+```
+
+After exclusions, there were `r unique(data_exp$session_id) |> length()` participants.
+
+Number of participants per study:
+```{r}
+data_exp |>
+  summarise(.by = c(exp, session_id)) |>
+  count(exp)
+```
+
+### Compile and save data
+```{r}
+# Rating data
+write_csv(data_exp, "data/manyfaces-pilot-exp_cleaned.csv")
+
+# Questionnaire data
+data_quest |> 
+  filter(session_id %in% data_exp$session_id) |>
+  write_csv("data/manyfaces-pilot-quest_cleaned.csv")
+
+# Model data
+write_csv(data_model, "data/manyfaces-pilot-models_cleaned.csv")
+```

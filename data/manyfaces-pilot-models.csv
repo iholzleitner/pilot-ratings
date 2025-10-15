@@ -1,0 +1,212 @@
+﻿ID,std_ang,std_dis,std_fea,std_hap,std_neu,std_sad,std_sur,unstd_neu,age,ethnicity,face_shape,face_shape-specific,gender,height,height_units,makeup_blush,makeup_concealer,makeup_eyebrow,makeup_eyelashes,makeup_eyes,makeup_foundation,makeup_lips,makeup_permanent,makeup_semipermanent,weight,weight_units
+MF0004_0001,1,1,1,1,1,1,1,1,24,white,1,NA,female,164,cm,1,2,1,1,1,1,1,1,1,58,kg
+MF0004_0002,1,1,1,1,1,1,1,1,27,white,1,NA,male,178,cm,1,1,1,1,1,1,1,1,1,80,kg
+MF0004_0003,1,1,1,1,1,1,1,1,22,german,1,NA,female,166,cm,1,1,1,1,1,1,1,1,1,51,kg
+MF0004_0004,1,1,1,1,1,1,1,1,23,white,1,NA,female,161,cm,1,1,1,1,1,1,1,1,1,65,kg
+MF0004_0005,1,1,1,1,1,1,1,1,25,white,1,no,male,174,cm,1,1,1,1,1,2,1,1,1,87,kg
+MF0004_0006,1,1,1,1,1,1,1,1,25,white,2,wisdom teeth extraction (swollen afterwards),female,162,cm,1,1,1,1,1,1,1,1,1,53,kg
+MF0004_0007,1,1,1,1,1,1,1,1,27,white,2,"scars (nose, above left eyebrow, below lip)",female,170,cm,1,1,1,1,1,1,1,1,1,66,kg
+MF0004_0008,1,1,1,1,1,1,1,1,26,white,1,NA,male,182,cm,1,1,1,1,1,1,1,1,1,82,kg
+MF0004_0009,1,1,1,1,1,1,1,1,NA,NA,NA,NA,female,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA
+MF0004_0010,1,1,1,1,1,1,1,1,27,white,1,NA,female,171,cm,1,1,1,1,1,1,1,1,1,70,kg
+MF0005_0001,1,1,1,1,1,1,1,1,29,Branco,1,NA,Homem,183,cm,1,1,1,1,1,1,1,1,1,85,kg
+MF0005_0002,1,1,1,1,1,1,1,1,27,Parda,1,NA,Mulher,161,cm,1,1,1,1,1,2,1,2,1,48,kg
+MF0005_0003,1,1,1,1,1,1,1,1,20,Pardo,1,NA,Homem,66,cm,1,1,1,1,1,1,1,1,1,68,kg
+MF0005_0004,1,1,1,1,1,1,1,1,29,Pardo,1,NA,Homem,175,cm,1,1,1,1,1,1,1,1,1,87,kg
+MF0005_0005,1,1,1,1,1,1,1,1,20,Branco,1,NA,Homem,176,cm,1,1,1,1,1,1,1,1,1,71,kg
+MF0005_0006,1,1,1,1,1,1,1,1,31,Parda,1,NA,Mulher,172,cm,1,1,1,1,1,1,2,1,1,67,kg
+MF0005_0007,1,1,1,1,1,1,1,1,26,Branca,2,Uso aparelho ortodÃ´ntico,Mulher,173,cm,1,1,1,1,1,1,1,1,1,90,kg
+MF0005_0008,1,1,1,1,1,1,1,1,27,Pardo,1,NA,Homem,166,cm,1,1,1,1,1,1,1,1,1,80,kg
+MF0005_0009,1,1,1,1,1,1,1,1,22,Preta,2,Aparelho ortodÃ´ntico.,Mulher,160,cm,1,1,1,1,1,1,1,2,1,49,kg
+MF0005_0010,1,1,1,1,1,1,1,1,27,Pardo,1,NA,Homem,75,cm,1,1,1,1,1,1,1,1,1,97,kg
+MF0006_0001,1,1,0,0,0,0,0,1,41,pardo - mixed race,1,nÃ£o,Masculino,176,cm,1,1,1,1,1,1,1,1,1,86,kg
+MF0006_0002,1,1,1,1,1,1,1,1,22,Branco,1,NA,"Sexo feminino, gÃªnero fluido",174,cm,1,1,1,1,1,1,1,1,1,78,kg
+MF0006_0003,1,1,1,1,1,1,1,0,22,Branca,2,Cirurgia de correÃ§Ã£o de orelha de abano,NÃ£o BinÃ¡rio,167,cm,1,1,1,1,1,1,1,1,1,69,kg
+MF0006_0004,1,1,1,1,1,1,1,0,37,negra,1,nenhum,NÃ£o binÃ¡rio,201,cm,1,1,1,1,1,1,1,1,1,110,kg
+MF0006_0005,1,1,1,1,1,1,1,1,23,latina branca,2,Utilizei aparelho ortodÃ´ntico desde meus 5 anos atÃ© hoje.,feminino,166,cm,1,1,1,1,1,1,1,1,1,73,kg
+MF0006_0006,1,1,1,1,1,1,1,1,25,Branca,1,NA,Masculino,179,cm,1,1,1,1,1,1,1,1,1,68,kg
+MF0006_0007,1,1,1,1,1,1,1,1,24,branca,1,NA,feminino,153,cm,1,1,1,1,1,1,1,1,1,44,kg
+MF0006_0008,1,1,1,1,1,1,1,0,30,branco,1,NA,homem,165,cm,1,1,1,1,1,1,1,1,1,60,kg
+MF0006_0009,1,1,1,1,1,1,1,0,27,Branco,1,NA,Hetero Cis,169,cm,1,1,1,1,1,1,1,1,1,61,kg
+MF0006_0010,1,1,1,1,1,1,1,1,23,branca,2,cirurgia para correÃ§Ã£o da orelha (plÃ¡stica),feminino,162,cm,1,1,1,1,1,1,1,1,1,57,kg
+MF0006_0011,1,1,1,1,1,1,1,0,25,branco,1,NA,masculino,180,cm,1,1,1,1,1,1,1,1,1,72,kg
+MF0006_0012,1,1,1,1,1,1,1,0,22,mixraces,1,NA,feminino,163,cm,1,1,1,1,1,1,1,1,1,64,kg
+MF0006_0013,1,1,1,1,1,1,1,0,22,Parda,1,NA,Feminino,163,cm,1,1,1,1,1,1,1,1,1,54,kg
+MF0007_0001,0,0,0,0,1,0,0,0,28,Caucasian,2,NA,Male,68,in,1,1,1,1,1,1,1,1,1,150,lb
+MF0007_0002,1,1,1,0,1,1,1,0,30,White (Italian),1,NA,Female,67,in,1,1,1,1,2,1,1,1,1,127,lb
+MF0007_0003,1,1,1,1,1,1,1,0,29,African (Mauritian),1,NA,Female,62,in,1,1,1,1,1,1,1,1,1,160,lb
+MF0007_0004,0,0,0,0,0,0,0,1,36,White,1,NA,Female,65,in,1,1,1,1,2,2,1,1,1,NULL,NULL
+MF0007_0005,1,1,1,1,1,1,1,0,44,East Indian,2,Braces at age 14.,Female,67,in,1,1,1,1,1,1,1,1,1,NULL,NULL
+MF0007_0006,0,0,0,0,0,0,0,1,NULL,South Asian,NA,NA,Female,NULL,NULL,NA,NA,NA,NA,NA,NA,NA,NA,NA,NULL,NULL
+MF0007_0007,0,0,0,0,0,0,0,1,54,NA,1,NA,Female,63,in,1,1,1,1,2,1,1,1,1,NULL,NULL
+MF0007_0008,1,1,1,1,1,1,1,0,38,Chinese,1,NA,Female,160,cm,1,1,1,1,1,1,1,1,1,130,lb
+MF0007_0009,0,0,0,0,0,0,0,1,46,White,1,NA,Female,62,in,1,1,1,1,1,2,1,1,1,NULL,NULL
+MF0007_0010,0,0,0,0,0,0,0,1,37,East African Middle Eastern,1,NA,Female,64,in,1,1,1,1,1,1,1,1,1,NULL,NULL
+MF0008_0002,1,1,1,1,1,1,1,1,20,South Asian,1,NA,Female,167,cm,1,1,1,1,1,1,1,1,1,130,lb
+MF0008_0004,1,1,1,1,1,1,1,1,19,East indian,1,NA,Male,178,cm,1,1,1,1,1,1,1,1,1,185,lb
+MF0008_0005,1,1,1,1,1,1,1,1,18,CHINESE - EAST ASIAN,1,NA,FEMALE,163,cm,1,1,1,1,1,1,1,1,1,125,lb
+MF0008_0006,1,1,1,1,1,1,1,1,18,CAUCASIAN,1,NA,FEMALE,163,cm,1,1,1,1,1,2,1,1,1,110,lb
+MF0008_0007,1,1,1,1,1,1,1,1,20,South asian,1,N/A,Male,191,cm,1,1,1,1,1,1,1,1,1,170,lb
+MF0008_0008,1,1,1,1,1,1,1,1,21,south asian,1,NA,male,188,cm,1,1,1,1,1,1,1,1,1,95,kg
+MF0008_0009,1,1,1,1,1,1,1,1,20,South asian,1,na,female,173,cm,1,1,1,1,1,1,1,1,1,65,kg
+MF0008_0010,1,1,1,1,1,1,1,1,20,south asian,2,SLIGHT CHANGE IN MID UPPER LIP,female,168,cm,1,1,1,1,1,1,1,2,1,58,kg
+MF0008_0011,1,1,1,1,1,1,1,1,20,south Asian,1,na,Male,188,in,1,1,1,1,1,1,1,1,1,72,kg
+MF0008_0012,1,1,1,1,1,1,1,1,18,south asian,1,na,female,163,cm,1,1,1,1,2,1,2,1,1,37,kg
+MF0010_0001,1,1,1,1,1,1,1,1,27,TÃ¼rkiye,NA,NA,female,NULL,NULL,1,1,1,1,1,1,1,1,1,NULL,NULL
+MF0010_0002,1,1,1,1,1,1,1,1,18,german,1,NA,female,NULL,NULL,1,1,1,1,1,1,1,1,1,NULL,NULL
+MF0010_0003,1,1,1,1,1,1,1,1,62,NA,NA,NA,female,NULL,NULL,1,1,1,1,1,1,1,1,1,NULL,NULL
+MF0010_0004,1,1,1,1,1,1,1,1,30,tÃ¼rkiye,NA,NA,female,NULL,NULL,1,1,1,1,1,1,1,1,1,NULL,NULL
+MF0010_0005,1,1,1,1,1,1,1,1,44,NA,1,NA,FEMALE,NULL,NULL,1,1,1,1,1,1,1,1,1,NULL,NULL
+MF0010_0006,1,1,1,1,1,1,1,1,NA,NA,NA,NA,female,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA
+MF0010_0007,1,1,1,1,1,1,1,1,NA,NA,NA,NA,female,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA
+MF0010_0008,1,1,1,1,1,1,1,1,63,NA,NA,NA,FEMALE,NULL,NULL,1,1,1,1,1,1,1,1,1,NULL,NULL
+MF0010_0009,1,1,1,1,1,1,1,1,60,NA,NA,NA,FEMALE,NULL,NULL,1,1,1,1,1,1,1,1,1,NULL,NULL
+MF0010_0010,1,1,1,1,1,1,1,1,80,NA,NA,NA,MALE,NULL,NULL,1,1,1,1,1,1,1,1,1,NULL,NULL
+MF0010_0011,1,1,1,1,1,1,1,1,33,GERMAN,1,NA,MALE,NULL,NULL,1,1,1,1,1,1,1,1,1,NULL,NULL
+MF0010_0012,1,1,1,1,1,1,1,1,27,TURKISH,1,NA,FEMALE,NULL,NULL,1,1,1,1,1,1,1,1,1,NULL,NULL
+MF0010_0013,1,1,1,1,1,1,1,1,65,GERMAN,NA,NA,FEMALE,NULL,NULL,1,1,1,1,1,1,1,1,1,NULL,NULL
+MF0010_0014,1,1,1,1,1,1,1,1,NA,NA,NA,NA,male,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA
+MF0011_0001,1,1,1,1,1,1,1,0,26,German,1,"Brocken nose, But no Sugery",Female,173,cm,1,1,1,1,1,1,1,1,1,108,kg
+MF0011_0002,1,1,1,1,1,1,1,1,25,German,1,/,female,174,cm,2,2,2,1,2,1,2,1,1,62,kg
+MF0011_0003,1,1,1,1,1,1,1,1,26,german,1,NA,female,179,cm,1,1,2,1,1,1,1,1,1,56,kg
+MF0011_0004,1,1,1,1,1,1,1,1,24,german/argentinien,1,no,female,180,cm,1,1,1,1,1,1,1,1,1,63,kg
+MF0011_0005,1,1,1,1,1,1,1,0,22,German,1,NA,Male,180,cm,1,1,1,1,1,1,1,1,1,75,kg
+MF0011_0006,1,1,1,1,1,1,1,1,25,caucasian,2,wisdom teeth removal,male,188,cm,1,1,1,1,1,1,1,1,1,89,kg
+MF0011_0007,1,1,1,1,1,1,1,0,24,german,1,NA,female,175,cm,1,2,1,1,1,1,1,1,1,78,kg
+MF0011_0008,1,1,1,1,1,1,1,1,27,caucasian,1,no,female,178,cm,1,1,1,1,1,1,1,1,1,70,kg
+MF0011_0009,1,1,1,1,1,1,1,1,31,german,1,NA,male,169,cm,1,1,1,1,1,1,1,1,1,80,kg
+MF0011_0010,1,1,1,1,1,1,1,0,30,caucasian,1,NA,NA,167,cm,1,1,1,1,1,1,1,1,1,60,kg
+MF0011_0011,1,1,1,1,1,1,1,1,23,"german, swedish",1,no,female,170,cm,1,2,1,1,1,1,1,1,1,85,kg
+MF0012_0001,1,1,1,1,1,1,1,1,26,Israeli,1,-,Female,173,cm,1,1,1,1,1,1,1,1,1,65,kg
+MF0012_0002,1,1,1,1,1,1,1,1,25,israeli,1,-,male,193,cm,1,1,1,1,1,1,1,1,1,130,kg
+MF0012_0003,1,1,1,1,1,1,1,1,24,israel,1,NA,female,162,cm,1,1,1,1,1,1,1,1,1,71,kg
+MF0012_0004,1,1,1,1,1,1,1,1,21,Israeli,1,NA,female,157,cm,1,1,1,1,1,1,1,1,1,52,kg
+MF0012_0005,0,1,1,1,1,1,1,1,29,Israeli,1,-,Female,164,cm,1,1,1,1,1,1,1,1,1,60,kg
+MF0012_0006,1,1,1,1,1,1,1,1,25,israeli,1,NA,male,182,cm,1,1,1,1,1,1,1,1,1,77,kg
+MF0012_0007,1,1,1,1,1,1,1,1,25,Israeli,1,-,male,193,cm,1,1,1,1,1,1,1,1,1,130,kg
+MF0012_0008,1,1,0,1,1,1,1,1,26,Middle eastern/White,1,-,Female,173,cm,1,1,1,1,1,1,1,1,1,65,kg
+MF0012_0009,1,1,0,1,1,0,1,1,22,Muslim,1,-,Female,158,cm,1,1,1,1,2,1,2,1,1,52,kg
+MF0012_0010,1,1,1,1,1,1,1,1,29,Israeli.,1,-,Female.,164,cm,1,1,1,1,1,1,1,1,1,60,kg
+MF0013_0002,1,1,1,1,1,1,1,1,23,Chinese,1,NA,Female,160,cm,1,1,1,1,1,1,1,1,1,50,kg
+MF0013_0003,1,1,1,1,1,1,1,1,34,Chinese,1,no,female,156,cm,1,1,2,1,1,1,1,1,1,60,kg
+MF0013_0004,1,1,1,1,1,1,1,1,22,Chinese,1,NA,Male,170,cm,1,1,1,1,1,1,1,1,1,75,kg
+MF0013_0005,1,1,1,1,1,1,1,1,24,Chinese,1,NA,Female,162,cm,1,1,1,1,1,1,1,1,2,53,kg
+MF0013_0006,1,1,1,1,1,1,1,1,24,Chinese,1,NA,Male,175,cm,1,1,1,1,1,1,1,1,1,70,kg
+MF0013_0007,1,1,1,1,1,1,1,1,35,Chinese,1,NA,Female,162,cm,1,1,1,1,1,1,1,1,1,66,kg
+MF0013_0008,1,1,1,1,1,1,1,1,23,Malaysian Chinese,1,NA,Female,165,cm,1,1,1,1,1,1,1,1,1,63,kg
+MF0013_0009,1,1,1,1,1,1,1,1,32,WHITE,1,NA,MALE,186,cm,1,1,1,1,1,1,1,1,1,70,kg
+MF0013_0010,1,1,1,1,1,1,1,1,27,Chinese-Indian-Malay mixed,1,NA,F,160,cm,1,1,1,1,1,1,1,1,1,55,kg
+MF0013_0011,1,1,1,1,1,1,1,1,40,White,1,NA,female,166,cm,1,2,1,1,1,2,1,1,1,80,kg
+MF0013_0012,0,0,0,1,1,0,0,1,21,Chinese,1,N/A,Female,158,cm,1,2,1,1,1,1,1,1,1,0,kg
+MF0014_0001,1,1,0,1,1,0,1,1,23,Chinese,1,NA,Female,162,cm,1,1,1,1,1,1,1,1,1,62,kg
+MF0014_0002,1,1,0,1,1,1,1,1,22,Chinese,1,NA,Male,164,cm,1,1,1,1,1,1,1,1,1,64,kg
+MF0014_0003,1,0,0,1,1,1,1,1,28,Chinese,1,NA,Female,165,cm,1,1,1,1,1,1,2,1,1,53,kg
+MF0014_0004,1,1,0,1,1,1,0,1,24,chinese,1,NA,Male,181,cm,1,1,1,1,1,1,1,1,1,67,kg
+MF0014_0005,1,0,0,1,1,1,1,1,24,Chinese,1,-,Male,176,cm,1,1,1,1,1,1,1,1,1,60,kg
+MF0014_0006,1,1,0,1,1,1,1,1,20,Chinese,1,NA,Male,170,cm,1,1,1,1,1,1,1,1,1,120,kg
+MF0014_0007,1,1,0,1,1,1,1,1,21,Chinese,1,NA,Male,185,cm,1,1,1,1,1,1,1,1,1,75,kg
+MF0014_0008,1,1,0,1,1,0,1,1,20,Chinese,1,NA,Female,172,cm,1,1,1,1,1,1,1,1,1,NULL,NULL
+MF0014_0009,1,1,0,1,1,1,1,1,19,Malaysian,1,NA,Genderfluid (AMAB),165,cm,1,1,1,1,1,1,1,1,1,59,kg
+MF0014_0010,1,0,0,1,1,1,0,1,27,Chinese,1,NA,Male,175,cm,1,1,1,1,1,1,1,1,1,70,kg
+MF0015_0001,1,1,1,1,1,1,1,1,39,South Asian,1,n/a,male,178,cm,1,1,1,1,1,1,1,1,1,130,kg
+MF0015_0002,1,1,1,1,1,1,1,1,20,Chinese,1,-,Female,163,cm,1,1,1,1,1,1,1,1,1,80,kg
+MF0015_0003,1,1,1,1,1,1,1,1,21,CHINESE,1,NA,MALE,170,cm,1,1,1,1,1,1,1,1,1,86,kg
+MF0015_0004,1,1,1,1,1,1,1,1,21,Chinese,1,NA,Male,169,cm,1,1,1,1,1,1,1,1,1,102,kg
+MF0015_0005,1,1,1,1,1,1,1,1,20,CHINESE,1,NA,FEMALE,155,cm,1,1,1,1,1,1,1,1,1,50,kg
+MF0015_0006,1,1,1,1,1,1,1,0,45,Hindu,1,nil,Male,169,cm,1,1,1,1,1,1,1,1,1,89,kg
+MF0015_0007,1,1,1,1,1,1,1,1,20,Chinese,1,NA,Female,149,cm,1,1,1,1,1,1,1,1,1,53,kg
+MF0015_0008,1,1,1,1,1,1,1,1,23,MALAYSIAN CHINESE,1,nil,MALE,176,cm,1,1,1,1,1,1,1,1,1,67,kg
+MF0015_0009,1,1,1,1,1,1,1,1,20,malaysian,1,NA,female,153,cm,1,1,1,1,1,1,1,1,1,54,kg
+MF0015_0010,1,1,1,1,1,1,1,1,22,Chinese,1,NA,Female,167,cm,1,1,1,1,1,1,2,2,1,52,kg
+MF0015_0011,1,1,1,1,1,1,1,0,21,MALAYSIA CHINESE,1,-,MALE,171,cm,1,1,1,1,1,1,1,1,1,63,kg
+MF0015_0012,1,1,1,1,1,1,1,1,21,Malaysian Chinese,1,NA,female,174,cm,1,1,1,1,1,1,1,1,1,58,kg
+MF0015_0013,1,1,1,1,1,1,1,1,22,Chinese,1,NA,Female,165,cm,1,1,1,1,1,1,1,1,1,NULL,NULL
+MF0016_0001,1,1,1,1,1,1,1,1,23,ninguno,1,NA,mujer,170,cm,1,1,1,1,1,1,1,1,1,53,kg
+MF0016_0002,1,1,1,1,1,1,1,1,23,Ninguno,1,NA,Femenino,150,cm,1,1,1,1,1,1,1,1,1,50,kg
+MF0016_0003,1,1,1,1,1,1,1,1,20,MEXICANA,1,NA,FEMENINO,155,cm,1,1,1,1,1,2,1,1,1,45,kg
+MF0016_0004,1,1,1,1,1,1,1,1,24,Mexicano,1,NA,MascÃºlino,175,cm,1,1,1,1,1,1,1,1,1,89,kg
+MF0016_0005,1,1,1,1,1,1,1,1,22,Ninguno,1,NA,Masculino,175,cm,1,1,1,1,1,1,1,1,1,68,kg
+MF0016_0006,1,1,1,1,1,1,1,1,22,latino,2,Ortodoncia,Masculino,179,cm,2,1,1,1,1,1,1,1,1,71,kg
+MF0016_0007,1,1,1,1,1,1,1,1,22,NINGUNO,2,ME FRACTURÃ‰ EL TABIQUE DE LA NARIZ,FEMENINO,152,cm,1,1,1,1,1,1,1,1,1,46,kg
+MF0016_0008,1,1,1,1,1,1,1,1,48,Mexicana,1,NA,Mujer,162,cm,2,2,1,1,1,2,1,1,1,63,kg
+MF0016_0009,1,1,1,1,1,1,1,1,28,Latino,1,NA,Masculino,163,cm,1,1,1,1,1,1,1,1,1,56,kg
+MF0016_0010,1,1,1,1,1,1,1,1,21,NINGUNO,1,NA,FEMENINO,156,cm,1,1,1,1,1,1,1,1,1,60,kg
+MF0017_0004,1,1,1,1,1,1,1,1,18,Caucasian,1,NA,Male,174,cm,1,1,1,1,1,1,1,1,1,74,kg
+MF0017_0005,1,1,1,1,1,1,1,1,20,Eastern European,1,NA,Female,168,cm,1,1,1,1,1,1,1,1,1,53,kg
+MF0017_0006,1,1,1,1,1,1,1,1,35,South american,1,NA,Female,160,cm,2,2,1,1,2,2,2,1,1,50,kg
+MF0017_0007,0,0,0,0,1,0,0,1,24,Dutch,1,NA,Male,181,cm,1,1,1,1,1,1,1,1,1,82,kg
+MF0017_0008,1,1,1,1,1,1,1,1,23,White,1,NA,Male,184,cm,1,1,1,1,1,1,1,1,1,62,kg
+MF0017_0009,1,1,1,1,1,0,0,1,18,Turkish,1,No,Female,170,cm,1,1,1,1,2,1,1,1,1,60,kg
+MF0017_0010,0,0,0,0,1,0,0,1,19,White,2,Orthodontic work to bring teeth forward\n,Male,186,cm,1,1,1,1,1,1,1,1,1,105,kg
+MF0017_0011,0,0,0,0,1,0,0,1,18,White,2,I have had braces in the past,Female,62,in,1,1,1,1,1,1,1,1,1,135,lb
+MF0017_0013,0,0,0,0,1,0,0,1,19,Croatian,1,NA,Female,163,cm,1,1,1,1,1,1,1,1,1,66,kg
+MF0018_0001,1,1,1,1,1,1,1,1,22,serbian,1,NA,m,183,cm,1,1,1,1,1,1,1,1,1,85,kg
+MF0018_0002,1,1,1,1,1,1,1,1,22,serbian,2,scar on forehead\n,f,172,cm,1,1,1,1,1,1,1,1,1,60,kg
+MF0018_0003,1,1,1,1,1,1,1,1,23,serbian,1,NA,f,164,cm,1,1,1,1,1,1,1,1,1,56,kg
+MF0018_0004,1,1,1,1,1,1,1,1,23,serbian,1,NA,f,173,cm,1,1,1,1,1,1,1,1,1,87,kg
+MF0018_0005,1,1,1,1,1,1,1,1,29,serbian,1,NA,f,169,cm,1,1,1,1,1,1,1,1,1,54,kg
+MF0018_0006,1,1,1,1,1,1,1,1,33,serbian,1,NA,m,187,cm,1,1,1,1,1,1,1,1,1,92,kg
+MF0018_0007,1,1,1,1,1,1,1,1,33,serbian,1,NA,f,173,cm,1,1,1,1,1,1,1,1,1,73,kg
+MF0018_0008,1,1,1,1,1,1,1,1,37,serbian,1,NA,m,190,cm,1,1,1,1,1,1,1,1,1,72,kg
+MF0018_0009,1,1,1,1,1,1,1,0,26,serbian,1,NA,f,159,cm,1,1,1,1,1,1,1,2,1,54,kg
+MF0018_0010,1,1,1,1,1,1,1,1,27,serbian,1,NA,f,175,cm,1,1,1,1,1,1,1,1,1,58,kg
+MF0018_0011,1,1,1,1,1,1,1,1,22,serbian,1,NA,m,170,cm,1,1,1,1,1,1,1,1,1,80,kg
+MF0021_0001,1,1,1,1,1,1,1,1,25,Romanian,1,NA,F,161,cm,1,1,1,1,1,1,1,1,1,54,kg
+MF0021_0002,1,1,1,1,1,1,1,1,23,Pakistani,2,Nose operation,Female,150,cm,1,1,1,1,1,1,1,1,1,55,kg
+MF0021_0003,0,0,0,1,1,0,0,1,21,White - other,1,NA,Female,165,cm,1,1,1,1,1,1,1,1,1,65,kg
+MF0021_0004,1,1,1,1,1,1,1,1,20,Pakistani,1,NA,Male,170,cm,1,1,1,1,1,1,1,1,1,71,kg
+MF0021_0005,0,0,0,1,1,1,1,1,19,Indian,1,NA,Female,153,cm,1,1,1,1,1,1,1,1,1,50,kg
+MF0021_0006,1,1,1,1,1,1,1,1,19,Indian,1,NA,Female,169,cm,1,1,1,1,1,1,1,1,1,65,kg
+MF0021_0007,1,1,1,1,1,1,1,1,20,Indian,1,NA,Female,160,cm,1,1,1,1,1,1,1,1,1,63,kg
+MF0021_0008,1,1,1,1,1,1,1,1,20,British Indian,1,NA,Male,177,cm,1,1,1,1,1,1,1,1,1,60,kg
+MF0021_0009,1,1,1,1,1,1,1,1,32,Black,1,NA,Male,180,cm,1,1,1,1,1,1,1,1,1,95,kg
+MF0021_0010,1,1,1,1,1,1,1,1,19,Indian,1,NA,Male,68,in,1,1,1,1,1,1,1,1,1,61,kg
+MF0022_0001,0,0,0,1,1,0,0,1,36,White British,1,NA,M,185,cm,1,1,1,1,1,1,1,1,1,85,kg
+MF0022_0002,0,0,0,1,1,0,0,1,24,White,1,NA,Female,178,cm,1,1,1,1,2,1,1,1,1,85,kg
+MF0022_0003,0,0,0,1,1,0,0,1,20,Asian (Indian),1,NA,Female,158,cm,1,1,1,1,1,1,1,1,1,60,kg
+MF0022_0004,0,0,0,1,1,0,0,1,25,White British,1,NA,Non-Binary,173,cm,1,1,1,1,1,1,1,1,1,70,kg
+MF0022_0005,0,0,0,1,1,0,0,1,31,White British,2,Broken Nose,Male,183,cm,1,1,1,1,1,1,1,1,1,93,kg
+MF0022_0006,0,0,0,1,1,0,0,1,19,Hispanic,1,NA,Male,171,cm,1,1,1,1,1,1,1,1,1,54,kg
+MF0022_0007,0,0,0,1,1,0,0,1,24,White British,1,NA,non-binary,170,cm,1,2,2,1,2,1,1,1,1,69,kg
+MF0022_0008,0,0,0,1,1,0,0,1,20,White British,2,Braces to correct overbite,Male,175,cm,1,1,1,1,1,1,1,1,1,62,kg
+MF0022_0009,0,0,0,1,1,0,0,1,34,White British,2,Broken Nose,Male,173,cm,1,1,1,1,1,1,1,1,1,69,kg
+MF0022_0010,0,0,0,1,1,0,0,1,20,Mixed White & Asian,1,NA,Female,173,cm,1,1,1,1,1,1,1,1,1,63,kg
+MF0023_0001,1,1,1,1,1,1,1,1,37,BRITISH WHITE,1,N/A,FEMALE,164,cm,2,1,1,1,2,2,2,1,2,97,kg
+MF0023_0002,1,1,1,1,1,1,1,1,29,white britisg,1,N/A,female,157,cm,2,2,2,1,2,2,1,1,1,70,kg
+MF0023_0003,1,1,1,1,1,1,1,1,28,British,1,n/a,female,171,cm,1,1,1,1,1,1,1,1,1,87,kg
+MF0023_0004,1,1,1,1,1,1,1,1,37,White British,1,NA,Female,170,cm,1,1,1,1,1,1,1,1,1,65,kg
+MF0023_0005,1,1,1,1,1,1,1,1,61,mix white/black,1,NA,male,182,cm,1,1,1,1,1,1,1,1,1,108,kg
+MF0023_0006,1,1,1,1,1,1,1,0,25,Indian,1,NA,Male,178,cm,1,1,1,1,1,1,1,1,1,83,kg
+MF0023_0007,1,1,1,1,1,1,1,1,33,Middle Eastern,1,NA,Female,162,cm,1,1,1,1,2,2,1,1,1,59,kg
+MF0023_0008,1,1,1,1,1,1,1,1,28,Arab,2,Orthodontic work,Female,164,cm,1,1,1,1,1,1,1,2,1,50,kg
+MF0023_0009,1,1,1,1,1,1,1,1,39,White-French,1,NA,Male,190,cm,1,1,1,1,1,1,1,1,1,82,kg
+MF0023_0010,1,1,1,1,1,1,1,1,29,Latino,1,n/a,Male,174,cm,1,1,1,1,1,1,1,1,1,78,kg
+MF0024_0001,1,1,1,1,1,1,1,1,48,white european,1,no,trans woman,179,cm,1,1,1,1,1,1,1,1,1,88,kg
+MF0024_0002,1,1,1,1,1,1,1,1,55,White British,1,.,Female,164,cm,2,2,2,1,2,2,1,1,1,80,kg
+MF0024_0003,1,1,1,1,1,1,1,1,26,white,1,NA,female,163,cm,NA,NA,2,NA,2,NA,NA,NA,NA,60,kg
+MF0024_0004,1,1,1,1,1,1,1,1,29,White British,1,NA,Male,191,cm,1,1,1,1,1,1,1,1,1,83,kg
+MF0024_0005,1,1,1,1,1,1,1,1,23,White,1,NA,Female,167,cm,1,1,1,1,1,1,1,1,1,107,kg
+MF0024_0006,1,1,1,1,1,1,1,1,23,white,1,NA,female,163,cm,1,1,1,1,1,1,1,1,1,54,kg
+MF0024_0007,1,1,1,1,1,1,1,1,29,Asian,1,n/a,Male,174,cm,1,1,1,1,1,1,1,1,1,74,kg
+MF0024_0008,1,1,1,1,1,1,1,1,20,White-Scottish,1,NA,Male,180,cm,1,1,1,1,1,1,1,1,1,65,kg
+MF0024_0009,1,1,1,1,1,1,1,1,22,Jewish,1,NA,Male,187,cm,1,1,1,1,1,1,1,1,1,84,kg
+MF0024_0010,1,1,1,1,1,1,1,1,44,White Scottish,1,NA,F,165,cm,1,1,1,1,1,1,1,1,1,55,kg
+MF0025_0001,1,1,1,1,1,1,1,1,22,Not hispanic/latino,1,N/A,Female,67,in,1,1,1,1,1,1,1,1,1,145,lb
+MF0025_0002,1,1,1,1,1,1,1,1,24,white / middle-eastern,1,NA,female,63,in,1,1,1,1,1,1,1,1,1,140,lb
+MF0025_0003,1,1,1,1,1,1,1,1,NA,NA,NA,NA,male,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA
+MF0025_0004,1,1,1,1,1,1,1,1,23,white / middle eastern,1,NA,female,63,in,1,1,1,1,1,1,1,1,1,130,lb
+MF0025_0005,1,1,1,1,1,1,1,0,24,Asian,2,Braces,Male,70,in,1,1,1,1,1,1,1,1,1,135,lb
+MF0025_0006,1,1,1,1,1,1,1,0,22,African American,1,NA,Male,67,in,1,1,1,1,1,1,1,1,1,70,lb
+MF0025_0007,1,1,1,1,1,1,1,1,33,Asian/Chinese,1,no,F,170,cm,1,1,1,1,1,1,1,1,1,54,kg
+MF0025_0008,1,1,1,1,1,1,1,0,22,white,2,"Wisdom teeth removal, root canal + crown implant",male,75,in,1,1,1,1,1,1,1,1,1,205,lb
+MF0025_0009,1,1,1,1,1,1,1,0,22,white,2,I had orthodontic work,female,71,in,2,2,1,1,2,1,1,1,1,140,lb
+MF0025_0010,1,1,1,1,1,1,1,0,22,Puerto Rican/Hispanic,1,NA,Male,177,cm,1,1,1,1,1,1,1,1,1,150,lb
+MF0026_0001,1,1,1,1,1,1,1,0,23,white,2,"Broken cheek at 6 years old, I think it fully healed, though. Also have a bit of TMJ, and some orthodontic work to fix that.",female,67,in,1,1,1,1,1,1,1,1,1,240,lb
+MF0026_0002,1,1,1,1,1,1,1,0,24,white,1,n/a,nonbinary,69,in,1,1,1,1,1,1,1,1,1,140,lb
+MF0026_0003,1,1,1,1,1,1,1,0,35,White,1,NA,Female,170,cm,1,1,1,1,1,1,1,1,1,75,kg
+MF0026_0004,1,1,1,1,1,1,1,0,22,White,1,no,Female,66,in,1,1,1,1,1,1,1,1,1,127,lb
+MF0026_0005,1,1,1,1,1,1,1,0,26,Asian,1,NA,Female,159,cm,1,1,1,1,1,1,1,1,1,55,kg
+MF0026_0006,1,1,1,1,1,1,1,0,24,Asian,1,NA,Femal,173,cm,1,1,1,1,1,1,1,1,1,69,kg
+MF0026_0007,1,1,1,1,1,1,1,0,25,Meditrainian,1,NA,Male,172,cm,1,1,1,1,1,1,1,1,1,63,kg
+MF0026_0008,1,1,1,1,1,1,1,0,32,N/a,1,NA,female,64,in,1,1,1,1,1,1,1,1,1,156,lb
+MF0026_0009,1,0,1,1,1,0,0,0,32,white,1,n/a,male,187,cm,1,1,1,1,1,1,1,1,1,82,kg
