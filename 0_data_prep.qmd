@@ -15,14 +15,7 @@ execute:
 
 ```{r}
 #| message: false
-library(psych) # ICC, alpha, omega
-library(furrr) # run code parallel
 library(tidyverse)
-```
-
-```{r}
-# Load custom functions
-source("data/custom_functions.R")
 ```
 
 ## Project Structure
@@ -187,51 +180,23 @@ model_raw <- read_csv("data/manyfaces-pilot-models.csv",
 #### Model data
 
 ```{r}
+ethnicity_recode <- read_csv("data/eth_recode.csv", na = "", show_col_types = FALSE)
+gender_recode <- read_csv("data/gender_recode.csv", na = "", show_col_types = FALSE)
+```
+
+
+```{r}
 data_model <- model_raw |> 
   separate_wider_delim(ID,
                        delim = "_",
                        names = c("lab_id", "model_id"),
                        too_many = "drop") |>
   mutate(across(where(is.character), ~ na_if(.x, "NULL"))) |> 
-  # recode gender
+  # recode gender and ethnicity
   mutate(gender = tolower(gender),
-         gender_rec = case_match(gender,
-                                 c("female", "mulher", "feminino", "female.",
-                                   "f", "mujer", "femenino", "trans woman", "femal") ~ "female",
-                                 c("homem", "masculino", "mascãºlino", "m") ~ "male",
-                                 c("sexo feminino, gãªnero fluido", "nã£o binã¡rio", "nã£o binã¡rio",
-                                   "genderfluid (amab)", "nonbinary") ~ "non-binary",
-                                 c("sexo feminino, gãªnero fluido",
-                                   "genderfluid (amab)") ~ "gender-fluid",
-                                 c("hetero cis", "NA") ~ NA_character_,
-                                 .default = gender),
-         ethnicity = tolower(ethnicity),
-         ethnicity_rec = case_match(ethnicity,
-                                    c("white", "branco", "branca", "caucasian", 
-                                      "white (italian)", "white british", "british", "white-french", 
-                                      "british white", "white european", "white-scottish", 
-                                      "white scottish", "white britisg", "german", "german,", 
-                                      "german, swedish", "german/argentinien", "dutch", "french", 
-                                      "scottish", "european", "eastern european", "croatian", 
-                                      "serbian", "romanian", "white - other", "meditrainian") ~ "White",
-                                    c("black", "preta", "negra", "african american", 
-                                      "african (mauritian)") ~ "Black",
-                                    c("asian", "asian (indian)", "south asian", "southasian", 
-                                      "east indian", "chinese", "chinese - east asian", "asian/chinese", 
-                                      "malaysian chinese", "malaysia chinese", "malaysian", 
-                                      "indian", "pakistani", "hindu", "british indian") ~ "Asian",
-                                    c("indigenous") ~ "Indigenous",
-                                    c("middle eastern", "arab", "east african middle eastern",
-                                      "israeli", "israeli.", "israel", "muslim", 
-                                      "turkish", "tã¼rkiye", "türkiye") ~ "Middle Eastern or North African (MENA)",
-                                    c("latino", "latina", "latina branca", "mexicana", "mexicano", 
-                                      "puerto rican/hispanic", "hispanic", "south american") ~ "Latine",
-                                    c("mixed", "pardo", "parda", "pardo - mixed race", "mixraces",
-                                      "chinese-indian-malay mixed", "mixed white & asian", "mix white/black",
-                                      "white / middle-eastern", "white / middle eastern",
-                                      "middle eastern/white") ~ "Mixed",
-                                    c("ninguno", "jewish", "not hispanic/latino") ~ "Ambiguous label",
-                                    .default = NA_character_)) |> 
+         ethnicity = tolower(ethnicity)) |>
+  left_join(gender_recode, by = "gender") |>
+  left_join(ethnicity_recode, by = "ethnicity") |>
   relocate(gender_rec, .after = gender) |> 
   relocate(ethnicity_rec, .after = ethnicity) |> 
   # recode height and weight
@@ -254,63 +219,18 @@ data_model <- model_raw |>
 
 #### Questionnaire data
 ```{r}
+quest_eth_recode <- read_csv("data/quest_eth_recode.csv", na = "", show_col_types = FALSE)
+
 data_quest <- quest_raw |> 
   # recode ethnicity
-  mutate(ethnicity = tolower(ethnicity),
-         ethnicity_rec = case_match(ethnicity,
-                                    c("white", "whitr", "blanco", "weiß",
-                                      "white/caucasian", "white caucasian", "white/caucasion",
-                                      "white / caucasian",  "caucasian/white", "caucasian (white)",
-                                      "whithe/caucasian", "caucasic", "caucasian", "caicasoan",
-                                      "caucasian canadian", "caucasian/greek",  
-                                      "white british caucasian", "white british caucasian",
-                                      "white british", "british", "white/british", "white - british",
-                                      "british/white", "welsh", "english", "irish", "scottish", 
-                                      "white european", "white/european", "white, southern european",
-                                      "white, eastern european", "european american", "eastern european",
-                                      "white slavic", "slavic", "white/polish", "polish", "polish/white",
-                                      "white, german", "white/greek", "greek/white", "greek", "white/italian",
-                                      "white/swedish", "white/estonian", "white other - romanian",
-                                      "white/spanish", "spanish", "spanish/white", "spanish-white") ~ "White",
-                                    c("black", "black african", "black/african",
-                                      "black/africa", "african/black", "africa/black",
-                                      "black/ african", "african black", "black-african", 
-                                      "african", "africa", "black south african",
-                                      "african american", "afican american",
-                                      "black: african american", "black american",
-                                      "black or african american", "african american/black", 
-                                      "black african american", "african/black american",
-                                      "black british",
-                                      "zulu", "kenyan", "nigeria",  
-                                      "colored", "coloured", "coloured south african") ~ "Black",
-                                    c("asian", "asia", "south asian", "east asian",
-                                      "asian/indian", "indian", "bangladeshi", "pakistani",
-                                      "sri lankan", "chinese", "japanese",
-                                      "filipino", "philippine", "vietnamese", "sundanese",
-                                      "indo-aryan", "indo-fijian", "british - indian",
-                                      "british asian", "british pakistani") ~ "Asian",
-                                    c("native american", "native hawaiian", "samoan") ~ "Indigenous / Pacific Islander",
-                                    c("arab", "middle eastern", "north african") ~ "MENA",
-                                    c("latino", "latina", "latinx", "latine", "latin", 
-                                      "hispanic", "hispanic/latino", "latinamerican", 
-                                       "preta", "brazilian") ~ "Latine",
-                                    c("mixed", "mixed race", "mix", "biracial",
-                                      "mixed black caribbean and white", "cape coloured",
-                                      "black/white", "white / puerto rican",
-                                      "white/ latino", "white & asian", 
-                                      "coloured / mixed race") ~ "Mixed",
-                                    c("mauritian", "belgium, asian", "black/british",
-                                      "eurasian", "caribbean", "carribean", 
-                                      "british asian american","chinese/uk",
-                                      "latin european", "white hispanic", "race",
-                                       "american", "christian", "christianity") ~ "Ambiguous label",
-                                    .default = NA_character_)) |> 
-   relocate(ethnicity_rec, .after = ethnicity)
+  mutate(ethnicity = tolower(ethnicity)) |>
+  left_join(quest_eth_recode, by = "ethnicity") |>
+  relocate(ethnicity_rec, .after = ethnicity)
 ```
 
 #### Experimental data
 
-**Remove remove duplicate trials and incomplete data**
+**Remove duplicate trials and incomplete data**
 
 ```{r}
 #| echo: false
@@ -466,7 +386,7 @@ exclusions |>
     `Overly consistent response` = sum(!is.na(same_pcnt)),
     `RT below cutoff` = sum(!is.na(med_rt)),
     `Failed honesty check` = sum(!is.na(honesty_check)),
-    `Failed 2 or more of 7 attention checks` = sum(!is.na(attn_checks_passed)),
+    `Failed more than 1 of 7 attention checks` = sum(!is.na(attn_checks_passed)),
     "Total exclusions" = n()
   ) |> 
   pivot_longer(
@@ -489,6 +409,7 @@ data_exp <- exp_long |>
 After exclusions, there were `r unique(data_exp$session_id) |> length()` participants.
 
 Number of participants per study:
+
 ```{r}
 data_exp |>
   summarise(.by = c(exp, session_id)) |>
@@ -496,6 +417,7 @@ data_exp |>
 ```
 
 ### Compile and save data
+
 ```{r}
 # Rating data
 write_csv(data_exp, "data/manyfaces-pilot-exp_cleaned.csv")
@@ -504,6 +426,9 @@ write_csv(data_exp, "data/manyfaces-pilot-exp_cleaned.csv")
 data_quest |> 
   filter(session_id %in% data_exp$session_id) |>
   write_csv("data/manyfaces-pilot-quest_cleaned.csv")
+
+# Exclusions data
+write_csv(exclusions, "data/exclusions.csv")
 
 # Model data
 write_csv(data_model, "data/manyfaces-pilot-models_cleaned.csv")

@@ -4395,16 +4395,7 @@ window.onload = function() {
 <div class="cell">
 <details class="code-fold">
 <summary>Code</summary>
-<div class="sourceCode cell-code" id="cb1"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb1-1"><a href="#cb1-1" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(psych) <span class="co"># ICC, alpha, omega</span></span>
-<span id="cb1-2"><a href="#cb1-2" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(furrr) <span class="co"># run code parallel</span></span>
-<span id="cb1-3"><a href="#cb1-3" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(tidyverse)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
-</details>
-</div>
-<div class="cell">
-<details class="code-fold">
-<summary>Code</summary>
-<div class="sourceCode cell-code" id="cb2"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb2-1"><a href="#cb2-1" aria-hidden="true" tabindex="-1"></a><span class="co"># Load custom functions</span></span>
-<span id="cb2-2"><a href="#cb2-2" aria-hidden="true" tabindex="-1"></a><span class="fu">source</span>(<span class="st">&quot;data/custom_functions.R&quot;</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="sourceCode cell-code" id="cb1"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb1-1"><a href="#cb1-1" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(tidyverse)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 </details>
 </div>
 <section id="project-structure" class="level2">
@@ -4413,54 +4404,54 @@ window.onload = function() {
 <div class="cell">
 <details class="code-fold">
 <summary>Code</summary>
-<div class="sourceCode cell-code" id="cb3"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb3-1"><a href="#cb3-1" aria-hidden="true" tabindex="-1"></a>proj <span class="ot">&lt;-</span> jsonlite<span class="sc">::</span><span class="fu">read_json</span>(<span class="st">&quot;data/project_1136_structure.json&quot;</span>)</span>
-<span id="cb3-2"><a href="#cb3-2" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb3-3"><a href="#cb3-3" aria-hidden="true" tabindex="-1"></a>exp_data <span class="ot">&lt;-</span> purrr<span class="sc">::</span><span class="fu">map_df</span>(proj, \(comp) {</span>
-<span id="cb3-4"><a href="#cb3-4" aria-hidden="true" tabindex="-1"></a>  <span class="cf">if</span> (comp<span class="sc">$</span>component_type <span class="sc">==</span> <span class="st">&quot;exp&quot;</span>) {</span>
-<span id="cb3-5"><a href="#cb3-5" aria-hidden="true" tabindex="-1"></a>     <span class="fu">data.frame</span>(</span>
-<span id="cb3-6"><a href="#cb3-6" aria-hidden="true" tabindex="-1"></a>       <span class="at">exp_id =</span> comp<span class="sc">$</span>id,</span>
-<span id="cb3-7"><a href="#cb3-7" aria-hidden="true" tabindex="-1"></a>       <span class="at">name =</span> comp<span class="sc">$</span>name,</span>
-<span id="cb3-8"><a href="#cb3-8" aria-hidden="true" tabindex="-1"></a>       <span class="at">res_name =</span> comp<span class="sc">$</span>res_name,</span>
-<span id="cb3-9"><a href="#cb3-9" aria-hidden="true" tabindex="-1"></a>       <span class="at">instructions =</span> comp<span class="sc">$</span>instructions,</span>
-<span id="cb3-10"><a href="#cb3-10" aria-hidden="true" tabindex="-1"></a>       <span class="at">question =</span> comp<span class="sc">$</span>question,</span>
-<span id="cb3-11"><a href="#cb3-11" aria-hidden="true" tabindex="-1"></a>       <span class="at">exptype =</span> comp<span class="sc">$</span>exptype,</span>
-<span id="cb3-12"><a href="#cb3-12" aria-hidden="true" tabindex="-1"></a>       <span class="at">trial_order =</span> comp<span class="sc">$</span>trial_order,</span>
-<span id="cb3-13"><a href="#cb3-13" aria-hidden="true" tabindex="-1"></a>       <span class="at">total_stim =</span> comp<span class="sc">$</span>total_stim,</span>
-<span id="cb3-14"><a href="#cb3-14" aria-hidden="true" tabindex="-1"></a>       <span class="at">random_stim =</span> comp<span class="sc">$</span>random_stim,</span>
-<span id="cb3-15"><a href="#cb3-15" aria-hidden="true" tabindex="-1"></a>       <span class="at">trials =</span> <span class="fu">length</span>(comp<span class="sc">$</span>trial),</span>
-<span id="cb3-16"><a href="#cb3-16" aria-hidden="true" tabindex="-1"></a>       <span class="at">stim =</span> <span class="fu">length</span>(comp<span class="sc">$</span>stim)</span>
-<span id="cb3-17"><a href="#cb3-17" aria-hidden="true" tabindex="-1"></a>     )</span>
-<span id="cb3-18"><a href="#cb3-18" aria-hidden="true" tabindex="-1"></a>  } <span class="cf">else</span> {</span>
-<span id="cb3-19"><a href="#cb3-19" aria-hidden="true" tabindex="-1"></a>    <span class="cn">NULL</span></span>
-<span id="cb3-20"><a href="#cb3-20" aria-hidden="true" tabindex="-1"></a>  }</span>
-<span id="cb3-21"><a href="#cb3-21" aria-hidden="true" tabindex="-1"></a>}) <span class="sc">|&gt;</span></span>
-<span id="cb3-22"><a href="#cb3-22" aria-hidden="true" tabindex="-1"></a>  <span class="fu">mutate</span>(<span class="at">exp =</span> <span class="fu">sub</span>(<span class="st">&quot;ManyFaces? Pilot Ratings: &quot;</span>, <span class="st">&quot;&quot;</span>, res_name) <span class="sc">|&gt;</span> <span class="fu">trimws</span>())</span>
-<span id="cb3-23"><a href="#cb3-23" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb3-24"><a href="#cb3-24" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb3-25"><a href="#cb3-25" aria-hidden="true" tabindex="-1"></a>trial_data <span class="ot">&lt;-</span> purrr<span class="sc">::</span><span class="fu">map_df</span>(proj, \(comp) {</span>
-<span id="cb3-26"><a href="#cb3-26" aria-hidden="true" tabindex="-1"></a>  <span class="cf">if</span> (comp<span class="sc">$</span>component_type <span class="sc">==</span> <span class="st">&quot;exp&quot;</span>) {</span>
-<span id="cb3-27"><a href="#cb3-27" aria-hidden="true" tabindex="-1"></a>    purrr<span class="sc">::</span><span class="fu">map_df</span>(comp<span class="sc">$</span>trial, \(trial) {</span>
-<span id="cb3-28"><a href="#cb3-28" aria-hidden="true" tabindex="-1"></a>      <span class="fu">data.frame</span>(</span>
-<span id="cb3-29"><a href="#cb3-29" aria-hidden="true" tabindex="-1"></a>        <span class="at">exp_id =</span> comp<span class="sc">$</span>id,</span>
-<span id="cb3-30"><a href="#cb3-30" aria-hidden="true" tabindex="-1"></a>        <span class="at">n =</span> trial<span class="sc">$</span>trial_n,</span>
-<span id="cb3-31"><a href="#cb3-31" aria-hidden="true" tabindex="-1"></a>        <span class="at">name =</span> trial<span class="sc">$</span>name, </span>
-<span id="cb3-32"><a href="#cb3-32" aria-hidden="true" tabindex="-1"></a>        <span class="at">img_id =</span> trial<span class="sc">$</span>center_img,</span>
-<span id="cb3-33"><a href="#cb3-33" aria-hidden="true" tabindex="-1"></a>        <span class="at">img_path =</span> comp<span class="sc">$</span>stimuli[[<span class="fu">as.character</span>(trial<span class="sc">$</span>center_img)]]</span>
-<span id="cb3-34"><a href="#cb3-34" aria-hidden="true" tabindex="-1"></a>      )</span>
-<span id="cb3-35"><a href="#cb3-35" aria-hidden="true" tabindex="-1"></a>    })</span>
-<span id="cb3-36"><a href="#cb3-36" aria-hidden="true" tabindex="-1"></a>  } <span class="cf">else</span> {</span>
-<span id="cb3-37"><a href="#cb3-37" aria-hidden="true" tabindex="-1"></a>    <span class="cn">NULL</span></span>
-<span id="cb3-38"><a href="#cb3-38" aria-hidden="true" tabindex="-1"></a>  }</span>
-<span id="cb3-39"><a href="#cb3-39" aria-hidden="true" tabindex="-1"></a>}) <span class="sc">|&gt;</span></span>
-<span id="cb3-40"><a href="#cb3-40" aria-hidden="true" tabindex="-1"></a>  <span class="fu">mutate</span>(<span class="at">name =</span> <span class="fu">sub</span>(<span class="st">&quot;^(manyfaces|attention_checks)/&quot;</span>, <span class="st">&quot;&quot;</span>, name))</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="sourceCode cell-code" id="cb2"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb2-1"><a href="#cb2-1" aria-hidden="true" tabindex="-1"></a>proj <span class="ot">&lt;-</span> jsonlite<span class="sc">::</span><span class="fu">read_json</span>(<span class="st">&quot;data/project_1136_structure.json&quot;</span>)</span>
+<span id="cb2-2"><a href="#cb2-2" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb2-3"><a href="#cb2-3" aria-hidden="true" tabindex="-1"></a>exp_data <span class="ot">&lt;-</span> purrr<span class="sc">::</span><span class="fu">map_df</span>(proj, \(comp) {</span>
+<span id="cb2-4"><a href="#cb2-4" aria-hidden="true" tabindex="-1"></a>  <span class="cf">if</span> (comp<span class="sc">$</span>component_type <span class="sc">==</span> <span class="st">&quot;exp&quot;</span>) {</span>
+<span id="cb2-5"><a href="#cb2-5" aria-hidden="true" tabindex="-1"></a>     <span class="fu">data.frame</span>(</span>
+<span id="cb2-6"><a href="#cb2-6" aria-hidden="true" tabindex="-1"></a>       <span class="at">exp_id =</span> comp<span class="sc">$</span>id,</span>
+<span id="cb2-7"><a href="#cb2-7" aria-hidden="true" tabindex="-1"></a>       <span class="at">name =</span> comp<span class="sc">$</span>name,</span>
+<span id="cb2-8"><a href="#cb2-8" aria-hidden="true" tabindex="-1"></a>       <span class="at">res_name =</span> comp<span class="sc">$</span>res_name,</span>
+<span id="cb2-9"><a href="#cb2-9" aria-hidden="true" tabindex="-1"></a>       <span class="at">instructions =</span> comp<span class="sc">$</span>instructions,</span>
+<span id="cb2-10"><a href="#cb2-10" aria-hidden="true" tabindex="-1"></a>       <span class="at">question =</span> comp<span class="sc">$</span>question,</span>
+<span id="cb2-11"><a href="#cb2-11" aria-hidden="true" tabindex="-1"></a>       <span class="at">exptype =</span> comp<span class="sc">$</span>exptype,</span>
+<span id="cb2-12"><a href="#cb2-12" aria-hidden="true" tabindex="-1"></a>       <span class="at">trial_order =</span> comp<span class="sc">$</span>trial_order,</span>
+<span id="cb2-13"><a href="#cb2-13" aria-hidden="true" tabindex="-1"></a>       <span class="at">total_stim =</span> comp<span class="sc">$</span>total_stim,</span>
+<span id="cb2-14"><a href="#cb2-14" aria-hidden="true" tabindex="-1"></a>       <span class="at">random_stim =</span> comp<span class="sc">$</span>random_stim,</span>
+<span id="cb2-15"><a href="#cb2-15" aria-hidden="true" tabindex="-1"></a>       <span class="at">trials =</span> <span class="fu">length</span>(comp<span class="sc">$</span>trial),</span>
+<span id="cb2-16"><a href="#cb2-16" aria-hidden="true" tabindex="-1"></a>       <span class="at">stim =</span> <span class="fu">length</span>(comp<span class="sc">$</span>stim)</span>
+<span id="cb2-17"><a href="#cb2-17" aria-hidden="true" tabindex="-1"></a>     )</span>
+<span id="cb2-18"><a href="#cb2-18" aria-hidden="true" tabindex="-1"></a>  } <span class="cf">else</span> {</span>
+<span id="cb2-19"><a href="#cb2-19" aria-hidden="true" tabindex="-1"></a>    <span class="cn">NULL</span></span>
+<span id="cb2-20"><a href="#cb2-20" aria-hidden="true" tabindex="-1"></a>  }</span>
+<span id="cb2-21"><a href="#cb2-21" aria-hidden="true" tabindex="-1"></a>}) <span class="sc">|&gt;</span></span>
+<span id="cb2-22"><a href="#cb2-22" aria-hidden="true" tabindex="-1"></a>  <span class="fu">mutate</span>(<span class="at">exp =</span> <span class="fu">sub</span>(<span class="st">&quot;ManyFaces? Pilot Ratings: &quot;</span>, <span class="st">&quot;&quot;</span>, res_name) <span class="sc">|&gt;</span> <span class="fu">trimws</span>())</span>
+<span id="cb2-23"><a href="#cb2-23" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb2-24"><a href="#cb2-24" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb2-25"><a href="#cb2-25" aria-hidden="true" tabindex="-1"></a>trial_data <span class="ot">&lt;-</span> purrr<span class="sc">::</span><span class="fu">map_df</span>(proj, \(comp) {</span>
+<span id="cb2-26"><a href="#cb2-26" aria-hidden="true" tabindex="-1"></a>  <span class="cf">if</span> (comp<span class="sc">$</span>component_type <span class="sc">==</span> <span class="st">&quot;exp&quot;</span>) {</span>
+<span id="cb2-27"><a href="#cb2-27" aria-hidden="true" tabindex="-1"></a>    purrr<span class="sc">::</span><span class="fu">map_df</span>(comp<span class="sc">$</span>trial, \(trial) {</span>
+<span id="cb2-28"><a href="#cb2-28" aria-hidden="true" tabindex="-1"></a>      <span class="fu">data.frame</span>(</span>
+<span id="cb2-29"><a href="#cb2-29" aria-hidden="true" tabindex="-1"></a>        <span class="at">exp_id =</span> comp<span class="sc">$</span>id,</span>
+<span id="cb2-30"><a href="#cb2-30" aria-hidden="true" tabindex="-1"></a>        <span class="at">n =</span> trial<span class="sc">$</span>trial_n,</span>
+<span id="cb2-31"><a href="#cb2-31" aria-hidden="true" tabindex="-1"></a>        <span class="at">name =</span> trial<span class="sc">$</span>name, </span>
+<span id="cb2-32"><a href="#cb2-32" aria-hidden="true" tabindex="-1"></a>        <span class="at">img_id =</span> trial<span class="sc">$</span>center_img,</span>
+<span id="cb2-33"><a href="#cb2-33" aria-hidden="true" tabindex="-1"></a>        <span class="at">img_path =</span> comp<span class="sc">$</span>stimuli[[<span class="fu">as.character</span>(trial<span class="sc">$</span>center_img)]]</span>
+<span id="cb2-34"><a href="#cb2-34" aria-hidden="true" tabindex="-1"></a>      )</span>
+<span id="cb2-35"><a href="#cb2-35" aria-hidden="true" tabindex="-1"></a>    })</span>
+<span id="cb2-36"><a href="#cb2-36" aria-hidden="true" tabindex="-1"></a>  } <span class="cf">else</span> {</span>
+<span id="cb2-37"><a href="#cb2-37" aria-hidden="true" tabindex="-1"></a>    <span class="cn">NULL</span></span>
+<span id="cb2-38"><a href="#cb2-38" aria-hidden="true" tabindex="-1"></a>  }</span>
+<span id="cb2-39"><a href="#cb2-39" aria-hidden="true" tabindex="-1"></a>}) <span class="sc">|&gt;</span></span>
+<span id="cb2-40"><a href="#cb2-40" aria-hidden="true" tabindex="-1"></a>  <span class="fu">mutate</span>(<span class="at">name =</span> <span class="fu">sub</span>(<span class="st">&quot;^(manyfaces|attention_checks)/&quot;</span>, <span class="st">&quot;&quot;</span>, name))</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 </details>
 </div>
 <div class="cell">
 <details class="code-fold">
 <summary>Code</summary>
-<div class="sourceCode cell-code" id="cb4"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb4-1"><a href="#cb4-1" aria-hidden="true" tabindex="-1"></a>exp_data <span class="sc">|&gt;</span></span>
-<span id="cb4-2"><a href="#cb4-2" aria-hidden="true" tabindex="-1"></a>  <span class="fu">select</span>(exp_id, exp, question, trials) <span class="sc">|&gt;</span></span>
-<span id="cb4-3"><a href="#cb4-3" aria-hidden="true" tabindex="-1"></a>  <span class="fu">arrange</span>(exp)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="sourceCode cell-code" id="cb3"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb3-1"><a href="#cb3-1" aria-hidden="true" tabindex="-1"></a>exp_data <span class="sc">|&gt;</span></span>
+<span id="cb3-2"><a href="#cb3-2" aria-hidden="true" tabindex="-1"></a>  <span class="fu">select</span>(exp_id, exp, question, trials) <span class="sc">|&gt;</span></span>
+<span id="cb3-3"><a href="#cb3-3" aria-hidden="true" tabindex="-1"></a>  <span class="fu">arrange</span>(exp)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 </details>
 <div class="cell-output-display">
 <div data-pagedtable="false">
@@ -4477,63 +4468,63 @@ window.onload = function() {
 <h3 class="anchored" data-anchor-id="raw-data">Raw Data</h3>
 <p>This workflow requires the data-raw directory, which is not shared on github.</p>
 <p>This is the SQL for downloading the data from Experimentum. We need to download in chunks of 50000 rows to avoid file download limits on the site (not needed if downloading directly from SQL).</p>
-<div class="sourceCode" id="cb5"><pre class="sourceCode sql code-with-copy"><code class="sourceCode sql"><span id="cb5-1"><a href="#cb5-1" aria-hidden="true" tabindex="-1"></a><span class="kw">SELECT</span> </span>
-<span id="cb5-2"><a href="#cb5-2" aria-hidden="true" tabindex="-1"></a>  <span class="kw">session</span>.<span class="kw">id</span> <span class="kw">as</span> session_id, project_id, <span class="fu">exp</span>.res_name <span class="kw">as</span> exp_name, exp_id, </span>
-<span id="cb5-3"><a href="#cb5-3" aria-hidden="true" tabindex="-1"></a>  <span class="kw">session</span>.user_id, <span class="fu">user</span>.sex <span class="kw">as</span> user_sex, <span class="fu">user</span>.status <span class="kw">as</span> user_status,</span>
-<span id="cb5-4"><a href="#cb5-4" aria-hidden="true" tabindex="-1"></a>  <span class="fu">ROUND</span>(DATEDIFF(ed.dt, <span class="kw">REPLACE</span>(birthday, <span class="ot">&quot;-00&quot;</span>,<span class="ot">&quot;-01&quot;</span>))<span class="op">/</span><span class="fl">365.25</span>, <span class="dv">1</span>) <span class="kw">AS</span> user_age,</span>
-<span id="cb5-5"><a href="#cb5-5" aria-hidden="true" tabindex="-1"></a>  trial.name <span class="kw">as</span> trial_name,</span>
-<span id="cb5-6"><a href="#cb5-6" aria-hidden="true" tabindex="-1"></a>  trial_n,</span>
-<span id="cb5-7"><a href="#cb5-7" aria-hidden="true" tabindex="-1"></a>  `order`,</span>
-<span id="cb5-8"><a href="#cb5-8" aria-hidden="true" tabindex="-1"></a>  dv,</span>
-<span id="cb5-9"><a href="#cb5-9" aria-hidden="true" tabindex="-1"></a>  rt,</span>
-<span id="cb5-10"><a href="#cb5-10" aria-hidden="true" tabindex="-1"></a>  ed.side,</span>
-<span id="cb5-11"><a href="#cb5-11" aria-hidden="true" tabindex="-1"></a>  ed.dt</span>
-<span id="cb5-12"><a href="#cb5-12" aria-hidden="true" tabindex="-1"></a><span class="kw">FROM</span> <span class="kw">session</span> </span>
-<span id="cb5-13"><a href="#cb5-13" aria-hidden="true" tabindex="-1"></a>  <span class="kw">LEFT</span> <span class="kw">JOIN</span> <span class="fu">user</span> <span class="kw">USING</span> (user_id)</span>
-<span id="cb5-14"><a href="#cb5-14" aria-hidden="true" tabindex="-1"></a>  <span class="kw">LEFT</span> <span class="kw">JOIN</span> exp_data <span class="kw">AS</span> ed <span class="kw">ON</span> ed.session_id <span class="op">=</span> <span class="kw">session</span>.<span class="kw">id</span></span>
-<span id="cb5-15"><a href="#cb5-15" aria-hidden="true" tabindex="-1"></a>  <span class="kw">LEFT</span> <span class="kw">JOIN</span> <span class="fu">exp</span> <span class="kw">ON</span> <span class="fu">exp</span>.<span class="kw">id</span> <span class="op">=</span> ed.exp_id</span>
-<span id="cb5-16"><a href="#cb5-16" aria-hidden="true" tabindex="-1"></a>  <span class="kw">LEFT</span> <span class="kw">JOIN</span> trial <span class="kw">USING</span> (exp_id, trial_n)</span>
-<span id="cb5-17"><a href="#cb5-17" aria-hidden="true" tabindex="-1"></a><span class="kw">WHERE</span> <span class="kw">session</span>.project_id <span class="op">=</span> <span class="dv">1136</span></span>
-<span id="cb5-18"><a href="#cb5-18" aria-hidden="true" tabindex="-1"></a>  <span class="kw">AND</span> <span class="fu">user</span>.status <span class="kw">IN</span> (<span class="ot">&quot;guest&quot;</span>, <span class="ot">&quot;registered&quot;</span>)</span>
-<span id="cb5-19"><a href="#cb5-19" aria-hidden="true" tabindex="-1"></a>  <span class="kw">AND</span> exp_id <span class="kw">IN</span> (<span class="dv">1384</span>, <span class="dv">1400</span>, <span class="dv">1399</span>, <span class="dv">1398</span>, <span class="dv">1401</span>, <span class="dv">1402</span>, <span class="dv">1403</span>, </span>
-<span id="cb5-20"><a href="#cb5-20" aria-hidden="true" tabindex="-1"></a>                 <span class="dv">1404</span>, <span class="dv">1405</span>, <span class="dv">1397</span>, <span class="dv">1390</span>, <span class="dv">1389</span>, <span class="dv">1388</span>, <span class="dv">1387</span>, </span>
-<span id="cb5-21"><a href="#cb5-21" aria-hidden="true" tabindex="-1"></a>                 <span class="dv">1386</span>, <span class="dv">1385</span>, <span class="dv">1382</span>, <span class="dv">1381</span>, <span class="dv">1380</span>, <span class="dv">1379</span>, <span class="dv">1377</span>)</span>
-<span id="cb5-22"><a href="#cb5-22" aria-hidden="true" tabindex="-1"></a><span class="kw">LIMIT</span> <span class="dv">50000</span></span>
-<span id="cb5-23"><a href="#cb5-23" aria-hidden="true" tabindex="-1"></a>OFFSET <span class="dv">0</span></span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="sourceCode" id="cb4"><pre class="sourceCode sql code-with-copy"><code class="sourceCode sql"><span id="cb4-1"><a href="#cb4-1" aria-hidden="true" tabindex="-1"></a><span class="kw">SELECT</span> </span>
+<span id="cb4-2"><a href="#cb4-2" aria-hidden="true" tabindex="-1"></a>  <span class="kw">session</span>.<span class="kw">id</span> <span class="kw">as</span> session_id, project_id, <span class="fu">exp</span>.res_name <span class="kw">as</span> exp_name, exp_id, </span>
+<span id="cb4-3"><a href="#cb4-3" aria-hidden="true" tabindex="-1"></a>  <span class="kw">session</span>.user_id, <span class="fu">user</span>.sex <span class="kw">as</span> user_sex, <span class="fu">user</span>.status <span class="kw">as</span> user_status,</span>
+<span id="cb4-4"><a href="#cb4-4" aria-hidden="true" tabindex="-1"></a>  <span class="fu">ROUND</span>(DATEDIFF(ed.dt, <span class="kw">REPLACE</span>(birthday, <span class="ot">&quot;-00&quot;</span>,<span class="ot">&quot;-01&quot;</span>))<span class="op">/</span><span class="fl">365.25</span>, <span class="dv">1</span>) <span class="kw">AS</span> user_age,</span>
+<span id="cb4-5"><a href="#cb4-5" aria-hidden="true" tabindex="-1"></a>  trial.name <span class="kw">as</span> trial_name,</span>
+<span id="cb4-6"><a href="#cb4-6" aria-hidden="true" tabindex="-1"></a>  trial_n,</span>
+<span id="cb4-7"><a href="#cb4-7" aria-hidden="true" tabindex="-1"></a>  `order`,</span>
+<span id="cb4-8"><a href="#cb4-8" aria-hidden="true" tabindex="-1"></a>  dv,</span>
+<span id="cb4-9"><a href="#cb4-9" aria-hidden="true" tabindex="-1"></a>  rt,</span>
+<span id="cb4-10"><a href="#cb4-10" aria-hidden="true" tabindex="-1"></a>  ed.side,</span>
+<span id="cb4-11"><a href="#cb4-11" aria-hidden="true" tabindex="-1"></a>  ed.dt</span>
+<span id="cb4-12"><a href="#cb4-12" aria-hidden="true" tabindex="-1"></a><span class="kw">FROM</span> <span class="kw">session</span> </span>
+<span id="cb4-13"><a href="#cb4-13" aria-hidden="true" tabindex="-1"></a>  <span class="kw">LEFT</span> <span class="kw">JOIN</span> <span class="fu">user</span> <span class="kw">USING</span> (user_id)</span>
+<span id="cb4-14"><a href="#cb4-14" aria-hidden="true" tabindex="-1"></a>  <span class="kw">LEFT</span> <span class="kw">JOIN</span> exp_data <span class="kw">AS</span> ed <span class="kw">ON</span> ed.session_id <span class="op">=</span> <span class="kw">session</span>.<span class="kw">id</span></span>
+<span id="cb4-15"><a href="#cb4-15" aria-hidden="true" tabindex="-1"></a>  <span class="kw">LEFT</span> <span class="kw">JOIN</span> <span class="fu">exp</span> <span class="kw">ON</span> <span class="fu">exp</span>.<span class="kw">id</span> <span class="op">=</span> ed.exp_id</span>
+<span id="cb4-16"><a href="#cb4-16" aria-hidden="true" tabindex="-1"></a>  <span class="kw">LEFT</span> <span class="kw">JOIN</span> trial <span class="kw">USING</span> (exp_id, trial_n)</span>
+<span id="cb4-17"><a href="#cb4-17" aria-hidden="true" tabindex="-1"></a><span class="kw">WHERE</span> <span class="kw">session</span>.project_id <span class="op">=</span> <span class="dv">1136</span></span>
+<span id="cb4-18"><a href="#cb4-18" aria-hidden="true" tabindex="-1"></a>  <span class="kw">AND</span> <span class="fu">user</span>.status <span class="kw">IN</span> (<span class="ot">&quot;guest&quot;</span>, <span class="ot">&quot;registered&quot;</span>)</span>
+<span id="cb4-19"><a href="#cb4-19" aria-hidden="true" tabindex="-1"></a>  <span class="kw">AND</span> exp_id <span class="kw">IN</span> (<span class="dv">1384</span>, <span class="dv">1400</span>, <span class="dv">1399</span>, <span class="dv">1398</span>, <span class="dv">1401</span>, <span class="dv">1402</span>, <span class="dv">1403</span>, </span>
+<span id="cb4-20"><a href="#cb4-20" aria-hidden="true" tabindex="-1"></a>                 <span class="dv">1404</span>, <span class="dv">1405</span>, <span class="dv">1397</span>, <span class="dv">1390</span>, <span class="dv">1389</span>, <span class="dv">1388</span>, <span class="dv">1387</span>, </span>
+<span id="cb4-21"><a href="#cb4-21" aria-hidden="true" tabindex="-1"></a>                 <span class="dv">1386</span>, <span class="dv">1385</span>, <span class="dv">1382</span>, <span class="dv">1381</span>, <span class="dv">1380</span>, <span class="dv">1379</span>, <span class="dv">1377</span>)</span>
+<span id="cb4-22"><a href="#cb4-22" aria-hidden="true" tabindex="-1"></a><span class="kw">LIMIT</span> <span class="dv">50000</span></span>
+<span id="cb4-23"><a href="#cb4-23" aria-hidden="true" tabindex="-1"></a>OFFSET <span class="dv">0</span></span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 <div class="cell">
 <details class="code-fold">
 <summary>Code</summary>
-<div class="sourceCode cell-code" id="cb6"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb6-1"><a href="#cb6-1" aria-hidden="true" tabindex="-1"></a><span class="co"># combine multiple downloads into one file</span></span>
-<span id="cb6-2"><a href="#cb6-2" aria-hidden="true" tabindex="-1"></a>exp_raw <span class="ot">&lt;-</span> <span class="fu">list.files</span>(<span class="st">&quot;data-raw/exp&quot;</span>, <span class="at">full.names =</span> <span class="cn">TRUE</span>) <span class="sc">|&gt;</span> </span>
-<span id="cb6-3"><a href="#cb6-3" aria-hidden="true" tabindex="-1"></a>  <span class="fu">read_csv</span>(<span class="at">show_col_types =</span> <span class="cn">FALSE</span>) <span class="sc">|&gt;</span></span>
-<span id="cb6-4"><a href="#cb6-4" aria-hidden="true" tabindex="-1"></a>  <span class="fu">unique</span>() <span class="sc">|&gt;</span></span>
-<span id="cb6-5"><a href="#cb6-5" aria-hidden="true" tabindex="-1"></a>  <span class="fu">filter</span>(user_status <span class="sc">%in%</span> <span class="fu">c</span>(<span class="st">&quot;guest&quot;</span>, <span class="st">&quot;registered&quot;</span>))</span>
-<span id="cb6-6"><a href="#cb6-6" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb6-7"><a href="#cb6-7" aria-hidden="true" tabindex="-1"></a><span class="fu">write_csv</span>(exp_raw, <span class="fu">paste0</span>(<span class="st">&quot;data-raw/ManyFaces-Pilot-Ratings-exps_&quot;</span>, <span class="fu">Sys.Date</span>(), <span class="st">&quot;.csv&quot;</span>))</span>
-<span id="cb6-8"><a href="#cb6-8" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb6-9"><a href="#cb6-9" aria-hidden="true" tabindex="-1"></a><span class="co"># get most recent files</span></span>
-<span id="cb6-10"><a href="#cb6-10" aria-hidden="true" tabindex="-1"></a>exp_file <span class="ot">&lt;-</span> <span class="fu">list.files</span>(<span class="st">&quot;data-raw&quot;</span>, <span class="st">&quot;ManyFaces-Pilot-Ratings-exps&quot;</span>,</span>
-<span id="cb6-11"><a href="#cb6-11" aria-hidden="true" tabindex="-1"></a>                       <span class="at">full.names =</span> <span class="cn">TRUE</span>) <span class="sc">|&gt;</span></span>
-<span id="cb6-12"><a href="#cb6-12" aria-hidden="true" tabindex="-1"></a>  <span class="fu">sort</span>(<span class="at">decreasing =</span> <span class="cn">TRUE</span>) <span class="sc">|&gt;</span></span>
-<span id="cb6-13"><a href="#cb6-13" aria-hidden="true" tabindex="-1"></a>  <span class="fu">pluck</span>(<span class="dv">1</span>)</span>
-<span id="cb6-14"><a href="#cb6-14" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb6-15"><a href="#cb6-15" aria-hidden="true" tabindex="-1"></a>exp_raw <span class="ot">&lt;-</span> <span class="fu">read_csv</span>(exp_file, <span class="at">show_col_types =</span> <span class="cn">FALSE</span>) <span class="sc">|&gt;</span></span>
-<span id="cb6-16"><a href="#cb6-16" aria-hidden="true" tabindex="-1"></a>  <span class="fu">filter</span>(user_status <span class="sc">%in%</span> <span class="fu">c</span>(<span class="st">&quot;guest&quot;</span>, <span class="st">&quot;registered&quot;</span>)) <span class="sc">|&gt;</span></span>
-<span id="cb6-17"><a href="#cb6-17" aria-hidden="true" tabindex="-1"></a>  <span class="fu">unique</span>()</span>
-<span id="cb6-18"><a href="#cb6-18" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb6-19"><a href="#cb6-19" aria-hidden="true" tabindex="-1"></a><span class="co"># get most recent files</span></span>
-<span id="cb6-20"><a href="#cb6-20" aria-hidden="true" tabindex="-1"></a>quest_file <span class="ot">&lt;-</span> <span class="fu">list.files</span>(<span class="st">&quot;data-raw&quot;</span>, <span class="st">&quot;ManyFaces-Pilot-Ratings-quests&quot;</span>, </span>
-<span id="cb6-21"><a href="#cb6-21" aria-hidden="true" tabindex="-1"></a>                       <span class="at">full.names =</span> <span class="cn">TRUE</span>) <span class="sc">|&gt;</span></span>
-<span id="cb6-22"><a href="#cb6-22" aria-hidden="true" tabindex="-1"></a>  <span class="fu">sort</span>(<span class="at">decreasing =</span> <span class="cn">TRUE</span>) <span class="sc">|&gt;</span></span>
-<span id="cb6-23"><a href="#cb6-23" aria-hidden="true" tabindex="-1"></a>  <span class="fu">pluck</span>(<span class="dv">1</span>)</span>
-<span id="cb6-24"><a href="#cb6-24" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb6-25"><a href="#cb6-25" aria-hidden="true" tabindex="-1"></a>quest_raw <span class="ot">&lt;-</span> <span class="fu">read_csv</span>(quest_file, <span class="at">show_col_types =</span> <span class="cn">FALSE</span>) <span class="sc">|&gt;</span></span>
-<span id="cb6-26"><a href="#cb6-26" aria-hidden="true" tabindex="-1"></a>  <span class="fu">filter</span>(user_status <span class="sc">%in%</span> <span class="fu">c</span>(<span class="st">&quot;guest&quot;</span>, <span class="st">&quot;registered&quot;</span>)) <span class="sc">|&gt;</span></span>
-<span id="cb6-27"><a href="#cb6-27" aria-hidden="true" tabindex="-1"></a>  <span class="fu">unique</span>()</span>
-<span id="cb6-28"><a href="#cb6-28" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb6-29"><a href="#cb6-29" aria-hidden="true" tabindex="-1"></a><span class="co"># write to the data directory</span></span>
-<span id="cb6-30"><a href="#cb6-30" aria-hidden="true" tabindex="-1"></a><span class="fu">write_csv</span>(exp_raw, <span class="st">&quot;data/manyfaces-pilot-exp.csv&quot;</span>)</span>
-<span id="cb6-31"><a href="#cb6-31" aria-hidden="true" tabindex="-1"></a><span class="fu">write_csv</span>(quest_raw, <span class="st">&quot;data/manyfaces-pilot-quest.csv&quot;</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="sourceCode cell-code" id="cb5"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb5-1"><a href="#cb5-1" aria-hidden="true" tabindex="-1"></a><span class="co"># combine multiple downloads into one file</span></span>
+<span id="cb5-2"><a href="#cb5-2" aria-hidden="true" tabindex="-1"></a>exp_raw <span class="ot">&lt;-</span> <span class="fu">list.files</span>(<span class="st">&quot;data-raw/exp&quot;</span>, <span class="at">full.names =</span> <span class="cn">TRUE</span>) <span class="sc">|&gt;</span> </span>
+<span id="cb5-3"><a href="#cb5-3" aria-hidden="true" tabindex="-1"></a>  <span class="fu">read_csv</span>(<span class="at">show_col_types =</span> <span class="cn">FALSE</span>) <span class="sc">|&gt;</span></span>
+<span id="cb5-4"><a href="#cb5-4" aria-hidden="true" tabindex="-1"></a>  <span class="fu">unique</span>() <span class="sc">|&gt;</span></span>
+<span id="cb5-5"><a href="#cb5-5" aria-hidden="true" tabindex="-1"></a>  <span class="fu">filter</span>(user_status <span class="sc">%in%</span> <span class="fu">c</span>(<span class="st">&quot;guest&quot;</span>, <span class="st">&quot;registered&quot;</span>))</span>
+<span id="cb5-6"><a href="#cb5-6" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb5-7"><a href="#cb5-7" aria-hidden="true" tabindex="-1"></a><span class="fu">write_csv</span>(exp_raw, <span class="fu">paste0</span>(<span class="st">&quot;data-raw/ManyFaces-Pilot-Ratings-exps_&quot;</span>, <span class="fu">Sys.Date</span>(), <span class="st">&quot;.csv&quot;</span>))</span>
+<span id="cb5-8"><a href="#cb5-8" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb5-9"><a href="#cb5-9" aria-hidden="true" tabindex="-1"></a><span class="co"># get most recent files</span></span>
+<span id="cb5-10"><a href="#cb5-10" aria-hidden="true" tabindex="-1"></a>exp_file <span class="ot">&lt;-</span> <span class="fu">list.files</span>(<span class="st">&quot;data-raw&quot;</span>, <span class="st">&quot;ManyFaces-Pilot-Ratings-exps&quot;</span>,</span>
+<span id="cb5-11"><a href="#cb5-11" aria-hidden="true" tabindex="-1"></a>                       <span class="at">full.names =</span> <span class="cn">TRUE</span>) <span class="sc">|&gt;</span></span>
+<span id="cb5-12"><a href="#cb5-12" aria-hidden="true" tabindex="-1"></a>  <span class="fu">sort</span>(<span class="at">decreasing =</span> <span class="cn">TRUE</span>) <span class="sc">|&gt;</span></span>
+<span id="cb5-13"><a href="#cb5-13" aria-hidden="true" tabindex="-1"></a>  <span class="fu">pluck</span>(<span class="dv">1</span>)</span>
+<span id="cb5-14"><a href="#cb5-14" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb5-15"><a href="#cb5-15" aria-hidden="true" tabindex="-1"></a>exp_raw <span class="ot">&lt;-</span> <span class="fu">read_csv</span>(exp_file, <span class="at">show_col_types =</span> <span class="cn">FALSE</span>) <span class="sc">|&gt;</span></span>
+<span id="cb5-16"><a href="#cb5-16" aria-hidden="true" tabindex="-1"></a>  <span class="fu">filter</span>(user_status <span class="sc">%in%</span> <span class="fu">c</span>(<span class="st">&quot;guest&quot;</span>, <span class="st">&quot;registered&quot;</span>)) <span class="sc">|&gt;</span></span>
+<span id="cb5-17"><a href="#cb5-17" aria-hidden="true" tabindex="-1"></a>  <span class="fu">unique</span>()</span>
+<span id="cb5-18"><a href="#cb5-18" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb5-19"><a href="#cb5-19" aria-hidden="true" tabindex="-1"></a><span class="co"># get most recent files</span></span>
+<span id="cb5-20"><a href="#cb5-20" aria-hidden="true" tabindex="-1"></a>quest_file <span class="ot">&lt;-</span> <span class="fu">list.files</span>(<span class="st">&quot;data-raw&quot;</span>, <span class="st">&quot;ManyFaces-Pilot-Ratings-quests&quot;</span>, </span>
+<span id="cb5-21"><a href="#cb5-21" aria-hidden="true" tabindex="-1"></a>                       <span class="at">full.names =</span> <span class="cn">TRUE</span>) <span class="sc">|&gt;</span></span>
+<span id="cb5-22"><a href="#cb5-22" aria-hidden="true" tabindex="-1"></a>  <span class="fu">sort</span>(<span class="at">decreasing =</span> <span class="cn">TRUE</span>) <span class="sc">|&gt;</span></span>
+<span id="cb5-23"><a href="#cb5-23" aria-hidden="true" tabindex="-1"></a>  <span class="fu">pluck</span>(<span class="dv">1</span>)</span>
+<span id="cb5-24"><a href="#cb5-24" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb5-25"><a href="#cb5-25" aria-hidden="true" tabindex="-1"></a>quest_raw <span class="ot">&lt;-</span> <span class="fu">read_csv</span>(quest_file, <span class="at">show_col_types =</span> <span class="cn">FALSE</span>) <span class="sc">|&gt;</span></span>
+<span id="cb5-26"><a href="#cb5-26" aria-hidden="true" tabindex="-1"></a>  <span class="fu">filter</span>(user_status <span class="sc">%in%</span> <span class="fu">c</span>(<span class="st">&quot;guest&quot;</span>, <span class="st">&quot;registered&quot;</span>)) <span class="sc">|&gt;</span></span>
+<span id="cb5-27"><a href="#cb5-27" aria-hidden="true" tabindex="-1"></a>  <span class="fu">unique</span>()</span>
+<span id="cb5-28"><a href="#cb5-28" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb5-29"><a href="#cb5-29" aria-hidden="true" tabindex="-1"></a><span class="co"># write to the data directory</span></span>
+<span id="cb5-30"><a href="#cb5-30" aria-hidden="true" tabindex="-1"></a><span class="fu">write_csv</span>(exp_raw, <span class="st">&quot;data/manyfaces-pilot-exp.csv&quot;</span>)</span>
+<span id="cb5-31"><a href="#cb5-31" aria-hidden="true" tabindex="-1"></a><span class="fu">write_csv</span>(quest_raw, <span class="st">&quot;data/manyfaces-pilot-quest.csv&quot;</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 </details>
 </div>
 </section>
@@ -4542,36 +4533,36 @@ window.onload = function() {
 <div class="cell">
 <details class="code-fold">
 <summary>Code</summary>
-<div class="sourceCode cell-code" id="cb7"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb7-1"><a href="#cb7-1" aria-hidden="true" tabindex="-1"></a>exp_raw <span class="ot">&lt;-</span> <span class="fu">read_csv</span>(<span class="st">&quot;data/manyfaces-pilot-exp.csv&quot;</span>,</span>
-<span id="cb7-2"><a href="#cb7-2" aria-hidden="true" tabindex="-1"></a>                    <span class="at">show_col_types =</span> <span class="cn">FALSE</span>)</span>
-<span id="cb7-3"><a href="#cb7-3" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb7-4"><a href="#cb7-4" aria-hidden="true" tabindex="-1"></a>ed <span class="ot">&lt;-</span> exp_data <span class="sc">|&gt;</span></span>
-<span id="cb7-5"><a href="#cb7-5" aria-hidden="true" tabindex="-1"></a>  <span class="fu">select</span>(exp_id, exp, trials) <span class="sc">|&gt;</span> </span>
-<span id="cb7-6"><a href="#cb7-6" aria-hidden="true" tabindex="-1"></a>  <span class="fu">rename</span>(<span class="at">trials_total =</span> trials)</span>
-<span id="cb7-7"><a href="#cb7-7" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb7-8"><a href="#cb7-8" aria-hidden="true" tabindex="-1"></a>exp_long_raw <span class="ot">&lt;-</span> exp_raw <span class="sc">|&gt;</span></span>
-<span id="cb7-9"><a href="#cb7-9" aria-hidden="true" tabindex="-1"></a>  <span class="fu">select</span>(session_id, exp_id, trial_name, dv, rt, dt) <span class="sc">|&gt;</span></span>
-<span id="cb7-10"><a href="#cb7-10" aria-hidden="true" tabindex="-1"></a>  <span class="fu">unique</span>() <span class="sc">|&gt;</span></span>
-<span id="cb7-11"><a href="#cb7-11" aria-hidden="true" tabindex="-1"></a>  <span class="fu">mutate</span>(<span class="at">trial_name =</span> <span class="fu">sub</span>(<span class="st">&quot;^(manyfaces|attention_checks)/&quot;</span>, <span class="st">&quot;&quot;</span>, trial_name)) <span class="sc">|&gt;</span></span>
-<span id="cb7-12"><a href="#cb7-12" aria-hidden="true" tabindex="-1"></a>  <span class="fu">left_join</span>(ed, <span class="at">by =</span> <span class="st">&quot;exp_id&quot;</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="sourceCode cell-code" id="cb6"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb6-1"><a href="#cb6-1" aria-hidden="true" tabindex="-1"></a>exp_raw <span class="ot">&lt;-</span> <span class="fu">read_csv</span>(<span class="st">&quot;data/manyfaces-pilot-exp.csv&quot;</span>,</span>
+<span id="cb6-2"><a href="#cb6-2" aria-hidden="true" tabindex="-1"></a>                    <span class="at">show_col_types =</span> <span class="cn">FALSE</span>)</span>
+<span id="cb6-3"><a href="#cb6-3" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb6-4"><a href="#cb6-4" aria-hidden="true" tabindex="-1"></a>ed <span class="ot">&lt;-</span> exp_data <span class="sc">|&gt;</span></span>
+<span id="cb6-5"><a href="#cb6-5" aria-hidden="true" tabindex="-1"></a>  <span class="fu">select</span>(exp_id, exp, trials) <span class="sc">|&gt;</span> </span>
+<span id="cb6-6"><a href="#cb6-6" aria-hidden="true" tabindex="-1"></a>  <span class="fu">rename</span>(<span class="at">trials_total =</span> trials)</span>
+<span id="cb6-7"><a href="#cb6-7" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb6-8"><a href="#cb6-8" aria-hidden="true" tabindex="-1"></a>exp_long_raw <span class="ot">&lt;-</span> exp_raw <span class="sc">|&gt;</span></span>
+<span id="cb6-9"><a href="#cb6-9" aria-hidden="true" tabindex="-1"></a>  <span class="fu">select</span>(session_id, exp_id, trial_name, dv, rt, dt) <span class="sc">|&gt;</span></span>
+<span id="cb6-10"><a href="#cb6-10" aria-hidden="true" tabindex="-1"></a>  <span class="fu">unique</span>() <span class="sc">|&gt;</span></span>
+<span id="cb6-11"><a href="#cb6-11" aria-hidden="true" tabindex="-1"></a>  <span class="fu">mutate</span>(<span class="at">trial_name =</span> <span class="fu">sub</span>(<span class="st">&quot;^(manyfaces|attention_checks)/&quot;</span>, <span class="st">&quot;&quot;</span>, trial_name)) <span class="sc">|&gt;</span></span>
+<span id="cb6-12"><a href="#cb6-12" aria-hidden="true" tabindex="-1"></a>  <span class="fu">left_join</span>(ed, <span class="at">by =</span> <span class="st">&quot;exp_id&quot;</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 </details>
 </div>
 <div class="cell">
 <details class="code-fold">
 <summary>Code</summary>
-<div class="sourceCode cell-code" id="cb8"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb8-1"><a href="#cb8-1" aria-hidden="true" tabindex="-1"></a>quest_raw <span class="ot">&lt;-</span> <span class="fu">read_csv</span>(<span class="st">&quot;data/manyfaces-pilot-quest.csv&quot;</span>,</span>
-<span id="cb8-2"><a href="#cb8-2" aria-hidden="true" tabindex="-1"></a>                      <span class="at">show_col_types =</span> <span class="cn">FALSE</span>) <span class="sc">|&gt;</span> </span>
-<span id="cb8-3"><a href="#cb8-3" aria-hidden="true" tabindex="-1"></a>  dplyr<span class="sc">::</span><span class="fu">select</span>(session_id, q_name, dv, endtime) <span class="sc">|&gt;</span></span>
-<span id="cb8-4"><a href="#cb8-4" aria-hidden="true" tabindex="-1"></a>  <span class="fu">unique</span>() <span class="sc">|&gt;</span></span>
-<span id="cb8-5"><a href="#cb8-5" aria-hidden="true" tabindex="-1"></a>  <span class="fu">pivot_wider</span>(<span class="at">names_from =</span> q_name, <span class="at">values_from =</span> dv) <span class="sc">|&gt;</span></span>
-<span id="cb8-6"><a href="#cb8-6" aria-hidden="true" tabindex="-1"></a>  <span class="fu">mutate</span>(<span class="at">age =</span> <span class="fu">as.integer</span>(age))</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="sourceCode cell-code" id="cb7"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb7-1"><a href="#cb7-1" aria-hidden="true" tabindex="-1"></a>quest_raw <span class="ot">&lt;-</span> <span class="fu">read_csv</span>(<span class="st">&quot;data/manyfaces-pilot-quest.csv&quot;</span>,</span>
+<span id="cb7-2"><a href="#cb7-2" aria-hidden="true" tabindex="-1"></a>                      <span class="at">show_col_types =</span> <span class="cn">FALSE</span>) <span class="sc">|&gt;</span> </span>
+<span id="cb7-3"><a href="#cb7-3" aria-hidden="true" tabindex="-1"></a>  dplyr<span class="sc">::</span><span class="fu">select</span>(session_id, q_name, dv, endtime) <span class="sc">|&gt;</span></span>
+<span id="cb7-4"><a href="#cb7-4" aria-hidden="true" tabindex="-1"></a>  <span class="fu">unique</span>() <span class="sc">|&gt;</span></span>
+<span id="cb7-5"><a href="#cb7-5" aria-hidden="true" tabindex="-1"></a>  <span class="fu">pivot_wider</span>(<span class="at">names_from =</span> q_name, <span class="at">values_from =</span> dv) <span class="sc">|&gt;</span></span>
+<span id="cb7-6"><a href="#cb7-6" aria-hidden="true" tabindex="-1"></a>  <span class="fu">mutate</span>(<span class="at">age =</span> <span class="fu">as.integer</span>(age))</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 </details>
 </div>
 <div class="cell">
 <details class="code-fold">
 <summary>Code</summary>
-<div class="sourceCode cell-code" id="cb9"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb9-1"><a href="#cb9-1" aria-hidden="true" tabindex="-1"></a>model_raw <span class="ot">&lt;-</span> <span class="fu">read_csv</span>(<span class="st">&quot;data/manyfaces-pilot-models.csv&quot;</span>,</span>
-<span id="cb9-2"><a href="#cb9-2" aria-hidden="true" tabindex="-1"></a>                      <span class="at">show_col_types =</span> <span class="cn">FALSE</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="sourceCode cell-code" id="cb8"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb8-1"><a href="#cb8-1" aria-hidden="true" tabindex="-1"></a>model_raw <span class="ot">&lt;-</span> <span class="fu">read_csv</span>(<span class="st">&quot;data/manyfaces-pilot-models.csv&quot;</span>,</span>
+<span id="cb8-2"><a href="#cb8-2" aria-hidden="true" tabindex="-1"></a>                      <span class="at">show_col_types =</span> <span class="cn">FALSE</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 </details>
 </div>
 </section>
@@ -4582,69 +4573,42 @@ window.onload = function() {
 <div class="cell">
 <details class="code-fold">
 <summary>Code</summary>
+<div class="sourceCode cell-code" id="cb9"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb9-1"><a href="#cb9-1" aria-hidden="true" tabindex="-1"></a>ethnicity_recode <span class="ot">&lt;-</span> <span class="fu">read_csv</span>(<span class="st">&quot;data/eth_recode.csv&quot;</span>, <span class="at">na =</span> <span class="st">&quot;&quot;</span>, <span class="at">show_col_types =</span> <span class="cn">FALSE</span>)</span>
+<span id="cb9-2"><a href="#cb9-2" aria-hidden="true" tabindex="-1"></a>gender_recode <span class="ot">&lt;-</span> <span class="fu">read_csv</span>(<span class="st">&quot;data/gender_recode.csv&quot;</span>, <span class="at">na =</span> <span class="st">&quot;&quot;</span>, <span class="at">show_col_types =</span> <span class="cn">FALSE</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</details>
+</div>
+<div class="cell">
+<details class="code-fold">
+<summary>Code</summary>
 <div class="sourceCode cell-code" id="cb10"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb10-1"><a href="#cb10-1" aria-hidden="true" tabindex="-1"></a>data_model <span class="ot">&lt;-</span> model_raw <span class="sc">|&gt;</span> </span>
 <span id="cb10-2"><a href="#cb10-2" aria-hidden="true" tabindex="-1"></a>  <span class="fu">separate_wider_delim</span>(ID,</span>
 <span id="cb10-3"><a href="#cb10-3" aria-hidden="true" tabindex="-1"></a>                       <span class="at">delim =</span> <span class="st">&quot;_&quot;</span>,</span>
 <span id="cb10-4"><a href="#cb10-4" aria-hidden="true" tabindex="-1"></a>                       <span class="at">names =</span> <span class="fu">c</span>(<span class="st">&quot;lab_id&quot;</span>, <span class="st">&quot;model_id&quot;</span>),</span>
 <span id="cb10-5"><a href="#cb10-5" aria-hidden="true" tabindex="-1"></a>                       <span class="at">too_many =</span> <span class="st">&quot;drop&quot;</span>) <span class="sc">|&gt;</span></span>
 <span id="cb10-6"><a href="#cb10-6" aria-hidden="true" tabindex="-1"></a>  <span class="fu">mutate</span>(<span class="fu">across</span>(<span class="fu">where</span>(is.character), <span class="sc">~</span> <span class="fu">na_if</span>(.x, <span class="st">&quot;NULL&quot;</span>))) <span class="sc">|&gt;</span> </span>
-<span id="cb10-7"><a href="#cb10-7" aria-hidden="true" tabindex="-1"></a>  <span class="co"># recode gender</span></span>
+<span id="cb10-7"><a href="#cb10-7" aria-hidden="true" tabindex="-1"></a>  <span class="co"># recode gender and ethnicity</span></span>
 <span id="cb10-8"><a href="#cb10-8" aria-hidden="true" tabindex="-1"></a>  <span class="fu">mutate</span>(<span class="at">gender =</span> <span class="fu">tolower</span>(gender),</span>
-<span id="cb10-9"><a href="#cb10-9" aria-hidden="true" tabindex="-1"></a>         <span class="at">gender_rec =</span> <span class="fu">case_match</span>(gender,</span>
-<span id="cb10-10"><a href="#cb10-10" aria-hidden="true" tabindex="-1"></a>                                 <span class="fu">c</span>(<span class="st">&quot;female&quot;</span>, <span class="st">&quot;mulher&quot;</span>, <span class="st">&quot;feminino&quot;</span>, <span class="st">&quot;female.&quot;</span>,</span>
-<span id="cb10-11"><a href="#cb10-11" aria-hidden="true" tabindex="-1"></a>                                   <span class="st">&quot;f&quot;</span>, <span class="st">&quot;mujer&quot;</span>, <span class="st">&quot;femenino&quot;</span>, <span class="st">&quot;trans woman&quot;</span>, <span class="st">&quot;femal&quot;</span>) <span class="sc">~</span> <span class="st">&quot;female&quot;</span>,</span>
-<span id="cb10-12"><a href="#cb10-12" aria-hidden="true" tabindex="-1"></a>                                 <span class="fu">c</span>(<span class="st">&quot;homem&quot;</span>, <span class="st">&quot;masculino&quot;</span>, <span class="st">&quot;mascãºlino&quot;</span>, <span class="st">&quot;m&quot;</span>) <span class="sc">~</span> <span class="st">&quot;male&quot;</span>,</span>
-<span id="cb10-13"><a href="#cb10-13" aria-hidden="true" tabindex="-1"></a>                                 <span class="fu">c</span>(<span class="st">&quot;sexo feminino, gãªnero fluido&quot;</span>, <span class="st">&quot;nã£o binã¡rio&quot;</span>, <span class="st">&quot;nã£o binã¡rio&quot;</span>,</span>
-<span id="cb10-14"><a href="#cb10-14" aria-hidden="true" tabindex="-1"></a>                                   <span class="st">&quot;genderfluid (amab)&quot;</span>, <span class="st">&quot;nonbinary&quot;</span>) <span class="sc">~</span> <span class="st">&quot;non-binary&quot;</span>,</span>
-<span id="cb10-15"><a href="#cb10-15" aria-hidden="true" tabindex="-1"></a>                                 <span class="fu">c</span>(<span class="st">&quot;sexo feminino, gãªnero fluido&quot;</span>,</span>
-<span id="cb10-16"><a href="#cb10-16" aria-hidden="true" tabindex="-1"></a>                                   <span class="st">&quot;genderfluid (amab)&quot;</span>) <span class="sc">~</span> <span class="st">&quot;gender-fluid&quot;</span>,</span>
-<span id="cb10-17"><a href="#cb10-17" aria-hidden="true" tabindex="-1"></a>                                 <span class="fu">c</span>(<span class="st">&quot;hetero cis&quot;</span>, <span class="st">&quot;NA&quot;</span>) <span class="sc">~</span> <span class="cn">NA_character_</span>,</span>
-<span id="cb10-18"><a href="#cb10-18" aria-hidden="true" tabindex="-1"></a>                                 <span class="at">.default =</span> gender),</span>
-<span id="cb10-19"><a href="#cb10-19" aria-hidden="true" tabindex="-1"></a>         <span class="at">ethnicity =</span> <span class="fu">tolower</span>(ethnicity),</span>
-<span id="cb10-20"><a href="#cb10-20" aria-hidden="true" tabindex="-1"></a>         <span class="at">ethnicity_rec =</span> <span class="fu">case_match</span>(ethnicity,</span>
-<span id="cb10-21"><a href="#cb10-21" aria-hidden="true" tabindex="-1"></a>                                    <span class="fu">c</span>(<span class="st">&quot;white&quot;</span>, <span class="st">&quot;branco&quot;</span>, <span class="st">&quot;branca&quot;</span>, <span class="st">&quot;caucasian&quot;</span>, </span>
-<span id="cb10-22"><a href="#cb10-22" aria-hidden="true" tabindex="-1"></a>                                      <span class="st">&quot;white (italian)&quot;</span>, <span class="st">&quot;white british&quot;</span>, <span class="st">&quot;british&quot;</span>, <span class="st">&quot;white-french&quot;</span>, </span>
-<span id="cb10-23"><a href="#cb10-23" aria-hidden="true" tabindex="-1"></a>                                      <span class="st">&quot;british white&quot;</span>, <span class="st">&quot;white european&quot;</span>, <span class="st">&quot;white-scottish&quot;</span>, </span>
-<span id="cb10-24"><a href="#cb10-24" aria-hidden="true" tabindex="-1"></a>                                      <span class="st">&quot;white scottish&quot;</span>, <span class="st">&quot;white britisg&quot;</span>, <span class="st">&quot;german&quot;</span>, <span class="st">&quot;german,&quot;</span>, </span>
-<span id="cb10-25"><a href="#cb10-25" aria-hidden="true" tabindex="-1"></a>                                      <span class="st">&quot;german, swedish&quot;</span>, <span class="st">&quot;german/argentinien&quot;</span>, <span class="st">&quot;dutch&quot;</span>, <span class="st">&quot;french&quot;</span>, </span>
-<span id="cb10-26"><a href="#cb10-26" aria-hidden="true" tabindex="-1"></a>                                      <span class="st">&quot;scottish&quot;</span>, <span class="st">&quot;european&quot;</span>, <span class="st">&quot;eastern european&quot;</span>, <span class="st">&quot;croatian&quot;</span>, </span>
-<span id="cb10-27"><a href="#cb10-27" aria-hidden="true" tabindex="-1"></a>                                      <span class="st">&quot;serbian&quot;</span>, <span class="st">&quot;romanian&quot;</span>, <span class="st">&quot;white - other&quot;</span>, <span class="st">&quot;meditrainian&quot;</span>) <span class="sc">~</span> <span class="st">&quot;White&quot;</span>,</span>
-<span id="cb10-28"><a href="#cb10-28" aria-hidden="true" tabindex="-1"></a>                                    <span class="fu">c</span>(<span class="st">&quot;black&quot;</span>, <span class="st">&quot;preta&quot;</span>, <span class="st">&quot;negra&quot;</span>, <span class="st">&quot;african american&quot;</span>, </span>
-<span id="cb10-29"><a href="#cb10-29" aria-hidden="true" tabindex="-1"></a>                                      <span class="st">&quot;african (mauritian)&quot;</span>) <span class="sc">~</span> <span class="st">&quot;Black&quot;</span>,</span>
-<span id="cb10-30"><a href="#cb10-30" aria-hidden="true" tabindex="-1"></a>                                    <span class="fu">c</span>(<span class="st">&quot;asian&quot;</span>, <span class="st">&quot;asian (indian)&quot;</span>, <span class="st">&quot;south asian&quot;</span>, <span class="st">&quot;southasian&quot;</span>, </span>
-<span id="cb10-31"><a href="#cb10-31" aria-hidden="true" tabindex="-1"></a>                                      <span class="st">&quot;east indian&quot;</span>, <span class="st">&quot;chinese&quot;</span>, <span class="st">&quot;chinese - east asian&quot;</span>, <span class="st">&quot;asian/chinese&quot;</span>, </span>
-<span id="cb10-32"><a href="#cb10-32" aria-hidden="true" tabindex="-1"></a>                                      <span class="st">&quot;malaysian chinese&quot;</span>, <span class="st">&quot;malaysia chinese&quot;</span>, <span class="st">&quot;malaysian&quot;</span>, </span>
-<span id="cb10-33"><a href="#cb10-33" aria-hidden="true" tabindex="-1"></a>                                      <span class="st">&quot;indian&quot;</span>, <span class="st">&quot;pakistani&quot;</span>, <span class="st">&quot;hindu&quot;</span>, <span class="st">&quot;british indian&quot;</span>) <span class="sc">~</span> <span class="st">&quot;Asian&quot;</span>,</span>
-<span id="cb10-34"><a href="#cb10-34" aria-hidden="true" tabindex="-1"></a>                                    <span class="fu">c</span>(<span class="st">&quot;indigenous&quot;</span>) <span class="sc">~</span> <span class="st">&quot;Indigenous&quot;</span>,</span>
-<span id="cb10-35"><a href="#cb10-35" aria-hidden="true" tabindex="-1"></a>                                    <span class="fu">c</span>(<span class="st">&quot;middle eastern&quot;</span>, <span class="st">&quot;arab&quot;</span>, <span class="st">&quot;east african middle eastern&quot;</span>,</span>
-<span id="cb10-36"><a href="#cb10-36" aria-hidden="true" tabindex="-1"></a>                                      <span class="st">&quot;israeli&quot;</span>, <span class="st">&quot;israeli.&quot;</span>, <span class="st">&quot;israel&quot;</span>, <span class="st">&quot;muslim&quot;</span>, </span>
-<span id="cb10-37"><a href="#cb10-37" aria-hidden="true" tabindex="-1"></a>                                      <span class="st">&quot;turkish&quot;</span>, <span class="st">&quot;tã¼rkiye&quot;</span>, <span class="st">&quot;türkiye&quot;</span>) <span class="sc">~</span> <span class="st">&quot;Middle Eastern or North African (MENA)&quot;</span>,</span>
-<span id="cb10-38"><a href="#cb10-38" aria-hidden="true" tabindex="-1"></a>                                    <span class="fu">c</span>(<span class="st">&quot;latino&quot;</span>, <span class="st">&quot;latina&quot;</span>, <span class="st">&quot;latina branca&quot;</span>, <span class="st">&quot;mexicana&quot;</span>, <span class="st">&quot;mexicano&quot;</span>, </span>
-<span id="cb10-39"><a href="#cb10-39" aria-hidden="true" tabindex="-1"></a>                                      <span class="st">&quot;puerto rican/hispanic&quot;</span>, <span class="st">&quot;hispanic&quot;</span>, <span class="st">&quot;south american&quot;</span>) <span class="sc">~</span> <span class="st">&quot;Latine&quot;</span>,</span>
-<span id="cb10-40"><a href="#cb10-40" aria-hidden="true" tabindex="-1"></a>                                    <span class="fu">c</span>(<span class="st">&quot;mixed&quot;</span>, <span class="st">&quot;pardo&quot;</span>, <span class="st">&quot;parda&quot;</span>, <span class="st">&quot;pardo - mixed race&quot;</span>, <span class="st">&quot;mixraces&quot;</span>,</span>
-<span id="cb10-41"><a href="#cb10-41" aria-hidden="true" tabindex="-1"></a>                                      <span class="st">&quot;chinese-indian-malay mixed&quot;</span>, <span class="st">&quot;mixed white &amp; asian&quot;</span>, <span class="st">&quot;mix white/black&quot;</span>,</span>
-<span id="cb10-42"><a href="#cb10-42" aria-hidden="true" tabindex="-1"></a>                                      <span class="st">&quot;white / middle-eastern&quot;</span>, <span class="st">&quot;white / middle eastern&quot;</span>,</span>
-<span id="cb10-43"><a href="#cb10-43" aria-hidden="true" tabindex="-1"></a>                                      <span class="st">&quot;middle eastern/white&quot;</span>) <span class="sc">~</span> <span class="st">&quot;Mixed&quot;</span>,</span>
-<span id="cb10-44"><a href="#cb10-44" aria-hidden="true" tabindex="-1"></a>                                    <span class="fu">c</span>(<span class="st">&quot;ninguno&quot;</span>, <span class="st">&quot;jewish&quot;</span>, <span class="st">&quot;not hispanic/latino&quot;</span>) <span class="sc">~</span> <span class="st">&quot;Ambiguous label&quot;</span>,</span>
-<span id="cb10-45"><a href="#cb10-45" aria-hidden="true" tabindex="-1"></a>                                    <span class="at">.default =</span> <span class="cn">NA_character_</span>)) <span class="sc">|&gt;</span> </span>
-<span id="cb10-46"><a href="#cb10-46" aria-hidden="true" tabindex="-1"></a>  <span class="fu">relocate</span>(gender_rec, <span class="at">.after =</span> gender) <span class="sc">|&gt;</span> </span>
-<span id="cb10-47"><a href="#cb10-47" aria-hidden="true" tabindex="-1"></a>  <span class="fu">relocate</span>(ethnicity_rec, <span class="at">.after =</span> ethnicity) <span class="sc">|&gt;</span> </span>
-<span id="cb10-48"><a href="#cb10-48" aria-hidden="true" tabindex="-1"></a>  <span class="co"># recode height and weight</span></span>
-<span id="cb10-49"><a href="#cb10-49" aria-hidden="true" tabindex="-1"></a>  <span class="co"># one person reported weight of 37 kg at 163 cm -- recode as NA? Would be a BMI of 13.9</span></span>
-<span id="cb10-50"><a href="#cb10-50" aria-hidden="true" tabindex="-1"></a>  <span class="fu">mutate</span>(<span class="at">height_cm =</span> <span class="fu">case_when</span>(height_units <span class="sc">==</span> <span class="st">&quot;cm&quot;</span> <span class="sc">&amp;</span> <span class="fu">as.numeric</span>(height) <span class="sc">&lt;</span> <span class="dv">100</span> <span class="sc">~</span> <span class="fu">as.numeric</span>(height) <span class="sc">*</span> <span class="fl">2.54</span>, <span class="co"># likely mislabelled inches</span></span>
-<span id="cb10-51"><a href="#cb10-51" aria-hidden="true" tabindex="-1"></a>                               height_units <span class="sc">==</span> <span class="st">&quot;in&quot;</span> <span class="sc">&amp;</span> <span class="fu">as.numeric</span>(height) <span class="sc">&gt;</span> <span class="dv">100</span> <span class="sc">~</span> <span class="fu">as.numeric</span>(height), <span class="co"># likely mislabelled cms</span></span>
-<span id="cb10-52"><a href="#cb10-52" aria-hidden="true" tabindex="-1"></a>                               height_units <span class="sc">==</span> <span class="st">&quot;in&quot;</span> <span class="sc">~</span> <span class="fu">as.numeric</span>(height) <span class="sc">*</span> <span class="fl">2.54</span>,</span>
-<span id="cb10-53"><a href="#cb10-53" aria-hidden="true" tabindex="-1"></a>                               height_units <span class="sc">==</span> <span class="st">&quot;cm&quot;</span> <span class="sc">~</span> <span class="fu">as.numeric</span>(height),</span>
-<span id="cb10-54"><a href="#cb10-54" aria-hidden="true" tabindex="-1"></a>                               <span class="at">.default =</span> <span class="cn">NA_real_</span>),</span>
-<span id="cb10-55"><a href="#cb10-55" aria-hidden="true" tabindex="-1"></a>         <span class="at">weight_kg =</span> <span class="fu">case_when</span>(<span class="fu">as.numeric</span>(weight) <span class="sc">==</span> <span class="dv">0</span> <span class="sc">~</span> <span class="cn">NA_real_</span>,</span>
-<span id="cb10-56"><a href="#cb10-56" aria-hidden="true" tabindex="-1"></a>                               <span class="co"># Note: one participant indicated weight as 37kg and height as 163cm, which would mean BMI of ~14.0 - data entry error or legitimate value?</span></span>
-<span id="cb10-57"><a href="#cb10-57" aria-hidden="true" tabindex="-1"></a>                               weight_units <span class="sc">==</span> <span class="st">&quot;lb&quot;</span> <span class="sc">&amp;</span> <span class="fu">as.numeric</span>(weight) <span class="sc">&lt;</span> <span class="dv">80</span> <span class="sc">~</span> <span class="fu">as.numeric</span>(weight),            <span class="co"># likely mislabelled kg</span></span>
-<span id="cb10-58"><a href="#cb10-58" aria-hidden="true" tabindex="-1"></a>                               weight_units <span class="sc">==</span> <span class="st">&quot;lb&quot;</span> <span class="sc">~</span> <span class="fu">as.numeric</span>(weight) <span class="sc">/</span> <span class="fl">2.20462</span>,</span>
-<span id="cb10-59"><a href="#cb10-59" aria-hidden="true" tabindex="-1"></a>                               weight_units <span class="sc">==</span> <span class="st">&quot;kg&quot;</span> <span class="sc">~</span> <span class="fu">as.numeric</span>(weight),</span>
-<span id="cb10-60"><a href="#cb10-60" aria-hidden="true" tabindex="-1"></a>                               <span class="fu">as.numeric</span>(weight) <span class="sc">==</span> <span class="dv">0</span> <span class="sc">~</span> <span class="cn">NA</span>,</span>
-<span id="cb10-61"><a href="#cb10-61" aria-hidden="true" tabindex="-1"></a>                               <span class="at">.default =</span> <span class="cn">NA_real_</span>)) <span class="sc">|&gt;</span> </span>
-<span id="cb10-62"><a href="#cb10-62" aria-hidden="true" tabindex="-1"></a>  <span class="fu">relocate</span>(height_cm, <span class="at">.after =</span> height_units) <span class="sc">|&gt;</span></span>
-<span id="cb10-63"><a href="#cb10-63" aria-hidden="true" tabindex="-1"></a>  <span class="fu">relocate</span>(<span class="fu">c</span>(weight, weight_units, weight_kg), <span class="at">.after =</span> height_cm)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<span id="cb10-9"><a href="#cb10-9" aria-hidden="true" tabindex="-1"></a>         <span class="at">ethnicity =</span> <span class="fu">tolower</span>(ethnicity)) <span class="sc">|&gt;</span></span>
+<span id="cb10-10"><a href="#cb10-10" aria-hidden="true" tabindex="-1"></a>  <span class="fu">left_join</span>(gender_recode, <span class="at">by =</span> <span class="st">&quot;gender&quot;</span>) <span class="sc">|&gt;</span></span>
+<span id="cb10-11"><a href="#cb10-11" aria-hidden="true" tabindex="-1"></a>  <span class="fu">left_join</span>(ethnicity_recode, <span class="at">by =</span> <span class="st">&quot;ethnicity&quot;</span>) <span class="sc">|&gt;</span></span>
+<span id="cb10-12"><a href="#cb10-12" aria-hidden="true" tabindex="-1"></a>  <span class="fu">relocate</span>(gender_rec, <span class="at">.after =</span> gender) <span class="sc">|&gt;</span> </span>
+<span id="cb10-13"><a href="#cb10-13" aria-hidden="true" tabindex="-1"></a>  <span class="fu">relocate</span>(ethnicity_rec, <span class="at">.after =</span> ethnicity) <span class="sc">|&gt;</span> </span>
+<span id="cb10-14"><a href="#cb10-14" aria-hidden="true" tabindex="-1"></a>  <span class="co"># recode height and weight</span></span>
+<span id="cb10-15"><a href="#cb10-15" aria-hidden="true" tabindex="-1"></a>  <span class="co"># one person reported weight of 37 kg at 163 cm -- recode as NA? Would be a BMI of 13.9</span></span>
+<span id="cb10-16"><a href="#cb10-16" aria-hidden="true" tabindex="-1"></a>  <span class="fu">mutate</span>(<span class="at">height_cm =</span> <span class="fu">case_when</span>(height_units <span class="sc">==</span> <span class="st">&quot;cm&quot;</span> <span class="sc">&amp;</span> <span class="fu">as.numeric</span>(height) <span class="sc">&lt;</span> <span class="dv">100</span> <span class="sc">~</span> <span class="fu">as.numeric</span>(height) <span class="sc">*</span> <span class="fl">2.54</span>, <span class="co"># likely mislabelled inches</span></span>
+<span id="cb10-17"><a href="#cb10-17" aria-hidden="true" tabindex="-1"></a>                               height_units <span class="sc">==</span> <span class="st">&quot;in&quot;</span> <span class="sc">&amp;</span> <span class="fu">as.numeric</span>(height) <span class="sc">&gt;</span> <span class="dv">100</span> <span class="sc">~</span> <span class="fu">as.numeric</span>(height), <span class="co"># likely mislabelled cms</span></span>
+<span id="cb10-18"><a href="#cb10-18" aria-hidden="true" tabindex="-1"></a>                               height_units <span class="sc">==</span> <span class="st">&quot;in&quot;</span> <span class="sc">~</span> <span class="fu">as.numeric</span>(height) <span class="sc">*</span> <span class="fl">2.54</span>,</span>
+<span id="cb10-19"><a href="#cb10-19" aria-hidden="true" tabindex="-1"></a>                               height_units <span class="sc">==</span> <span class="st">&quot;cm&quot;</span> <span class="sc">~</span> <span class="fu">as.numeric</span>(height),</span>
+<span id="cb10-20"><a href="#cb10-20" aria-hidden="true" tabindex="-1"></a>                               <span class="at">.default =</span> <span class="cn">NA_real_</span>),</span>
+<span id="cb10-21"><a href="#cb10-21" aria-hidden="true" tabindex="-1"></a>         <span class="at">weight_kg =</span> <span class="fu">case_when</span>(<span class="fu">as.numeric</span>(weight) <span class="sc">==</span> <span class="dv">0</span> <span class="sc">~</span> <span class="cn">NA_real_</span>,</span>
+<span id="cb10-22"><a href="#cb10-22" aria-hidden="true" tabindex="-1"></a>                               <span class="co"># Note: one participant indicated weight as 37kg and height as 163cm, which would mean BMI of ~14.0 - data entry error or legitimate value?</span></span>
+<span id="cb10-23"><a href="#cb10-23" aria-hidden="true" tabindex="-1"></a>                               weight_units <span class="sc">==</span> <span class="st">&quot;lb&quot;</span> <span class="sc">&amp;</span> <span class="fu">as.numeric</span>(weight) <span class="sc">&lt;</span> <span class="dv">80</span> <span class="sc">~</span> <span class="fu">as.numeric</span>(weight),            <span class="co"># likely mislabelled kg</span></span>
+<span id="cb10-24"><a href="#cb10-24" aria-hidden="true" tabindex="-1"></a>                               weight_units <span class="sc">==</span> <span class="st">&quot;lb&quot;</span> <span class="sc">~</span> <span class="fu">as.numeric</span>(weight) <span class="sc">/</span> <span class="fl">2.20462</span>,</span>
+<span id="cb10-25"><a href="#cb10-25" aria-hidden="true" tabindex="-1"></a>                               weight_units <span class="sc">==</span> <span class="st">&quot;kg&quot;</span> <span class="sc">~</span> <span class="fu">as.numeric</span>(weight),</span>
+<span id="cb10-26"><a href="#cb10-26" aria-hidden="true" tabindex="-1"></a>                               <span class="fu">as.numeric</span>(weight) <span class="sc">==</span> <span class="dv">0</span> <span class="sc">~</span> <span class="cn">NA</span>,</span>
+<span id="cb10-27"><a href="#cb10-27" aria-hidden="true" tabindex="-1"></a>                               <span class="at">.default =</span> <span class="cn">NA_real_</span>)) <span class="sc">|&gt;</span> </span>
+<span id="cb10-28"><a href="#cb10-28" aria-hidden="true" tabindex="-1"></a>  <span class="fu">relocate</span>(height_cm, <span class="at">.after =</span> height_units) <span class="sc">|&gt;</span></span>
+<span id="cb10-29"><a href="#cb10-29" aria-hidden="true" tabindex="-1"></a>  <span class="fu">relocate</span>(<span class="fu">c</span>(weight, weight_units, weight_kg), <span class="at">.after =</span> height_cm)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 </details>
 </div>
 </section>
@@ -4653,64 +4617,19 @@ window.onload = function() {
 <div class="cell">
 <details class="code-fold">
 <summary>Code</summary>
-<div class="sourceCode cell-code" id="cb11"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb11-1"><a href="#cb11-1" aria-hidden="true" tabindex="-1"></a>data_quest <span class="ot">&lt;-</span> quest_raw <span class="sc">|&gt;</span> </span>
-<span id="cb11-2"><a href="#cb11-2" aria-hidden="true" tabindex="-1"></a>  <span class="co"># recode ethnicity</span></span>
-<span id="cb11-3"><a href="#cb11-3" aria-hidden="true" tabindex="-1"></a>  <span class="fu">mutate</span>(<span class="at">ethnicity =</span> <span class="fu">tolower</span>(ethnicity),</span>
-<span id="cb11-4"><a href="#cb11-4" aria-hidden="true" tabindex="-1"></a>         <span class="at">ethnicity_rec =</span> <span class="fu">case_match</span>(ethnicity,</span>
-<span id="cb11-5"><a href="#cb11-5" aria-hidden="true" tabindex="-1"></a>                                    <span class="fu">c</span>(<span class="st">&quot;white&quot;</span>, <span class="st">&quot;whitr&quot;</span>, <span class="st">&quot;blanco&quot;</span>, <span class="st">&quot;weiß&quot;</span>,</span>
-<span id="cb11-6"><a href="#cb11-6" aria-hidden="true" tabindex="-1"></a>                                      <span class="st">&quot;white/caucasian&quot;</span>, <span class="st">&quot;white caucasian&quot;</span>, <span class="st">&quot;white/caucasion&quot;</span>,</span>
-<span id="cb11-7"><a href="#cb11-7" aria-hidden="true" tabindex="-1"></a>                                      <span class="st">&quot;white / caucasian&quot;</span>,  <span class="st">&quot;caucasian/white&quot;</span>, <span class="st">&quot;caucasian (white)&quot;</span>,</span>
-<span id="cb11-8"><a href="#cb11-8" aria-hidden="true" tabindex="-1"></a>                                      <span class="st">&quot;whithe/caucasian&quot;</span>, <span class="st">&quot;caucasic&quot;</span>, <span class="st">&quot;caucasian&quot;</span>, <span class="st">&quot;caicasoan&quot;</span>,</span>
-<span id="cb11-9"><a href="#cb11-9" aria-hidden="true" tabindex="-1"></a>                                      <span class="st">&quot;caucasian canadian&quot;</span>, <span class="st">&quot;caucasian/greek&quot;</span>,  </span>
-<span id="cb11-10"><a href="#cb11-10" aria-hidden="true" tabindex="-1"></a>                                      <span class="st">&quot;white british caucasian&quot;</span>, <span class="st">&quot;white british caucasian&quot;</span>,</span>
-<span id="cb11-11"><a href="#cb11-11" aria-hidden="true" tabindex="-1"></a>                                      <span class="st">&quot;white british&quot;</span>, <span class="st">&quot;british&quot;</span>, <span class="st">&quot;white/british&quot;</span>, <span class="st">&quot;white - british&quot;</span>,</span>
-<span id="cb11-12"><a href="#cb11-12" aria-hidden="true" tabindex="-1"></a>                                      <span class="st">&quot;british/white&quot;</span>, <span class="st">&quot;welsh&quot;</span>, <span class="st">&quot;english&quot;</span>, <span class="st">&quot;irish&quot;</span>, <span class="st">&quot;scottish&quot;</span>, </span>
-<span id="cb11-13"><a href="#cb11-13" aria-hidden="true" tabindex="-1"></a>                                      <span class="st">&quot;white european&quot;</span>, <span class="st">&quot;white/european&quot;</span>, <span class="st">&quot;white, southern european&quot;</span>,</span>
-<span id="cb11-14"><a href="#cb11-14" aria-hidden="true" tabindex="-1"></a>                                      <span class="st">&quot;white, eastern european&quot;</span>, <span class="st">&quot;european american&quot;</span>, <span class="st">&quot;eastern european&quot;</span>,</span>
-<span id="cb11-15"><a href="#cb11-15" aria-hidden="true" tabindex="-1"></a>                                      <span class="st">&quot;white slavic&quot;</span>, <span class="st">&quot;slavic&quot;</span>, <span class="st">&quot;white/polish&quot;</span>, <span class="st">&quot;polish&quot;</span>, <span class="st">&quot;polish/white&quot;</span>,</span>
-<span id="cb11-16"><a href="#cb11-16" aria-hidden="true" tabindex="-1"></a>                                      <span class="st">&quot;white, german&quot;</span>, <span class="st">&quot;white/greek&quot;</span>, <span class="st">&quot;greek/white&quot;</span>, <span class="st">&quot;greek&quot;</span>, <span class="st">&quot;white/italian&quot;</span>,</span>
-<span id="cb11-17"><a href="#cb11-17" aria-hidden="true" tabindex="-1"></a>                                      <span class="st">&quot;white/swedish&quot;</span>, <span class="st">&quot;white/estonian&quot;</span>, <span class="st">&quot;white other - romanian&quot;</span>,</span>
-<span id="cb11-18"><a href="#cb11-18" aria-hidden="true" tabindex="-1"></a>                                      <span class="st">&quot;white/spanish&quot;</span>, <span class="st">&quot;spanish&quot;</span>, <span class="st">&quot;spanish/white&quot;</span>, <span class="st">&quot;spanish-white&quot;</span>) <span class="sc">~</span> <span class="st">&quot;White&quot;</span>,</span>
-<span id="cb11-19"><a href="#cb11-19" aria-hidden="true" tabindex="-1"></a>                                    <span class="fu">c</span>(<span class="st">&quot;black&quot;</span>, <span class="st">&quot;black african&quot;</span>, <span class="st">&quot;black/african&quot;</span>,</span>
-<span id="cb11-20"><a href="#cb11-20" aria-hidden="true" tabindex="-1"></a>                                      <span class="st">&quot;black/africa&quot;</span>, <span class="st">&quot;african/black&quot;</span>, <span class="st">&quot;africa/black&quot;</span>,</span>
-<span id="cb11-21"><a href="#cb11-21" aria-hidden="true" tabindex="-1"></a>                                      <span class="st">&quot;black/ african&quot;</span>, <span class="st">&quot;african black&quot;</span>, <span class="st">&quot;black-african&quot;</span>, </span>
-<span id="cb11-22"><a href="#cb11-22" aria-hidden="true" tabindex="-1"></a>                                      <span class="st">&quot;african&quot;</span>, <span class="st">&quot;africa&quot;</span>, <span class="st">&quot;black south african&quot;</span>,</span>
-<span id="cb11-23"><a href="#cb11-23" aria-hidden="true" tabindex="-1"></a>                                      <span class="st">&quot;african american&quot;</span>, <span class="st">&quot;afican american&quot;</span>,</span>
-<span id="cb11-24"><a href="#cb11-24" aria-hidden="true" tabindex="-1"></a>                                      <span class="st">&quot;black: african american&quot;</span>, <span class="st">&quot;black american&quot;</span>,</span>
-<span id="cb11-25"><a href="#cb11-25" aria-hidden="true" tabindex="-1"></a>                                      <span class="st">&quot;black or african american&quot;</span>, <span class="st">&quot;african american/black&quot;</span>, </span>
-<span id="cb11-26"><a href="#cb11-26" aria-hidden="true" tabindex="-1"></a>                                      <span class="st">&quot;black african american&quot;</span>, <span class="st">&quot;african/black american&quot;</span>,</span>
-<span id="cb11-27"><a href="#cb11-27" aria-hidden="true" tabindex="-1"></a>                                      <span class="st">&quot;black british&quot;</span>,</span>
-<span id="cb11-28"><a href="#cb11-28" aria-hidden="true" tabindex="-1"></a>                                      <span class="st">&quot;zulu&quot;</span>, <span class="st">&quot;kenyan&quot;</span>, <span class="st">&quot;nigeria&quot;</span>,  </span>
-<span id="cb11-29"><a href="#cb11-29" aria-hidden="true" tabindex="-1"></a>                                      <span class="st">&quot;colored&quot;</span>, <span class="st">&quot;coloured&quot;</span>, <span class="st">&quot;coloured south african&quot;</span>) <span class="sc">~</span> <span class="st">&quot;Black&quot;</span>,</span>
-<span id="cb11-30"><a href="#cb11-30" aria-hidden="true" tabindex="-1"></a>                                    <span class="fu">c</span>(<span class="st">&quot;asian&quot;</span>, <span class="st">&quot;asia&quot;</span>, <span class="st">&quot;south asian&quot;</span>, <span class="st">&quot;east asian&quot;</span>,</span>
-<span id="cb11-31"><a href="#cb11-31" aria-hidden="true" tabindex="-1"></a>                                      <span class="st">&quot;asian/indian&quot;</span>, <span class="st">&quot;indian&quot;</span>, <span class="st">&quot;bangladeshi&quot;</span>, <span class="st">&quot;pakistani&quot;</span>,</span>
-<span id="cb11-32"><a href="#cb11-32" aria-hidden="true" tabindex="-1"></a>                                      <span class="st">&quot;sri lankan&quot;</span>, <span class="st">&quot;chinese&quot;</span>, <span class="st">&quot;japanese&quot;</span>,</span>
-<span id="cb11-33"><a href="#cb11-33" aria-hidden="true" tabindex="-1"></a>                                      <span class="st">&quot;filipino&quot;</span>, <span class="st">&quot;philippine&quot;</span>, <span class="st">&quot;vietnamese&quot;</span>, <span class="st">&quot;sundanese&quot;</span>,</span>
-<span id="cb11-34"><a href="#cb11-34" aria-hidden="true" tabindex="-1"></a>                                      <span class="st">&quot;indo-aryan&quot;</span>, <span class="st">&quot;indo-fijian&quot;</span>, <span class="st">&quot;british - indian&quot;</span>,</span>
-<span id="cb11-35"><a href="#cb11-35" aria-hidden="true" tabindex="-1"></a>                                      <span class="st">&quot;british asian&quot;</span>, <span class="st">&quot;british pakistani&quot;</span>) <span class="sc">~</span> <span class="st">&quot;Asian&quot;</span>,</span>
-<span id="cb11-36"><a href="#cb11-36" aria-hidden="true" tabindex="-1"></a>                                    <span class="fu">c</span>(<span class="st">&quot;native american&quot;</span>, <span class="st">&quot;native hawaiian&quot;</span>, <span class="st">&quot;samoan&quot;</span>) <span class="sc">~</span> <span class="st">&quot;Indigenous / Pacific Islander&quot;</span>,</span>
-<span id="cb11-37"><a href="#cb11-37" aria-hidden="true" tabindex="-1"></a>                                    <span class="fu">c</span>(<span class="st">&quot;arab&quot;</span>, <span class="st">&quot;middle eastern&quot;</span>, <span class="st">&quot;north african&quot;</span>) <span class="sc">~</span> <span class="st">&quot;MENA&quot;</span>,</span>
-<span id="cb11-38"><a href="#cb11-38" aria-hidden="true" tabindex="-1"></a>                                    <span class="fu">c</span>(<span class="st">&quot;latino&quot;</span>, <span class="st">&quot;latina&quot;</span>, <span class="st">&quot;latinx&quot;</span>, <span class="st">&quot;latine&quot;</span>, <span class="st">&quot;latin&quot;</span>, </span>
-<span id="cb11-39"><a href="#cb11-39" aria-hidden="true" tabindex="-1"></a>                                      <span class="st">&quot;hispanic&quot;</span>, <span class="st">&quot;hispanic/latino&quot;</span>, <span class="st">&quot;latinamerican&quot;</span>, </span>
-<span id="cb11-40"><a href="#cb11-40" aria-hidden="true" tabindex="-1"></a>                                       <span class="st">&quot;preta&quot;</span>, <span class="st">&quot;brazilian&quot;</span>) <span class="sc">~</span> <span class="st">&quot;Latine&quot;</span>,</span>
-<span id="cb11-41"><a href="#cb11-41" aria-hidden="true" tabindex="-1"></a>                                    <span class="fu">c</span>(<span class="st">&quot;mixed&quot;</span>, <span class="st">&quot;mixed race&quot;</span>, <span class="st">&quot;mix&quot;</span>, <span class="st">&quot;biracial&quot;</span>,</span>
-<span id="cb11-42"><a href="#cb11-42" aria-hidden="true" tabindex="-1"></a>                                      <span class="st">&quot;mixed black caribbean and white&quot;</span>, <span class="st">&quot;cape coloured&quot;</span>,</span>
-<span id="cb11-43"><a href="#cb11-43" aria-hidden="true" tabindex="-1"></a>                                      <span class="st">&quot;black/white&quot;</span>, <span class="st">&quot;white / puerto rican&quot;</span>,</span>
-<span id="cb11-44"><a href="#cb11-44" aria-hidden="true" tabindex="-1"></a>                                      <span class="st">&quot;white/ latino&quot;</span>, <span class="st">&quot;white &amp; asian&quot;</span>, </span>
-<span id="cb11-45"><a href="#cb11-45" aria-hidden="true" tabindex="-1"></a>                                      <span class="st">&quot;coloured / mixed race&quot;</span>) <span class="sc">~</span> <span class="st">&quot;Mixed&quot;</span>,</span>
-<span id="cb11-46"><a href="#cb11-46" aria-hidden="true" tabindex="-1"></a>                                    <span class="fu">c</span>(<span class="st">&quot;mauritian&quot;</span>, <span class="st">&quot;belgium, asian&quot;</span>, <span class="st">&quot;black/british&quot;</span>,</span>
-<span id="cb11-47"><a href="#cb11-47" aria-hidden="true" tabindex="-1"></a>                                      <span class="st">&quot;eurasian&quot;</span>, <span class="st">&quot;caribbean&quot;</span>, <span class="st">&quot;carribean&quot;</span>, </span>
-<span id="cb11-48"><a href="#cb11-48" aria-hidden="true" tabindex="-1"></a>                                      <span class="st">&quot;british asian american&quot;</span>,<span class="st">&quot;chinese/uk&quot;</span>,</span>
-<span id="cb11-49"><a href="#cb11-49" aria-hidden="true" tabindex="-1"></a>                                      <span class="st">&quot;latin european&quot;</span>, <span class="st">&quot;white hispanic&quot;</span>, <span class="st">&quot;race&quot;</span>,</span>
-<span id="cb11-50"><a href="#cb11-50" aria-hidden="true" tabindex="-1"></a>                                       <span class="st">&quot;american&quot;</span>, <span class="st">&quot;christian&quot;</span>, <span class="st">&quot;christianity&quot;</span>) <span class="sc">~</span> <span class="st">&quot;Ambiguous label&quot;</span>,</span>
-<span id="cb11-51"><a href="#cb11-51" aria-hidden="true" tabindex="-1"></a>                                    <span class="at">.default =</span> <span class="cn">NA_character_</span>)) <span class="sc">|&gt;</span> </span>
-<span id="cb11-52"><a href="#cb11-52" aria-hidden="true" tabindex="-1"></a>   <span class="fu">relocate</span>(ethnicity_rec, <span class="at">.after =</span> ethnicity)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="sourceCode cell-code" id="cb11"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb11-1"><a href="#cb11-1" aria-hidden="true" tabindex="-1"></a>quest_eth_recode <span class="ot">&lt;-</span> <span class="fu">read_csv</span>(<span class="st">&quot;data/quest_eth_recode.csv&quot;</span>, <span class="at">na =</span> <span class="st">&quot;&quot;</span>, <span class="at">show_col_types =</span> <span class="cn">FALSE</span>)</span>
+<span id="cb11-2"><a href="#cb11-2" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb11-3"><a href="#cb11-3" aria-hidden="true" tabindex="-1"></a>data_quest <span class="ot">&lt;-</span> quest_raw <span class="sc">|&gt;</span> </span>
+<span id="cb11-4"><a href="#cb11-4" aria-hidden="true" tabindex="-1"></a>  <span class="co"># recode ethnicity</span></span>
+<span id="cb11-5"><a href="#cb11-5" aria-hidden="true" tabindex="-1"></a>  <span class="fu">mutate</span>(<span class="at">ethnicity =</span> <span class="fu">tolower</span>(ethnicity)) <span class="sc">|&gt;</span></span>
+<span id="cb11-6"><a href="#cb11-6" aria-hidden="true" tabindex="-1"></a>  <span class="fu">left_join</span>(quest_eth_recode, <span class="at">by =</span> <span class="st">&quot;ethnicity&quot;</span>) <span class="sc">|&gt;</span></span>
+<span id="cb11-7"><a href="#cb11-7" aria-hidden="true" tabindex="-1"></a>  <span class="fu">relocate</span>(ethnicity_rec, <span class="at">.after =</span> ethnicity)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 </details>
 </div>
 </section>
 <section id="experimental-data" class="level4">
 <h4 class="anchored" data-anchor-id="experimental-data">Experimental data</h4>
-<p><strong>Remove remove duplicate trials and incomplete data</strong></p>
+<p><strong>Remove duplicate trials and incomplete data</strong></p>
 <p>We start with 2115 participants completing a total of 2158 experiments.</p>
 <p>Some participants completed more than the maximum amount of trials in an experiment. Duplicate trials were removed by only retaining participants’ initial ratings of a particular stimulus.</p>
 <div class="cell">
@@ -4879,7 +4798,7 @@ window.onload = function() {
 <span id="cb24-3"><a href="#cb24-3" aria-hidden="true" tabindex="-1"></a>    <span class="st">`</span><span class="at">Overly consistent response</span><span class="st">`</span> <span class="ot">=</span> <span class="fu">sum</span>(<span class="sc">!</span><span class="fu">is.na</span>(same_pcnt)),</span>
 <span id="cb24-4"><a href="#cb24-4" aria-hidden="true" tabindex="-1"></a>    <span class="st">`</span><span class="at">RT below cutoff</span><span class="st">`</span> <span class="ot">=</span> <span class="fu">sum</span>(<span class="sc">!</span><span class="fu">is.na</span>(med_rt)),</span>
 <span id="cb24-5"><a href="#cb24-5" aria-hidden="true" tabindex="-1"></a>    <span class="st">`</span><span class="at">Failed honesty check</span><span class="st">`</span> <span class="ot">=</span> <span class="fu">sum</span>(<span class="sc">!</span><span class="fu">is.na</span>(honesty_check)),</span>
-<span id="cb24-6"><a href="#cb24-6" aria-hidden="true" tabindex="-1"></a>    <span class="st">`</span><span class="at">Failed 2 or more of 7 attention checks</span><span class="st">`</span> <span class="ot">=</span> <span class="fu">sum</span>(<span class="sc">!</span><span class="fu">is.na</span>(attn_checks_passed)),</span>
+<span id="cb24-6"><a href="#cb24-6" aria-hidden="true" tabindex="-1"></a>    <span class="st">`</span><span class="at">Failed more than 1 of 7 attention checks</span><span class="st">`</span> <span class="ot">=</span> <span class="fu">sum</span>(<span class="sc">!</span><span class="fu">is.na</span>(attn_checks_passed)),</span>
 <span id="cb24-7"><a href="#cb24-7" aria-hidden="true" tabindex="-1"></a>    <span class="st">&quot;Total exclusions&quot;</span> <span class="ot">=</span> <span class="fu">n</span>()</span>
 <span id="cb24-8"><a href="#cb24-8" aria-hidden="true" tabindex="-1"></a>  ) <span class="sc">|&gt;</span> </span>
 <span id="cb24-9"><a href="#cb24-9" aria-hidden="true" tabindex="-1"></a>  <span class="fu">pivot_longer</span>(</span>
@@ -4891,7 +4810,7 @@ window.onload = function() {
 <div class="cell-output-display">
 <div data-pagedtable="false">
   <script data-pagedtable-source type="application/json">
-{"columns":[{"label":["Reason for exclusion"],"name":[1],"type":["chr"],"align":["left"]},{"label":["Number of participants"],"name":[2],"type":["int"],"align":["right"]}],"data":[{"1":"Overly consistent response","2":"13"},{"1":"RT below cutoff","2":"20"},{"1":"Failed honesty check","2":"2"},{"1":"Failed 2 or more of 7 attention checks","2":"19"},{"1":"Total exclusions","2":"49"}],"options":{"columns":{"min":{},"max":[10]},"rows":{"min":[10],"max":[10]},"pages":{}}}
+{"columns":[{"label":["Reason for exclusion"],"name":[1],"type":["chr"],"align":["left"]},{"label":["Number of participants"],"name":[2],"type":["int"],"align":["right"]}],"data":[{"1":"Overly consistent response","2":"13"},{"1":"RT below cutoff","2":"20"},{"1":"Failed honesty check","2":"2"},{"1":"Failed more than 1 of 7 attention checks","2":"19"},{"1":"Total exclusions","2":"49"}],"options":{"columns":{"min":{},"max":[10]},"rows":{"min":[10],"max":[10]},"pages":{}}}
   </script>
 </div>
 </div>
@@ -4938,8 +4857,11 @@ window.onload = function() {
 <span id="cb27-6"><a href="#cb27-6" aria-hidden="true" tabindex="-1"></a>  <span class="fu">filter</span>(session_id <span class="sc">%in%</span> data_exp<span class="sc">$</span>session_id) <span class="sc">|&gt;</span></span>
 <span id="cb27-7"><a href="#cb27-7" aria-hidden="true" tabindex="-1"></a>  <span class="fu">write_csv</span>(<span class="st">&quot;data/manyfaces-pilot-quest_cleaned.csv&quot;</span>)</span>
 <span id="cb27-8"><a href="#cb27-8" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb27-9"><a href="#cb27-9" aria-hidden="true" tabindex="-1"></a><span class="co"># Model data</span></span>
-<span id="cb27-10"><a href="#cb27-10" aria-hidden="true" tabindex="-1"></a><span class="fu">write_csv</span>(data_model, <span class="st">&quot;data/manyfaces-pilot-models_cleaned.csv&quot;</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<span id="cb27-9"><a href="#cb27-9" aria-hidden="true" tabindex="-1"></a><span class="co"># Exclusions data</span></span>
+<span id="cb27-10"><a href="#cb27-10" aria-hidden="true" tabindex="-1"></a><span class="fu">write_csv</span>(exclusions, <span class="st">&quot;data/exclusions.csv&quot;</span>)</span>
+<span id="cb27-11"><a href="#cb27-11" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb27-12"><a href="#cb27-12" aria-hidden="true" tabindex="-1"></a><span class="co"># Model data</span></span>
+<span id="cb27-13"><a href="#cb27-13" aria-hidden="true" tabindex="-1"></a><span class="fu">write_csv</span>(data_model, <span class="st">&quot;data/manyfaces-pilot-models_cleaned.csv&quot;</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 </details>
 </div>
 </section>
