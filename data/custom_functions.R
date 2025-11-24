@@ -47,6 +47,20 @@ get_mode_info <- function(x) {
   list(age_mode = mode_val, age_prop = prop)
 }
 
+# T-test summary
+ttest_summary <- function(x, y) {
+  test <- t.test(x, y, paired = TRUE)
+  p_val <- ifelse(test$p.value < 0.001, "<.001",
+                  sub("^0", "", sprintf("%.3f", test$p.value)))
+  tibble(M_std = round(mean(x, na.rm = TRUE), 2),
+         M_unstd = round(mean(y, na.rm = TRUE), 2),
+         M_diff = round(test$estimate, 2),
+         CI_95_lower = round(test$conf.int[1], 2),
+         CI_95_upper = round(test$conf.int[2], 2),
+         t = round(test$statistic, 2),
+         df = round(test$parameter, 2),
+         p = p_val)
+}
 
 #######################################################
 #################### ---- ICC ---- ####################

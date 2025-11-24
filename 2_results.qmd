@@ -51,6 +51,16 @@ rainbow <- c("firebrick", "darkorange", "goldenrod",
              "darkgreen", "dodgerblue3", "darkorchid4")
 ```
 
+## Model demographics
+
+```{r}
+data_model |> 
+  filter(!is.na(age)) |>
+  ggplot(aes(x = age, fill = gender_rec)) +
+  geom_histogram(binwidth = 1) +
+  scale_fill_manual(values = c("hotpink", "lightblue", "orchid", "gray")) +
+  labs(fill = "Gender")
+```
 
 ## Standardised neutral trait ratings
 
@@ -463,4 +473,49 @@ write_csv(pilot_ratings, "results/manyfaces-pilot-ratings-traits.csv")
 write_csv(pilot_ratings_emotions, "results/manyfaces-pilot-ratings-emotions.csv")
 ```
 
+
+## Exploratory inferential stats
+
+### Comparing ratings of standardised vs unstandardised face images
+
+```{r}
+
+bind_rows(
+  attractive = ttest_summary(pilot_ratings$attractive, pilot_ratings$`attractive (unstd)`),
+  trustworthy = ttest_summary(pilot_ratings$trustworthy, pilot_ratings$`trustworthy (unstd)`),
+  dominant = ttest_summary(pilot_ratings$dominant, pilot_ratings$`dominant (unstd)`),
+  .id = "trait"
+)
+
+```
+
+```{r}
+traits <- c("attractive", "trustworthy", "dominant")
+unstd_cols <- paste0(traits, " (unstd)")
+
+
+pilot_ratings |> 
+  dplyr::select(lab_id, model_id, all_of(c(traits, unstd_cols))) %>%
+  pivot_longer(cols = -c(lab_id, model_id),
+               names_to = "name",
+               values_to = "rating") |> 
+  mutate(type = if_else(str_detect(name, "\\(unstd\\)$"), "unstd", "std"),
+         trait = str_remove(name, " \\(unstd\\)$")) |> 
+  dplyr::select(lab_id, model_id, trait, type, rating) |> 
+  mutate(trait = factor(trait, levels = traits),
+         type = factor(type, levels = c("std", "unstd"))) |> 
+  ggplot(aes(x = type, y = rating, fill = type)) +
+  geom_violin(trim = FALSE, alpha = 0.6, na.rm = TRUE) +
+  geom_boxplot(width = 0.18, outlier.shape = NA, colour = "black", na.rm = TRUE) +
+  facet_wrap(~ trait, scales = "fixed") +
+  scale_fill_manual(values = c("std" = "lightblue", "unstd" = "orchid"), name = "Type") +
+  labs(x = NULL, y = "Rating") +
+  theme_minimal(base_size = 14) +
+  theme(strip.text = element_text(size = 12, face = "bold"),
+        legend.position = "top")
+```
+
+### Accuracy of emotion categorisation
+
+### Emotion intensity ratings
 

@@ -145,6 +145,17 @@ icc2k_corridor_summary <- icc_corridor |>
     ICC2_k_high = quantile(`ICC(2,k)`, 0.975, na.rm = TRUE),
     .groups = "drop"
   )
+
+
+thresholds_median <- icc2k_corridor_summary |>
+  group_by(experiment) |>
+  summarise(
+    N_for_075_median = ifelse(length(n_raters_sampled[ICC2_k_median >= 0.75]) > 0,
+                              min(n_raters_sampled[ICC2_k_median >= 0.75]),
+                              NA),
+    .groups = "drop")
+
+print(thresholds_median)
 ```
 
 ```{r}
@@ -157,11 +168,18 @@ icc2k_corridor_summary |>
   # Thresholds: 0.75 grey, 0.9 black
   geom_hline(yintercept = 0.75, linetype = "dashed", colour = "grey40") +
   geom_hline(yintercept = 0.9, linetype = "dashed", colour = "black") +
+  geom_vline(data = thresholds_median |> filter(!is.na(N_for_075_median)),
+             aes(xintercept = N_for_075_median), colour = "red", linetype = "dotted") +
+  geom_text(data = thresholds_median |> filter(!is.na(N_for_075_median)),
+            aes(x = N_for_075_median, y = 0.60, label = paste0("N=", N_for_075_median)),
+            angle = 0, hjust = -0.2, vjust = 0,, colour = "red", size = 3) +
   facet_wrap(~ experiment) +
   scale_y_continuous(limits = c(0, 1)) +
   labs(
     x = "Number of raters sampled", 
     y = "ICC(2,k)") +
+  scale_x_continuous(breaks = seq(10, 100, 10), labels = seq(10, 100, 10)) +
+  labs(x = "Number of raters sampled", y = "ICC(2,k)") +
   theme_minimal(base_size = 12) +
   theme(
     strip.text = element_text(size = 12, face = "bold"),
@@ -298,57 +316,6 @@ summary_ci_traits |>
              inherit.aes = FALSE)
 ```
 
-Sanity check with Hehman et al. (20180) code
-
-```{r}
-source("data/resampling_hehmanetal.R")
-```
-
-```{r}
-#| warning: false
-#| message: false
-# Trustworthy
-trustworthy <- data_trait |> 
-  filter(exp == "trustworthy")
-
-trustworthy_rs <-RSSample(Rating = trustworthy$dv,
-                          Stimulus = factor(trustworthy$trial_name))
-
-# Our code N=37; Hehman et al. (2018) N=37
-RSGetPointOfStability(trustworthy_rs$ci, 0.5, inarow = 1)
-
-RSFigure(
-  trustworthy_rs$data,
-  trustworthy_rs$ci,
-  threshold = .5,
-  title = "",
-  figPNGname = "",
-  inarow = 1
-)
-```
-
-```{r}
-#| warning: false
-#| message: false
-# Memorable
-memorable <- data_trait |> 
-  filter(exp == "memorable")
-
-memorable_rs <-RSSample(Rating = memorable$dv,
-                        Stimulus = factor(memorable$trial_name))
-
-# Our code N=45; Hehman et al. (2018) N=45
-RSGetPointOfStability(memorable_rs$ci, 0.5, inarow = 1)
-
-RSFigure(
-  memorable_rs$data,
-  memorable_rs$ci,
-  threshold = .5,
-  title = "",
-  figPNGname = "",
-  inarow = 1
-)
-```
 
 ### Unstandardised trait ratings
 
