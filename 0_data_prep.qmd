@@ -294,6 +294,11 @@ prelim_participants <- exp_long |>
 
 Prior to pre-registered exclusions, preliminary sample thus consisted of `r prelim_participants` participants.
 
+```{r}
+# Rating data prior to exclusions
+write_csv(exp_long, "data/manyfaces-pilot-exp-prior-exclusions.csv")
+```
+
 ### Pre-registered exclusions
 
 #### Overly consistent responses
